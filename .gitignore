@@ -1,0 +1,13 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
+.next/
+*.log
+chroma_data/
+postgres_data/
+.DS_Store
+Thumbs.db
+venv/
+.venv/

@@ -1,0 +1,103 @@
+services:
+
+  # ─── PostgreSQL 16 ────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: motoeduc_tesis_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./backend/db/seed.sql:/docker-entrypoint-initdb.d/02_seed.sql
+    networks:
+      - motoeduc_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── ChromaDB ─────────────────────────────────────────────────
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: motoeduc_tesis_chromadb
+    restart: unless-stopped
+    ports:
+      - "8002:8000"
+    volumes:
+      - chromadb_data:/chroma/chroma
+    networks:
+      - motoeduc_net
+
+  # ─── FastAPI Backend ──────────────────────────────────────────
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: motoeduc_tesis_api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      CHROMADB_HOST: chromadb
+      CHROMADB_PORT: 8000
+      CLAUDE_API_KEY: ${CLAUDE_API_KEY}
+      ENVIRONMENT: ${ENVIRONMENT}
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - motoeduc_net
+
+  # ─── Next.js 14 Frontend ──────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: motoeduc_tesis_frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8001
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - api
+    networks:
+      - motoeduc_net
+
+  # ─── pgAdmin ──────────────────────────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: motoeduc_tesis_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - "5051:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - motoeduc_net
+
+volumes:
+  postgres_data:
+  chromadb_data:
+
+networks:
+  motoeduc_net:
+    driver: bridge
