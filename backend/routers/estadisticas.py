@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.get("/resumen", summary="Resumen general del sistema")
 def resumen(db: Session = Depends(get_db)):
-    tablas = ["motocicletas","llantas","equipamiento","usuarios","historial_evaluaciones","preguntas_viales"]
+    tablas = ["motocicletas","llantas","usuarios","historial_evaluaciones","preguntas_viales","brechas_conocimiento"]
     counts = {}
     for t in tablas:
         try:
