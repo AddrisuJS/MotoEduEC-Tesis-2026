@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
@@ -29,7 +29,7 @@ services:
     container_name: motoeduc_tesis_chromadb
     restart: unless-stopped
     ports:
-      - "8002:8000"
+      - "8003:8000"
     volumes:
       - chromadb_data:/chroma/chroma
     networks:
@@ -49,7 +49,7 @@ services:
       CLAUDE_API_KEY: ${CLAUDE_API_KEY}
       ENVIRONMENT: ${ENVIRONMENT}
     ports:
-      - "8001:8000"
+      - "8010:8000"
     volumes:
       - ./backend:/app
     depends_on:
