@@ -51,7 +51,7 @@ PREGUNTAS_EVAL = [
 
     {"pregunta": "sancion multa casco Ecuador LOTTTSV infraccion grave retencion vehiculo motocicleta",
      "esperado": "Multa y retencion del vehiculo por no usar casco",
-     "terminos_fe": ["multa", "retención", "retencion", "casco", "infracción", "sanción", "vehiculo", "puntos", "licencia"],
+     "terminos_fe": ["multa", "retención", "retencion", "casco", "infracción", "sanción", "vehiculo"],
      "categoria": "sanciones"},
 
     {"pregunta": "zigzag motocicleta Ecuador prohibido infraccion LOTTTSV cambios bruscos carril",

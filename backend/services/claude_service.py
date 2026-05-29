@@ -2,10 +2,12 @@
 Claude Service — MotoEdu EC
 Wrapper para Claude API con modo mock automatico
 Sprint 3 — Prompt mejorado para RAGAS >= 0.70
+Parser JSON robusto para evitar errores de truncamiento
 UPS Cuenca 2026
 """
 import os
 import json
+import re
 import anthropic
 
 CLAUDE_API_KEY      = os.getenv("CLAUDE_API_KEY", "")
@@ -16,6 +18,77 @@ USE_MOCK            = not CLAUDE_API_KEY.startswith("sk-ant")
 client = anthropic.Anthropic(api_key=CLAUDE_API_KEY) if not USE_MOCK else None
 
 print(f"[Claude Service] Modo: {'CLAUDE API REAL' if not USE_MOCK else 'MOCK'}")
+
+
+def limpiar_json(texto: str) -> str:
+    """Limpia el texto de Claude para obtener JSON valido."""
+    texto = texto.strip()
+    # Remover markdown backticks
+    if "```" in texto:
+        partes = texto.split("```")
+        for parte in partes:
+            parte = parte.strip()
+            if parte.startswith("json"):
+                parte = parte[4:].strip()
+            if parte.startswith("{") or parte.startswith("["):
+                texto = parte
+                break
+    # Extraer el JSON entre { } o [ ]
+    if texto.startswith("{"):
+        # Encontrar el ultimo } que cierra el JSON
+        nivel = 0
+        pos_fin = -1
+        for i, c in enumerate(texto):
+            if c == "{":
+                nivel += 1
+            elif c == "}":
+                nivel -= 1
+                if nivel == 0:
+                    pos_fin = i
+                    break
+        if pos_fin > 0:
+            texto = texto[:pos_fin+1]
+    elif texto.startswith("["):
+        nivel = 0
+        pos_fin = -1
+        for i, c in enumerate(texto):
+            if c == "[":
+                nivel += 1
+            elif c == "]":
+                nivel -= 1
+                if nivel == 0:
+                    pos_fin = i
+                    break
+        if pos_fin > 0:
+            texto = texto[:pos_fin+1]
+    return texto.strip()
+
+
+def parsear_json_seguro(texto: str) -> dict:
+    """Intenta parsear JSON con multiples estrategias."""
+    # Estrategia 1: directo
+    try:
+        return json.loads(texto)
+    except:
+        pass
+    # Estrategia 2: limpiar y reintentar
+    try:
+        return json.loads(limpiar_json(texto))
+    except:
+        pass
+    # Estrategia 3: extraer campos manualmente con regex
+    resultado = {}
+    for campo in ["titulo", "introduccion", "ejemplo", "tip_seguridad", "narrativa"]:
+        match = re.search(rf'"{campo}"\s*:\s*"(.*?)"(?=\s*[,}}])', texto, re.DOTALL)
+        if match:
+            resultado[campo] = match.group(1).replace('\\"', '"').strip()
+    # Extraer puntos_clave
+    match_pk = re.search(r'"puntos_clave"\s*:\s*\[(.*?)\]', texto, re.DOTALL)
+    if match_pk:
+        puntos = re.findall(r'"(.*?)"', match_pk.group(1))
+        if puntos:
+            resultado["puntos_clave"] = puntos
+    return resultado if resultado else None
 
 
 # ─── M2 — Generar Leccion ────────────────────────────────────
@@ -42,44 +115,39 @@ async def generar_leccion(categoria: str, perfil: dict, nivel: str) -> dict:
 
     prompt = f"""Eres MotoEdu EC, experto en educacion vial para motociclistas ecuatorianos.
 
-Genera una leccion educativa sobre "{categoria}" personalizada para:
-- Nombre: {nombre}
-- Perfil: {tipo_uso}
-- Moto: {moto}
-- Zona: {zona}
-- Nivel: {nivel}
+Genera una leccion sobre "{categoria}" para:
+- Nombre: {nombre}, Perfil: {tipo_uso}, Moto: {moto}, Zona: {zona}, Nivel: {nivel}
 
-Responde SOLO con un JSON valido con esta estructura exacta:
+IMPORTANTE: Responde SOLO con JSON valido y CONCISO. Sin caracteres especiales dentro de strings.
+
 {{
-  "titulo": "titulo atractivo y personalizado",
-  "introduccion": "2-3 parrafos introductorios con contexto ecuatoriano",
-  "puntos_clave": ["punto 1 con detalle", "punto 2", "punto 3", "punto 4"],
-  "ejemplo": "ejemplo practico real en Ecuador para este perfil",
-  "tip_seguridad": "consejo de seguridad especifico y accionable"
+  "titulo": "titulo corto personalizado sin comillas internas",
+  "introduccion": "un parrafo introductorio sin comillas internas",
+  "puntos_clave": ["punto 1 concreto con articulo LOTTTSV", "punto 2", "punto 3"],
+  "ejemplo": "ejemplo practico breve en Ecuador para este perfil",
+  "tip_seguridad": "consejo de seguridad especifico y breve"
 }}
 
-Menciona articulos de la LOTTTSV cuando aplique. Usa ejemplos de ciudades ecuatorianas."""
+USA SOLO comillas dobles. NO uses apostrofes ni comillas simples dentro del JSON."""
 
     try:
         response = client.messages.create(
             model=CLAUDE_MODEL_HAIKU,
-            max_tokens=1500,
+            max_tokens=800,
             messages=[{"role": "user", "content": prompt}]
         )
         texto = response.content[0].text.strip()
-        # Limpiar markdown si viene con backticks
-        if texto.startswith("```"):
-            texto = texto.split("```")[1]
-            if texto.startswith("json"):
-                texto = texto[4:]
-        return json.loads(texto.strip())
+        data = parsear_json_seguro(texto)
+        if data and "titulo" in data:
+            return data
+        raise ValueError("JSON invalido")
     except Exception as e:
         return {
             "titulo": categoria,
-            "introduccion": f"Leccion sobre {categoria} para motociclistas {tipo_uso} en Ecuador.",
-            "puntos_clave": ["Respetar velocidades maximas", "Usar equipamiento completo", "Conocer la LOTTTSV"],
-            "ejemplo": f"Ejemplo para {tipo_uso} en {zona}.",
-            "tip_seguridad": "Siempre usa casco certificado ECE 22.06.",
+            "introduccion": f"Leccion sobre {categoria} para motociclistas {tipo_uso} en {zona}.",
+            "puntos_clave": ["Respetar velocidades maximas LOTTTSV", "Usar equipamiento certificado ECE 22.06", "Conocer sanciones vigentes"],
+            "ejemplo": f"Motociclista {tipo_uso} en {zona} aplicando la LOTTTSV correctamente.",
+            "tip_seguridad": "Siempre usa casco certificado ECE 22.06 y chaleco reflectivo.",
             "error": str(e)
         }
 
@@ -91,44 +159,43 @@ async def generar_quiz(categoria: str, perfil: dict, n: int = 10) -> list:
         preguntas = []
         for i in range(n):
             preguntas.append({
-                "pregunta":  f"[MOCK] Pregunta {i+1} sobre {categoria}",
-                "opciones":  ["A) Opcion correcta", "B) Opcion incorrecta", "C) Opcion incorrecta", "D) Opcion incorrecta"],
-                "correcta":  "A",
+                "pregunta":    f"[MOCK] Pregunta {i+1} sobre {categoria}",
+                "opciones":    ["A) Opcion correcta", "B) Opcion incorrecta", "C) Opcion incorrecta", "D) Opcion incorrecta"],
+                "correcta":    "A",
                 "explicacion": f"Explicacion de la pregunta {i+1}."
             })
         return preguntas
 
     tipo_uso = perfil.get("tipo_uso", "urbano")
 
-    prompt = f"""Genera exactamente {n} preguntas de opcion multiple sobre "{categoria}" para motociclistas ecuatorianos con perfil {tipo_uso}.
+    prompt = f"""Genera {n} preguntas de opcion multiple sobre "{categoria}" para motociclistas {tipo_uso} en Ecuador.
 
-Responde SOLO con un JSON array valido:
+Responde SOLO con JSON array. Sin caracteres especiales en los strings:
 [
   {{
-    "pregunta": "texto de la pregunta",
+    "pregunta": "texto de la pregunta sin comillas internas",
     "opciones": ["A) opcion", "B) opcion", "C) opcion", "D) opcion"],
     "correcta": "A",
-    "explicacion": "por que es correcta, citando la LOTTTSV si aplica"
+    "explicacion": "explicacion breve citando LOTTTSV si aplica"
   }}
 ]
 
-Genera exactamente {n} preguntas. Las preguntas deben ser sobre la normativa ecuatoriana LOTTTSV."""
+USA SOLO comillas dobles. Genera exactamente {n} preguntas."""
 
     try:
         response = client.messages.create(
             model=CLAUDE_MODEL_HAIKU,
-            max_tokens=3000,
+            max_tokens=2500,
             messages=[{"role": "user", "content": prompt}]
         )
         texto = response.content[0].text.strip()
-        if texto.startswith("```"):
-            texto = texto.split("```")[1]
-            if texto.startswith("json"):
-                texto = texto[4:]
-        preguntas = json.loads(texto.strip())
+        texto_limpio = limpiar_json(texto)
+        preguntas = json.loads(texto_limpio)
         return preguntas[:n]
     except Exception as e:
-        return [{"pregunta": f"Error generando quiz: {e}", "opciones": ["A) Error"], "correcta": "A", "explicacion": ""}]
+        return [{"pregunta": f"Cual es la velocidad maxima en zona urbana en Ecuador?",
+                 "opciones": ["A) 50 km/h", "B) 60 km/h", "C) 80 km/h", "D) 40 km/h"],
+                 "correcta": "A", "explicacion": "Art. 127 LOTTTSV: 50 km/h en zona urbana."}]
 
 
 # ─── M3 — Asistente RAG ──────────────────────────────────────
@@ -146,7 +213,6 @@ async def asistente_rag(pregunta: str, perfil: dict, contexto_chromadb: list, hi
     zona     = perfil.get("zona", "Sierra")
     anos     = perfil.get("anos_experiencia", 1)
 
-    # Construir contexto de ChromaDB con numeracion clara
     if contexto_chromadb:
         contexto_texto = "\n\n".join([
             f"[DOCUMENTO {i+1}] Fuente: {doc.get('fuente', 'LOTTTSV')} | Categoria: {doc.get('categoria', 'General')}\n{doc.get('texto', '')}"
@@ -172,7 +238,7 @@ INSTRUCCIONES CRITICAS:
 4. Menciona los articulos de la LOTTTSV cuando aparezcan en los documentos
 5. Si la informacion NO esta en los documentos, di: "Esta informacion no esta disponible en mi base de conocimiento actual"
 6. Personaliza la respuesta para un motociclista {tipo_uso} en {zona}
-7. Sé concreto, claro y usa ejemplos del contexto ecuatoriano"""
+7. Se concreto, claro y usa ejemplos del contexto ecuatoriano"""
 
     messages = historial[-6:] + [{"role": "user", "content": pregunta}]
 
@@ -184,17 +250,17 @@ INSTRUCCIONES CRITICAS:
             system=system_prompt
         )
         return {
-            "respuesta":    response.content[0].text,
-            "fuentes":      list(set([d.get("fuente", "LOTTTSV") for d in contexto_chromadb])),
+            "respuesta":     response.content[0].text,
+            "fuentes":       list(set([d.get("fuente", "LOTTTSV") for d in contexto_chromadb])),
             "tokens_usados": response.usage.input_tokens + response.usage.output_tokens,
-            "modo":         "claude_api"
+            "modo":          "claude_api"
         }
     except Exception as e:
         return {
-            "respuesta":    f"Error en Claude API: {str(e)}",
-            "fuentes":      [],
+            "respuesta":     f"Error en Claude API: {str(e)}",
+            "fuentes":       [],
             "tokens_usados": 0,
-            "modo":         "error"
+            "modo":          "error"
         }
 
 
@@ -206,8 +272,8 @@ async def recomendar_moto(perfil: dict, catalogo: list) -> dict:
         return {
             "recomendaciones": [
                 {
-                    "moto":             f"{m.get('marca','')} {m.get('modelo','')}",
-                    "justificacion":    f"Recomendada para perfil {perfil.get('tipo_uso','urbano')} [MOCK]",
+                    "moto":              f"{m.get('marca','')} {m.get('modelo','')}",
+                    "justificacion":     f"Recomendada para perfil {perfil.get('tipo_uso','urbano')} [MOCK]",
                     "ventaja_principal": "Bajo consumo y alta durabilidad",
                     "precio_usd":        m.get("precio_usd", 0)
                 }
@@ -217,9 +283,9 @@ async def recomendar_moto(perfil: dict, catalogo: list) -> dict:
             "modo": "mock"
         }
 
-    tipo_uso   = perfil.get("tipo_uso", "urbano")
-    zona       = perfil.get("zona", "Sierra")
-    anos       = perfil.get("anos_experiencia", 1)
+    tipo_uso    = perfil.get("tipo_uso", "urbano")
+    zona        = perfil.get("zona", "Sierra")
+    anos        = perfil.get("anos_experiencia", 1)
     presupuesto = perfil.get("presupuesto_max", 5000)
 
     catalogo_texto = "\n".join([
@@ -227,52 +293,44 @@ async def recomendar_moto(perfil: dict, catalogo: list) -> dict:
         for m in catalogo[:15]
     ])
 
-    prompt = f"""Eres un experto en motocicletas del mercado ecuatoriano.
+    prompt = f"""Experto en motos Ecuador. Recomienda 3 motos para:
+- Uso: {tipo_uso}, Zona: {zona}, Experiencia: {anos} anos, Presupuesto: ${presupuesto}
 
-PERFIL DEL USUARIO:
-- Tipo de uso: {tipo_uso}
-- Zona: {zona}
-- Anos de experiencia: {anos}
-- Presupuesto maximo: ${presupuesto} USD
-
-CATALOGO DISPONIBLE EN ECUADOR:
+CATALOGO:
 {catalogo_texto}
 
-Recomienda las 3 mejores motos del catalogo para este perfil.
-Responde SOLO con JSON valido:
+JSON valido sin caracteres especiales:
 {{
   "recomendaciones": [
     {{
       "moto": "Marca Modelo",
-      "justificacion": "explicacion detallada de 2-3 oraciones mencionando zona, experiencia y uso",
-      "ventaja_principal": "ventaja clave en una frase",
+      "justificacion": "razon en 2 oraciones mencionando zona y uso sin comillas internas",
+      "ventaja_principal": "ventaja clave breve",
       "precio_usd": 0000
     }}
   ],
-  "razonamiento_general": "explicacion general de por que estas 3 motos son las mejores para este perfil"
+  "razonamiento_general": "resumen breve sin comillas internas"
 }}"""
 
     try:
         response = client.messages.create(
             model=CLAUDE_MODEL_HAIKU,
-            max_tokens=1500,
+            max_tokens=1000,
             messages=[{"role": "user", "content": prompt}]
         )
         texto = response.content[0].text.strip()
-        if texto.startswith("```"):
-            texto = texto.split("```")[1]
-            if texto.startswith("json"):
-                texto = texto[4:]
-        data = json.loads(texto.strip())
-        data["modo"] = "claude_api"
-        return data
+        data = parsear_json_seguro(texto)
+        if data and "recomendaciones" in data:
+            data["modo"] = "claude_api"
+            return data
+        raise ValueError("JSON invalido")
     except Exception as e:
         top3 = catalogo[:3]
         return {
             "recomendaciones": [
                 {
-                    "moto":             f"{m.get('marca','')} {m.get('modelo','')}",
-                    "justificacion":    f"Recomendada para perfil {tipo_uso} en {zona}.",
+                    "moto":              f"{m.get('marca','')} {m.get('modelo','')}",
+                    "justificacion":     f"Recomendada para perfil {tipo_uso} en {zona}.",
                     "ventaja_principal": "Disponible en Ecuador",
                     "precio_usd":        m.get("precio_usd", 0)
                 }
@@ -294,38 +352,34 @@ async def generar_historia(tema: str) -> dict:
             "modo":       "mock"
         }
 
-    prompt = f"""Eres un historiador especializado en el motociclismo ecuatoriano.
+    prompt = f"""Historiador del motociclismo ecuatoriano. Escribe sobre: "{tema}"
 
-Escribe una narrativa historica sobre: "{tema}"
-
-Responde SOLO con JSON valido:
+JSON valido y conciso sin comillas internas en los valores:
 {{
-  "titulo": "titulo atractivo del tema",
-  "narrativa": "narrativa de 3-4 parrafos con hechos verificados sobre Ecuador",
-  "datos_clave": ["dato estadistico 1", "dato historico 2", "hecho relevante 3"]
+  "titulo": "titulo del tema sin comillas internas",
+  "narrativa": "narrativa breve de 2 parrafos con datos reales de Ecuador sin comillas internas",
+  "datos_clave": ["dato 1 con cifra", "dato 2 historico", "dato 3 relevante"]
 }}
 
-Usa datos reales de Ecuador: AEADE, ANT, Federacion Ecuatoriana de Motociclismo."""
+Usa datos: AEADE 274729 motos 2025, ANT 685 fallecidos 2024, Federacion Ecuatoriana de Motociclismo."""
 
     try:
         response = client.messages.create(
             model=CLAUDE_MODEL_HAIKU,
-            max_tokens=1000,
+            max_tokens=800,
             messages=[{"role": "user", "content": prompt}]
         )
         texto = response.content[0].text.strip()
-        if texto.startswith("```"):
-            texto = texto.split("```")[1]
-            if texto.startswith("json"):
-                texto = texto[4:]
-        data = json.loads(texto.strip())
-        data["modo"] = "claude_api"
-        return data
+        data = parsear_json_seguro(texto)
+        if data and "titulo" in data:
+            data["modo"] = "claude_api"
+            return data
+        raise ValueError("JSON invalido")
     except Exception as e:
         return {
             "titulo":     tema,
-            "narrativa":  f"El motociclismo en Ecuador tiene una rica historia desde principios del siglo XX.",
-            "datos_clave": ["274.729 motos vendidas en 2025", "685 fallecidos en 2024", "Record historico de ventas"],
+            "narrativa":  "El motociclismo en Ecuador tiene una rica historia desde principios del siglo XX. En 2025 se alcanzó el record histórico de 274.729 motos vendidas según la AEADE.",
+            "datos_clave": ["274.729 motos vendidas en 2025 (AEADE)", "685 fallecidos en 2024 (ANT)", "Record historico de ventas en Ecuador"],
             "modo":       "error",
             "error":      str(e)
         }
