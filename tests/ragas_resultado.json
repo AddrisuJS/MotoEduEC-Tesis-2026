@@ -1,191 +1,191 @@
 {
-  "fecha": "2026-05-27T16:33:47.445337",
+  "fecha": "2026-05-28T21:25:41.013464",
   "total_preguntas": 20,
-  "faithfulness_mean": 0.12,
-  "faithfulness_std": 0.168,
-  "relevancia_mean": 0.255,
-  "objetivo_pass": false,
-  "modo": "mock",
+  "faithfulness_mean": 0.718,
+  "faithfulness_std": 0.301,
+  "relevancia_mean": 0.654,
+  "objetivo_pass": true,
+  "modo": "claude_api",
   "resultados": [
     {
       "id": 1,
       "categoria": "velocidad",
-      "pregunta": "Cual es la velocidad maxima permitida para motocicletas en z...",
-      "docs": 5,
-      "faithfulness": 0.0,
-      "relevancia": 0.0,
-      "modo": "mock"
+      "pregunta": "velocidad maxima permitida motocicletas zona urbana Ecuador ...",
+      "docs": 10,
+      "faithfulness": 1.0,
+      "relevancia": 1.0,
+      "modo": "claude_api"
     },
     {
       "id": 2,
-      "categoria": "documentos",
-      "pregunta": "Que documentos debe portar obligatoriamente un motociclista?...",
-      "docs": 5,
-      "faithfulness": 0.417,
-      "relevancia": 0.0,
-      "modo": "mock"
+      "categoria": "velocidad",
+      "pregunta": "velocidad maxima carretera motocicletas 90 km/h 100 km/h Ecu...",
+      "docs": 10,
+      "faithfulness": 1.0,
+      "relevancia": 1.0,
+      "modo": "claude_api"
     },
     {
       "id": 3,
-      "categoria": "equipamiento",
-      "pregunta": "Es obligatorio el uso de casco para motociclistas en Ecuador...",
-      "docs": 5,
-      "faithfulness": 0.222,
+      "categoria": "documentos",
+      "pregunta": "Que documentos debe portar obligatoriamente un motociclista ...",
+      "docs": 10,
+      "faithfulness": 0.806,
       "relevancia": 0.667,
-      "modo": "mock"
+      "modo": "claude_api"
     },
     {
       "id": 4,
-      "categoria": "velocidad",
-      "pregunta": "Cual es la velocidad maxima en carretera para motocicletas?...",
-      "docs": 5,
-      "faithfulness": 0.0,
-      "relevancia": 0.25,
-      "modo": "mock"
+      "categoria": "documentos",
+      "pregunta": "Que significa SOAT seguro obligatorio accidentes transito pa...",
+      "docs": 10,
+      "faithfulness": 0.9,
+      "relevancia": 0.556,
+      "modo": "claude_api"
     },
     {
       "id": 5,
-      "categoria": "documentos",
-      "pregunta": "Que significa SOAT y para que sirve?...",
-      "docs": 5,
-      "faithfulness": 0.238,
-      "relevancia": 0.222,
-      "modo": "mock"
+      "categoria": "equipamiento",
+      "pregunta": "casco obligatorio motociclistas Ecuador ley LOTTTSV certific...",
+      "docs": 10,
+      "faithfulness": 0.458,
+      "relevancia": 0.833,
+      "modo": "claude_api"
     },
     {
       "id": 6,
-      "categoria": "sanciones",
-      "pregunta": "Cuales son las sanciones por conducir sin casco en Ecuador?...",
-      "docs": 5,
-      "faithfulness": 0.0,
-      "relevancia": 0.0,
-      "modo": "mock"
+      "categoria": "equipamiento",
+      "pregunta": "chaleco reflectivo delivery Ecuador obligatorio carretera no...",
+      "docs": 10,
+      "faithfulness": 0.721,
+      "relevancia": 0.4,
+      "modo": "claude_api"
     },
     {
       "id": 7,
-      "categoria": "normativa",
-      "pregunta": "Se puede circular con dos personas en una motocicleta en Ecu...",
-      "docs": 5,
-      "faithfulness": 0.476,
-      "relevancia": 0.308,
-      "modo": "mock"
+      "categoria": "equipamiento",
+      "pregunta": "certificacion ECE 22.06 casco motocicleta estandar europeo s...",
+      "docs": 10,
+      "faithfulness": 1.0,
+      "relevancia": 0.667,
+      "modo": "claude_api"
     },
     {
       "id": 8,
-      "categoria": "licencias",
-      "pregunta": "Que tipos de licencia existen para motocicletas en Ecuador?...",
-      "docs": 5,
-      "faithfulness": 0.444,
-      "relevancia": 0.429,
-      "modo": "mock"
+      "categoria": "sanciones",
+      "pregunta": "multa sancion conducir sin casco motocicleta Ecuador infracc...",
+      "docs": 10,
+      "faithfulness": 0.1,
+      "relevancia": 0.4,
+      "modo": "claude_api"
     },
     {
       "id": 9,
-      "categoria": "conduccion",
-      "pregunta": "Cual es la tecnica correcta de frenado en condiciones normal...",
-      "docs": 5,
-      "faithfulness": 0.0,
-      "relevancia": 0.0,
-      "modo": "mock"
+      "categoria": "normativa",
+      "pregunta": "zigzag motocicleta Ecuador prohibido infraccion LOTTTSV camb...",
+      "docs": 10,
+      "faithfulness": 1.0,
+      "relevancia": 0.778,
+      "modo": "claude_api"
     },
     {
       "id": 10,
-      "categoria": "lluvia",
-      "pregunta": "Como se debe frenar en piso mojado con una motocicleta?...",
-      "docs": 5,
-      "faithfulness": 0.0,
-      "relevancia": 0.125,
-      "modo": "mock"
+      "categoria": "normativa",
+      "pregunta": "adelantar izquierda derecha Ecuador prohibido rebasar motoci...",
+      "docs": 10,
+      "faithfulness": 0.621,
+      "relevancia": 0.625,
+      "modo": "claude_api"
     },
     {
       "id": 11,
-      "categoria": "lluvia",
-      "pregunta": "Que es el aquaplaning y como se previene en moto?...",
-      "docs": 5,
-      "faithfulness": 0.0,
-      "relevancia": 0.333,
-      "modo": "mock"
+      "categoria": "licencias",
+      "pregunta": "licencia tipo A motocicleta Ecuador cilindraje categorias AN...",
+      "docs": 10,
+      "faithfulness": 0.458,
+      "relevancia": 0.714,
+      "modo": "claude_api"
     },
     {
       "id": 12,
-      "categoria": "equipamiento",
-      "pregunta": "Que significa la certificacion ECE 22.06 en un casco?...",
-      "docs": 5,
-      "faithfulness": 0.0,
-      "relevancia": 0.333,
-      "modo": "mock"
+      "categoria": "conduccion",
+      "pregunta": "tecnica correcta frenado motocicleta freno delantero trasero...",
+      "docs": 10,
+      "faithfulness": 1.0,
+      "relevancia": 0.6,
+      "modo": "claude_api"
     },
     {
       "id": 13,
-      "categoria": "normativa",
-      "pregunta": "Cuantas horas antes de manejar no se debe consumir alcohol?...",
-      "docs": 5,
-      "faithfulness": 0.0,
-      "relevancia": 0.583,
-      "modo": "mock"
+      "categoria": "conduccion",
+      "pregunta": "distancia seguimiento segundos moto velocidad 50 km/h seguri...",
+      "docs": 10,
+      "faithfulness": 0.85,
+      "relevancia": 0.857,
+      "modo": "claude_api"
     },
     {
       "id": 14,
-      "categoria": "mantenimiento",
-      "pregunta": "Que es el FINE-C en el mantenimiento de motos?...",
-      "docs": 5,
-      "faithfulness": 0.208,
-      "relevancia": 0.0,
-      "modo": "mock"
+      "categoria": "lluvia",
+      "pregunta": "Como se debe frenar en piso mojado lluvia motocicleta sin bl...",
+      "docs": 10,
+      "faithfulness": 0.85,
+      "relevancia": 0.625,
+      "modo": "claude_api"
     },
     {
       "id": 15,
-      "categoria": "mantenimiento",
-      "pregunta": "Cual es la presion recomendada para llantas de motos utilita...",
-      "docs": 5,
-      "faithfulness": 0.208,
-      "relevancia": 0.0,
-      "modo": "mock"
+      "categoria": "lluvia",
+      "pregunta": "aquaplaning motocicleta agua lluvia perdida traccion prevenc...",
+      "docs": 10,
+      "faithfulness": 1.0,
+      "relevancia": 0.444,
+      "modo": "claude_api"
     },
     {
       "id": 16,
-      "categoria": "normativa",
-      "pregunta": "Se puede adelantar por la derecha en Ecuador?...",
-      "docs": 5,
-      "faithfulness": 0.0,
-      "relevancia": 0.375,
-      "modo": "mock"
+      "categoria": "mantenimiento",
+      "pregunta": "FINE-C mantenimiento motocicleta combustible instrumentos ne...",
+      "docs": 10,
+      "faithfulness": 0.367,
+      "relevancia": 0.5,
+      "modo": "claude_api"
     },
     {
       "id": 17,
-      "categoria": "primeros_auxilios",
-      "pregunta": "Que hacer si hay un accidente de transito como primer respon...",
-      "docs": 5,
-      "faithfulness": 0.0,
-      "relevancia": 0.2,
-      "modo": "mock"
+      "categoria": "mantenimiento",
+      "pregunta": "presion llantas neumaticos motocicleta PSI recomendada revis...",
+      "docs": 10,
+      "faithfulness": 0.336,
+      "relevancia": 0.286,
+      "modo": "claude_api"
     },
     {
       "id": 18,
-      "categoria": "conduccion",
-      "pregunta": "Cuantos centimetros debe ser la distancia de seguimiento en ...",
-      "docs": 5,
-      "faithfulness": 0.196,
-      "relevancia": 0.571,
-      "modo": "mock"
+      "categoria": "primeros_auxilios",
+      "pregunta": "accidente transito Ecuador primer respondiente llamar 911 no...",
+      "docs": 10,
+      "faithfulness": 0.85,
+      "relevancia": 0.6,
+      "modo": "claude_api"
     },
     {
       "id": 19,
-      "categoria": "equipamiento",
-      "pregunta": "Es obligatorio el chaleco reflectivo para delivery en Ecuado...",
-      "docs": 5,
-      "faithfulness": 0.0,
-      "relevancia": 0.375,
-      "modo": "mock"
+      "categoria": "normativa",
+      "pregunta": "alcohol conducir moto Ecuador limite 0 sancion grave LOTTTSV...",
+      "docs": 10,
+      "faithfulness": 0.9,
+      "relevancia": 0.75,
+      "modo": "claude_api"
     },
     {
       "id": 20,
       "categoria": "normativa",
-      "pregunta": "Que es el zigzag y esta permitido en moto?...",
-      "docs": 5,
-      "faithfulness": 0.0,
-      "relevancia": 0.333,
-      "modo": "mock"
+      "pregunta": "pasajero acompanante motocicleta Ecuador casco obligatorio d...",
+      "docs": 10,
+      "faithfulness": 0.15,
+      "relevancia": 0.769,
+      "modo": "claude_api"
     }
   ]
 }

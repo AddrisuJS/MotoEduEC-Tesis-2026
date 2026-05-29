@@ -1,315 +1,331 @@
 """
-Servicio Claude API — MotoEdu EC Tesis
-Wrapper central para todas las llamadas a Claude API.
-Cuando CLAUDE_API_KEY esté disponible, reemplaza las respuestas mock.
+Claude Service — MotoEdu EC
+Wrapper para Claude API con modo mock automatico
+Sprint 3 — Prompt mejorado para RAGAS >= 0.70
+UPS Cuenca 2026
 """
 import os
-from typing import Optional
+import json
+import anthropic
 
-CLAUDE_API_KEY = os.getenv("CLAUDE_API_KEY", "")
-CLAUDE_MODEL_SONNET = "claude-sonnet-4-20250514"
+CLAUDE_API_KEY      = os.getenv("CLAUDE_API_KEY", "")
+CLAUDE_MODEL_SONNET = "claude-sonnet-4-5"
 CLAUDE_MODEL_HAIKU  = "claude-haiku-4-5-20251001"
-USE_MOCK = not CLAUDE_API_KEY or CLAUDE_API_KEY.startswith("sk-ant-XXX")
+USE_MOCK            = not CLAUDE_API_KEY.startswith("sk-ant")
+
+client = anthropic.Anthropic(api_key=CLAUDE_API_KEY) if not USE_MOCK else None
+
+print(f"[Claude Service] Modo: {'CLAUDE API REAL' if not USE_MOCK else 'MOCK'}")
 
 
-async def generar_leccion(
-    categoria: str,
-    perfil: dict,
-    nivel: str = "basico"
-) -> dict:
-    """
-    M2 — Genera una lección educativa personalizada.
-    Cuando Claude API esté disponible, reemplaza el mock.
-    """
+# ─── M2 — Generar Leccion ────────────────────────────────────
+
+async def generar_leccion(categoria: str, perfil: dict, nivel: str) -> dict:
     if USE_MOCK:
-        return _mock_leccion(categoria, perfil, nivel)
+        return {
+            "titulo": f"{categoria}",
+            "introduccion": f"[MODO MOCK] Leccion sobre {categoria} para perfil {perfil.get('tipo_uso','urbano')}. Conectar Claude API para contenido real.",
+            "puntos_clave": [
+                f"Punto clave 1 sobre {categoria}",
+                f"Punto clave 2 sobre {categoria}",
+                f"Punto clave 3 sobre {categoria}"
+            ],
+            "ejemplo": f"Ejemplo practico de {categoria} en Ecuador.",
+            "tip_seguridad": f"Tip de seguridad relacionado con {categoria}.",
+            "modo": "mock"
+        }
 
-    import anthropic
-    client = anthropic.Anthropic(api_key=CLAUDE_API_KEY)
+    tipo_uso = perfil.get("tipo_uso", "urbano")
+    zona     = perfil.get("zona", "Sierra")
+    moto     = perfil.get("moto_actual", "motocicleta")
+    nombre   = perfil.get("nombre", "Motociclista")
 
-    system_prompt = _system_prompt_base() + _perfil_prompt(perfil)
-    task_prompt = f"""
-    Genera una lección educativa sobre "{categoria}" para un motociclista con perfil:
-    - Tipo de uso: {perfil.get('tipo_uso', 'urbano')}
-    - Experiencia: {perfil.get('anos_experiencia', 1)} años
-    - Nivel objetivo: {nivel}
-    
-    La lección debe tener:
-    1. Título atractivo
-    2. Introducción de 2 párrafos
-    3. 3 puntos clave numerados
-    4. Ejemplo práctico ecuatoriano
-    5. Tip de seguridad final
-    
-    Responde en JSON con campos: titulo, introduccion, puntos_clave, ejemplo, tip_seguridad
-    """
+    prompt = f"""Eres MotoEdu EC, experto en educacion vial para motociclistas ecuatorianos.
 
-    response = client.messages.create(
-        model=CLAUDE_MODEL_HAIKU,
-        max_tokens=1000,
-        messages=[{"role": "user", "content": task_prompt}],
-        system=system_prompt
-    )
-    import json
-    text = response.content[0].text
+Genera una leccion educativa sobre "{categoria}" personalizada para:
+- Nombre: {nombre}
+- Perfil: {tipo_uso}
+- Moto: {moto}
+- Zona: {zona}
+- Nivel: {nivel}
+
+Responde SOLO con un JSON valido con esta estructura exacta:
+{{
+  "titulo": "titulo atractivo y personalizado",
+  "introduccion": "2-3 parrafos introductorios con contexto ecuatoriano",
+  "puntos_clave": ["punto 1 con detalle", "punto 2", "punto 3", "punto 4"],
+  "ejemplo": "ejemplo practico real en Ecuador para este perfil",
+  "tip_seguridad": "consejo de seguridad especifico y accionable"
+}}
+
+Menciona articulos de la LOTTTSV cuando aplique. Usa ejemplos de ciudades ecuatorianas."""
+
     try:
-        return json.loads(text)
-    except:
-        return {"titulo": categoria, "contenido": text, "tipo": "generado"}
+        response = client.messages.create(
+            model=CLAUDE_MODEL_HAIKU,
+            max_tokens=1500,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        texto = response.content[0].text.strip()
+        # Limpiar markdown si viene con backticks
+        if texto.startswith("```"):
+            texto = texto.split("```")[1]
+            if texto.startswith("json"):
+                texto = texto[4:]
+        return json.loads(texto.strip())
+    except Exception as e:
+        return {
+            "titulo": categoria,
+            "introduccion": f"Leccion sobre {categoria} para motociclistas {tipo_uso} en Ecuador.",
+            "puntos_clave": ["Respetar velocidades maximas", "Usar equipamiento completo", "Conocer la LOTTTSV"],
+            "ejemplo": f"Ejemplo para {tipo_uso} en {zona}.",
+            "tip_seguridad": "Siempre usa casco certificado ECE 22.06.",
+            "error": str(e)
+        }
 
+
+# ─── M2 — Generar Quiz ───────────────────────────────────────
 
 async def generar_quiz(categoria: str, perfil: dict, n: int = 10) -> list:
-    """M2 — Genera quiz de N preguntas personalizado."""
     if USE_MOCK:
-        return _mock_quiz(categoria, n)
+        preguntas = []
+        for i in range(n):
+            preguntas.append({
+                "pregunta":  f"[MOCK] Pregunta {i+1} sobre {categoria}",
+                "opciones":  ["A) Opcion correcta", "B) Opcion incorrecta", "C) Opcion incorrecta", "D) Opcion incorrecta"],
+                "correcta":  "A",
+                "explicacion": f"Explicacion de la pregunta {i+1}."
+            })
+        return preguntas
 
-    import anthropic, json
-    client = anthropic.Anthropic(api_key=CLAUDE_API_KEY)
+    tipo_uso = perfil.get("tipo_uso", "urbano")
 
-    system_prompt = _system_prompt_base() + _perfil_prompt(perfil)
-    task_prompt = f"""
-    Genera {n} preguntas de opción múltiple sobre "{categoria}" para el reglamento LOTTTSV ecuatoriano.
-    Perfil del motociclista: {perfil.get('tipo_uso', 'urbano')}, {perfil.get('anos_experiencia', 1)} años de experiencia.
-    
-    Responde en JSON array con objetos:
-    {{
-        "pregunta": "...",
-        "opciones": ["A) ...", "B) ...", "C) ...", "D) ..."],
-        "correcta": "A",
-        "explicacion": "..."
-    }}
-    Solo JSON, sin texto adicional.
-    """
-    response = client.messages.create(
-        model=CLAUDE_MODEL_HAIKU,
-        max_tokens=2000,
-        messages=[{"role": "user", "content": task_prompt}],
-        system=system_prompt
-    )
+    prompt = f"""Genera exactamente {n} preguntas de opcion multiple sobre "{categoria}" para motociclistas ecuatorianos con perfil {tipo_uso}.
+
+Responde SOLO con un JSON array valido:
+[
+  {{
+    "pregunta": "texto de la pregunta",
+    "opciones": ["A) opcion", "B) opcion", "C) opcion", "D) opcion"],
+    "correcta": "A",
+    "explicacion": "por que es correcta, citando la LOTTTSV si aplica"
+  }}
+]
+
+Genera exactamente {n} preguntas. Las preguntas deben ser sobre la normativa ecuatoriana LOTTTSV."""
+
     try:
-        return json.loads(response.content[0].text)
-    except:
-        return _mock_quiz(categoria, n)
+        response = client.messages.create(
+            model=CLAUDE_MODEL_HAIKU,
+            max_tokens=3000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        texto = response.content[0].text.strip()
+        if texto.startswith("```"):
+            texto = texto.split("```")[1]
+            if texto.startswith("json"):
+                texto = texto[4:]
+        preguntas = json.loads(texto.strip())
+        return preguntas[:n]
+    except Exception as e:
+        return [{"pregunta": f"Error generando quiz: {e}", "opciones": ["A) Error"], "correcta": "A", "explicacion": ""}]
 
 
-async def asistente_rag(
-    pregunta: str,
-    perfil: dict,
-    contexto_chromadb: list,
-    historial: list
-) -> dict:
-    """
-    M3 — Asistente RAG con ChromaDB + Claude API.
-    contexto_chromadb: documentos recuperados de ChromaDB.
-    """
+# ─── M3 — Asistente RAG ──────────────────────────────────────
+
+async def asistente_rag(pregunta: str, perfil: dict, contexto_chromadb: list, historial: list) -> dict:
     if USE_MOCK:
-        return _mock_rag(pregunta, contexto_chromadb)
+        return {
+            "respuesta": f"[MODO MOCK] Respuesta a: '{pregunta}'. Conectar Claude API para respuestas reales basadas en la LOTTTSV.",
+            "fuentes":   ["LOTTTSV — Art. XXX"],
+            "tokens_usados": 0,
+            "modo": "mock"
+        }
 
-    import anthropic
-    client = anthropic.Anthropic(api_key=CLAUDE_API_KEY)
+    tipo_uso = perfil.get("tipo_uso", "urbano")
+    zona     = perfil.get("zona", "Sierra")
+    anos     = perfil.get("anos_experiencia", 1)
 
-    contexto_str = "\n\n".join([
-        f"[Fuente: {d.get('fuente','LOTTTSV')}]\n{d.get('texto','')}"
-        for d in contexto_chromadb
-    ])
+    # Construir contexto de ChromaDB con numeracion clara
+    if contexto_chromadb:
+        contexto_texto = "\n\n".join([
+            f"[DOCUMENTO {i+1}] Fuente: {doc.get('fuente', 'LOTTTSV')} | Categoria: {doc.get('categoria', 'General')}\n{doc.get('texto', '')}"
+            for i, doc in enumerate(contexto_chromadb)
+        ])
+    else:
+        contexto_texto = "No se encontraron documentos relevantes en la base de conocimiento."
 
-    system_prompt = _system_prompt_base() + _perfil_prompt(perfil) + f"""
-    
-    CONTEXTO DE LA BASE DE CONOCIMIENTO (LOTTTSV y catálogo):
-    {contexto_str}
-    
-    INSTRUCCIÓN: Responde usando únicamente la información del contexto anterior.
-    Cita el artículo o fuente específica al final de tu respuesta.
-    Si la información no está en el contexto, indícalo claramente.
-    """
+    system_prompt = f"""Eres MotoEdu EC, asistente experto en educacion vial para motociclistas ecuatorianos.
+
+PERFIL DEL USUARIO:
+- Tipo de uso: {tipo_uso}
+- Zona geografica: {zona}
+- Anos de experiencia: {anos}
+
+DOCUMENTOS RECUPERADOS DE LA BASE DE CONOCIMIENTO:
+{contexto_texto}
+
+INSTRUCCIONES CRITICAS:
+1. Responde UNICAMENTE usando la informacion de los documentos anteriores
+2. Cita EXPLICITAMENTE los documentos usando frases como "Segun el Documento X", "De acuerdo al Documento Y", "Como indica el Documento Z"
+3. Si la informacion esta en los documentos, DEBES citarla textualmente o parafraseada con referencia
+4. Menciona los articulos de la LOTTTSV cuando aparezcan en los documentos
+5. Si la informacion NO esta en los documentos, di: "Esta informacion no esta disponible en mi base de conocimiento actual"
+6. Personaliza la respuesta para un motociclista {tipo_uso} en {zona}
+7. Sé concreto, claro y usa ejemplos del contexto ecuatoriano"""
 
     messages = historial[-6:] + [{"role": "user", "content": pregunta}]
 
-    response = client.messages.create(
-        model=CLAUDE_MODEL_SONNET,
-        max_tokens=1000,
-        messages=messages,
-        system=system_prompt
-    )
+    try:
+        response = client.messages.create(
+            model=CLAUDE_MODEL_SONNET,
+            max_tokens=1000,
+            messages=messages,
+            system=system_prompt
+        )
+        return {
+            "respuesta":    response.content[0].text,
+            "fuentes":      list(set([d.get("fuente", "LOTTTSV") for d in contexto_chromadb])),
+            "tokens_usados": response.usage.input_tokens + response.usage.output_tokens,
+            "modo":         "claude_api"
+        }
+    except Exception as e:
+        return {
+            "respuesta":    f"Error en Claude API: {str(e)}",
+            "fuentes":      [],
+            "tokens_usados": 0,
+            "modo":         "error"
+        }
 
-    return {
-        "respuesta": response.content[0].text,
-        "fuentes": [d.get("fuente", "LOTTTSV") for d in contexto_chromadb],
-        "tokens_usados": response.usage.input_tokens + response.usage.output_tokens
-    }
 
+# ─── M4 — Recomendar Moto ────────────────────────────────────
 
 async def recomendar_moto(perfil: dict, catalogo: list) -> dict:
-    """M4 — Recomienda motos con justificación en lenguaje natural."""
     if USE_MOCK:
-        return _mock_recomendacion_moto(perfil, catalogo)
+        top3 = catalogo[:3]
+        return {
+            "recomendaciones": [
+                {
+                    "moto":             f"{m.get('marca','')} {m.get('modelo','')}",
+                    "justificacion":    f"Recomendada para perfil {perfil.get('tipo_uso','urbano')} [MOCK]",
+                    "ventaja_principal": "Bajo consumo y alta durabilidad",
+                    "precio_usd":        m.get("precio_usd", 0)
+                }
+                for m in top3
+            ],
+            "razonamiento_general": "[MODO MOCK] Conectar Claude API para recomendaciones personalizadas.",
+            "modo": "mock"
+        }
 
-    import anthropic, json
-    client = anthropic.Anthropic(api_key=CLAUDE_API_KEY)
+    tipo_uso   = perfil.get("tipo_uso", "urbano")
+    zona       = perfil.get("zona", "Sierra")
+    anos       = perfil.get("anos_experiencia", 1)
+    presupuesto = perfil.get("presupuesto_max", 5000)
 
-    catalogo_str = "\n".join([
-        f"- {m['marca']} {m['modelo']} ({m['anio']}): {m['cilindrada_cc']}cc, ${m['precio_usd']}, {m['uso_recomendado']}"
-        for m in catalogo[:20]
+    catalogo_texto = "\n".join([
+        f"- {m.get('marca')} {m.get('modelo')} ({m.get('anio')}): {m.get('cilindrada_cc')}cc, {m.get('potencia_hp')}HP, ${m.get('precio_usd')}, {m.get('uso_recomendado')}"
+        for m in catalogo[:15]
     ])
 
-    task_prompt = f"""
-    Analiza el perfil del motociclista y recomienda exactamente 3 motos del catálogo.
-    
-    PERFIL:
-    - Tipo de uso: {perfil.get('tipo_uso')}
-    - Años de experiencia: {perfil.get('anos_experiencia')}
-    - Presupuesto máximo: ${perfil.get('presupuesto_max', 5000)}
-    - Zona geográfica: {perfil.get('zona', 'Sierra')}
-    
-    CATÁLOGO DISPONIBLE:
-    {catalogo_str}
-    
-    Responde en JSON:
+    prompt = f"""Eres un experto en motocicletas del mercado ecuatoriano.
+
+PERFIL DEL USUARIO:
+- Tipo de uso: {tipo_uso}
+- Zona: {zona}
+- Anos de experiencia: {anos}
+- Presupuesto maximo: ${presupuesto} USD
+
+CATALOGO DISPONIBLE EN ECUADOR:
+{catalogo_texto}
+
+Recomienda las 3 mejores motos del catalogo para este perfil.
+Responde SOLO con JSON valido:
+{{
+  "recomendaciones": [
     {{
-        "recomendaciones": [
-            {{"moto": "Marca Modelo", "justificacion": "...", "ventaja_principal": "...", "precio_usd": 0}},
-            ...
-        ],
-        "razonamiento_general": "..."
+      "moto": "Marca Modelo",
+      "justificacion": "explicacion detallada de 2-3 oraciones mencionando zona, experiencia y uso",
+      "ventaja_principal": "ventaja clave en una frase",
+      "precio_usd": 0000
     }}
-    """
+  ],
+  "razonamiento_general": "explicacion general de por que estas 3 motos son las mejores para este perfil"
+}}"""
 
-    response = client.messages.create(
-        model=CLAUDE_MODEL_HAIKU,
-        max_tokens=1000,
-        messages=[{"role": "user", "content": task_prompt}],
-        system=_system_prompt_base()
-    )
     try:
-        return json.loads(response.content[0].text)
-    except:
-        return _mock_recomendacion_moto(perfil, catalogo)
+        response = client.messages.create(
+            model=CLAUDE_MODEL_HAIKU,
+            max_tokens=1500,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        texto = response.content[0].text.strip()
+        if texto.startswith("```"):
+            texto = texto.split("```")[1]
+            if texto.startswith("json"):
+                texto = texto[4:]
+        data = json.loads(texto.strip())
+        data["modo"] = "claude_api"
+        return data
+    except Exception as e:
+        top3 = catalogo[:3]
+        return {
+            "recomendaciones": [
+                {
+                    "moto":             f"{m.get('marca','')} {m.get('modelo','')}",
+                    "justificacion":    f"Recomendada para perfil {tipo_uso} en {zona}.",
+                    "ventaja_principal": "Disponible en Ecuador",
+                    "precio_usd":        m.get("precio_usd", 0)
+                }
+                for m in top3
+            ],
+            "razonamiento_general": f"Error: {str(e)}",
+            "modo": "error"
+        }
 
+
+# ─── M6 — Historia ───────────────────────────────────────────
 
 async def generar_historia(tema: str) -> dict:
-    """M6 — Genera narrativa cultural del motociclismo ecuatoriano."""
     if USE_MOCK:
-        return _mock_historia(tema)
-
-    import anthropic
-    client = anthropic.Anthropic(api_key=CLAUDE_API_KEY)
-
-    task_prompt = f"""
-    Genera una narrativa cultural sobre "{tema}" en la historia del motociclismo ecuatoriano.
-    Incluye datos reales: AEADE, ANT, Federación Ecuatoriana de Motociclismo.
-    
-    Responde en JSON:
-    {{
-        "titulo": "...",
-        "narrativa": "3 párrafos de narrativa cultural",
-        "datos_clave": ["dato 1", "dato 2", "dato 3"],
-        "epoca": "..."
-    }}
-    """
-    response = client.messages.create(
-        model=CLAUDE_MODEL_HAIKU,
-        max_tokens=800,
-        messages=[{"role": "user", "content": task_prompt}],
-        system=_system_prompt_base()
-    )
-    import json
-    try:
-        return json.loads(response.content[0].text)
-    except:
-        return _mock_historia(tema)
-
-
-# ─── System Prompts ───────────────────────────────────────────
-
-def _system_prompt_base() -> str:
-    return """Eres MotoEdu EC, el asistente experto en educación vial para motociclistas ecuatorianos.
-Tu misión es educar, informar y orientar a los motociclistas del Ecuador para reducir la siniestralidad vial.
-
-RESTRICCIONES:
-- Solo hablas sobre temas de motociclismo, seguridad vial, LOTTTSV y cultura motera ecuatoriana.
-- Nunca inventes información. Si no sabes, dilo claramente.
-- Siempre cita la fuente (artículo del reglamento, estadística, etc.).
-- Usa lenguaje claro y accesible, sin tecnicismos innecesarios.
-- Respeta el contexto ecuatoriano (leyes, marcas disponibles, geografía).
-"""
-
-
-def _perfil_prompt(perfil: dict) -> str:
-    if not perfil:
-        return ""
-    return f"""
-PERFIL DEL MOTOCICLISTA:
-- Nombre: {perfil.get('nombre', 'Motociclista')}
-- Tipo de uso: {perfil.get('tipo_uso', 'urbano')}
-- Años de experiencia: {perfil.get('anos_experiencia', 1)}
-- Moto actual: {perfil.get('moto_actual', 'No especificada')}
-- Zona geográfica: {perfil.get('zona', 'Sierra')}
-- Nivel de conocimiento: {perfil.get('nivel', 'basico')}
-
-Adapta SIEMPRE el contenido a este perfil específico.
-"""
-
-
-# ─── Respuestas Mock (sin Claude API) ────────────────────────
-
-def _mock_leccion(categoria: str, perfil: dict, nivel: str) -> dict:
-    return {
-        "titulo": f"Lección: {categoria}",
-        "introduccion": f"Esta lección sobre {categoria} está diseñada para motociclistas con perfil {perfil.get('tipo_uso', 'urbano')}. [MODO MOCK — conectar Claude API para contenido personalizado]",
-        "puntos_clave": [
-            f"Punto 1 sobre {categoria} según la LOTTTSV",
-            f"Punto 2 — aplicación práctica en Ecuador",
-            f"Punto 3 — estadísticas de la ANT Ecuador"
-        ],
-        "ejemplo": f"Ejemplo práctico de {categoria} en Cuenca, Ecuador.",
-        "tip_seguridad": "Recuerda siempre usar casco certificado ECE 22.06.",
-        "modo": "mock — integrar Claude API"
-    }
-
-
-def _mock_quiz(categoria: str, n: int) -> list:
-    return [
-        {
-            "pregunta": f"Pregunta {i+1} sobre {categoria} (MOCK)",
-            "opciones": ["A) Opción A", "B) Opción B", "C) Opción C", "D) Opción D"],
-            "correcta": "A",
-            "explicacion": "Explicación de la respuesta correcta. [Conectar Claude API para quizzes reales]"
+        return {
+            "titulo":     tema,
+            "narrativa":  f"[MODO MOCK] Narrativa sobre: {tema}. Conectar Claude API para narrativas reales.",
+            "datos_clave": ["Dato 1", "Dato 2", "Dato 3"],
+            "modo":       "mock"
         }
-        for i in range(n)
-    ]
 
+    prompt = f"""Eres un historiador especializado en el motociclismo ecuatoriano.
 
-def _mock_rag(pregunta: str, contexto: list) -> dict:
-    return {
-        "respuesta": f"[MODO MOCK] Respuesta a: '{pregunta}'. Conectar Claude API para respuestas reales basadas en la LOTTTSV.",
-        "fuentes": ["LOTTTSV — Art. XXX"],
-        "tokens_usados": 0,
-        "modo": "mock"
-    }
+Escribe una narrativa historica sobre: "{tema}"
 
+Responde SOLO con JSON valido:
+{{
+  "titulo": "titulo atractivo del tema",
+  "narrativa": "narrativa de 3-4 parrafos con hechos verificados sobre Ecuador",
+  "datos_clave": ["dato estadistico 1", "dato historico 2", "hecho relevante 3"]
+}}
 
-def _mock_recomendacion_moto(perfil: dict, catalogo: list) -> dict:
-    motos = catalogo[:3] if catalogo else []
-    return {
-        "recomendaciones": [
-            {
-                "moto": f"{m.get('marca','')} {m.get('modelo','')}",
-                "justificacion": f"Recomendada para perfil {perfil.get('tipo_uso','urbano')} [MOCK]",
-                "ventaja_principal": "Bajo consumo y alta durabilidad",
-                "precio_usd": m.get('precio_usd', 0)
-            }
-            for m in motos
-        ],
-        "razonamiento_general": "[MODO MOCK] Conectar Claude API para recomendaciones personalizadas.",
-        "modo": "mock"
-    }
+Usa datos reales de Ecuador: AEADE, ANT, Federacion Ecuatoriana de Motociclismo."""
 
-
-def _mock_historia(tema: str) -> dict:
-    return {
-        "titulo": f"Historia: {tema}",
-        "narrativa": f"[MODO MOCK] Narrativa cultural sobre {tema} en el motociclismo ecuatoriano. Conectar Claude API para contenido generado por IA.",
-        "datos_clave": ["274.729 motos vendidas en 2025", "28.4% del parque vehicular", "685 fallecidos en 2024"],
-        "epoca": "2020-2026",
-        "modo": "mock"
-    }
+    try:
+        response = client.messages.create(
+            model=CLAUDE_MODEL_HAIKU,
+            max_tokens=1000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        texto = response.content[0].text.strip()
+        if texto.startswith("```"):
+            texto = texto.split("```")[1]
+            if texto.startswith("json"):
+                texto = texto[4:]
+        data = json.loads(texto.strip())
+        data["modo"] = "claude_api"
+        return data
+    except Exception as e:
+        return {
+            "titulo":     tema,
+            "narrativa":  f"El motociclismo en Ecuador tiene una rica historia desde principios del siglo XX.",
+            "datos_clave": ["274.729 motos vendidas en 2025", "685 fallecidos en 2024", "Record historico de ventas"],
+            "modo":       "error",
+            "error":      str(e)
+        }

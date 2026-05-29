@@ -101,7 +101,7 @@ async def consultar_asistente(
     historial = historial_sesiones.get(usuario_id, [])
 
     # Buscar contexto relevante en ChromaDB
-    contexto = buscar_chromadb(pregunta, n=5)
+    contexto = buscar_chromadb(pregunta, n=10)
 
     # Generar respuesta con Claude API (o mock)
     respuesta_data = await asistente_rag(pregunta, perfil, contexto, historial)
