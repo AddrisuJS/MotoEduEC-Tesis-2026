@@ -1,9 +1,12 @@
 """
 M6 — Historia del Motociclismo Ecuatoriano
-Sprint 3 — Con endpoint de contribuciones comunitarias
+Sprint 3 — Con contribuciones en PostgreSQL
 MotoEdu EC — UPS Cuenca 2026
 """
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, Depends
+from sqlalchemy.orm import Session
+from sqlalchemy import text
+from models.database import get_db
 from services.claude_service import generar_historia
 
 router = APIRouter()
@@ -16,9 +19,6 @@ TEMAS_HISTORIA = [
     {"id":5,"tema":"La Federacion Ecuatoriana de Motociclismo y el deporte","epoca":"2000-2026"},
     {"id":6,"tema":"La cultura motera ecuatoriana: clubes, rodadas y comunidad","epoca":"1990-2026"},
 ]
-
-# Almacen en memoria para contribuciones (en produccion usar PostgreSQL)
-contribuciones_store = []
 
 
 @router.get("/temas", summary="Lista los 6 temas de historia motera")
@@ -41,47 +41,50 @@ def contribuir_historia(
         "nombre":   "El Lobo de Cuenca",
         "ciudad":   "Cuenca",
         "anio":     "1995",
-        "historia": "Mi primera moto fue una Honda CB100 que compre con mis ahorros de 3 meses..."
-    })
+        "historia": "Mi primera moto fue una Honda CB100..."
+    }),
+    db: Session = Depends(get_db)
 ):
-    """
-    Los motociclistas pueden contribuir sus propias historias.
-    En Sprint 3 se almacena en memoria. En produccion va a PostgreSQL.
-    """
     if not datos.get("historia", "").strip():
         return {"error": "La historia no puede estar vacia"}
 
-    contribucion = {
-        "id":       len(contribuciones_store) + 1,
-        "nombre":   datos.get("nombre", "Anonimo"),
-        "ciudad":   datos.get("ciudad", "Ecuador"),
-        "anio":     datos.get("anio", ""),
-        "historia": datos.get("historia", ""),
-        "estado":   "pendiente_revision"
-    }
-    contribuciones_store.append(contribucion)
+    try:
+        result = db.execute(text("""
+            INSERT INTO contribuciones_historia (nombre, ciudad, anio, historia, estado)
+            VALUES (:nombre, :ciudad, :anio, :historia, 'pendiente_revision')
+            RETURNING id
+        """), {
+            "nombre":   datos.get("nombre", "Anonimo"),
+            "ciudad":   datos.get("ciudad", "Ecuador"),
+            "anio":     datos.get("anio", ""),
+            "historia": datos.get("historia", "")
+        })
+        nuevo_id = result.fetchone()[0]
+        db.commit()
 
-    return {
-        "mensaje":    "Historia recibida exitosamente. Sera revisada y publicada pronto.",
-        "id":         contribucion["id"],
-        "estado":     "pendiente_revision",
-        "total_contribuciones": len(contribuciones_store)
-    }
+        total = db.execute(text("SELECT COUNT(*) FROM contribuciones_historia")).scalar()
+
+        return {
+            "mensaje":              "Historia recibida exitosamente. Sera revisada y publicada pronto.",
+            "id":                   nuevo_id,
+            "estado":               "pendiente_revision",
+            "total_contribuciones": total
+        }
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e), "mensaje": "Error al guardar la historia"}
 
 
 @router.get("/contribuciones/lista", summary="Lista las contribuciones comunitarias")
-def listar_contribuciones():
+def listar_contribuciones(db: Session = Depends(get_db)):
+    result = db.execute(text("""
+        SELECT id, nombre, ciudad, anio,
+               LEFT(historia, 100) || '...' AS preview,
+               estado, fecha_envio
+        FROM contribuciones_historia
+        ORDER BY fecha_envio DESC
+    """)).mappings().all()
     return {
-        "total": len(contribuciones_store),
-        "contribuciones": [
-            {
-                "id":      c["id"],
-                "nombre":  c["nombre"],
-                "ciudad":  c["ciudad"],
-                "anio":    c["anio"],
-                "preview": c["historia"][:100] + "..." if len(c["historia"]) > 100 else c["historia"],
-                "estado":  c["estado"]
-            }
-            for c in contribuciones_store
-        ]
+        "total":          len(result),
+        "contribuciones": [dict(r) for r in result]
     }
