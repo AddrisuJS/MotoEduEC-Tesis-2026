@@ -26,11 +26,11 @@ PREGUNTAS_EVAL = [
     {"pregunta": "chaleco reflectivo delivery Ecuador obligatorio carretera nocturno comercial", "esperado": "Si, para actividad comercial nocturna", "categoria": "equipamiento"},
     {"pregunta": "certificacion ECE 22.06 casco motocicleta estandar europeo seguridad vigente", "esperado": "Estandar europeo de seguridad vigente para cascos de moto", "categoria": "equipamiento"},
     # Sanciones y normativa
-    {"pregunta": "multa sancion conducir sin casco motocicleta Ecuador infraccion LOTTTSV retencion", "esperado": "Multa y retencion del vehiculo", "categoria": "sanciones"},
+    {"pregunta": "sancion multa casco Ecuador LOTTTSV infraccion grave retencion vehiculo motocicleta", "esperado": "Multa y retencion del vehiculo", "categoria": "sanciones"},
     {"pregunta": "zigzag motocicleta Ecuador prohibido infraccion LOTTTSV cambios bruscos carril", "esperado": "Maniobra peligrosa de cambios bruscos de carril, esta PROHIBIDA", "categoria": "normativa"},
     {"pregunta": "adelantar izquierda derecha Ecuador prohibido rebasar motocicleta norma", "esperado": "No, los adelantamientos se realizan por la izquierda", "categoria": "normativa"},
     # Licencias
-    {"pregunta": "licencia tipo A motocicleta Ecuador cilindraje categorias ANT subcategorias", "esperado": "Tipo A: motocicletas, con subcategorias por cilindraje", "categoria": "licencias"},
+    {"pregunta": "licencia conducir moto tipo A1 A2 Ecuador ANT cilindraje menor mayor 500cc", "esperado": "Tipo A: motocicletas, con subcategorias por cilindraje", "categoria": "licencias"},
     # Conduccion segura
     {"pregunta": "tecnica correcta frenado motocicleta freno delantero trasero ambos gradualmente", "esperado": "Usar ambos frenos gradualmente, primero el trasero luego el delantero", "categoria": "conduccion"},
     {"pregunta": "distancia seguimiento segundos moto velocidad 50 km/h seguridad vial", "esperado": "Minimo 2 segundos de distancia de seguimiento", "categoria": "conduccion"},
@@ -38,13 +38,13 @@ PREGUNTAS_EVAL = [
     {"pregunta": "Como se debe frenar en piso mojado lluvia motocicleta sin bloquear ruedas?", "esperado": "Suavemente con ambos frenos, sin bloquear las ruedas", "categoria": "lluvia"},
     {"pregunta": "aquaplaning motocicleta agua lluvia perdida traccion prevencion reducir velocidad", "esperado": "Perdida de traccion sobre agua, se previene reduciendo velocidad", "categoria": "lluvia"},
     # Mantenimiento
-    {"pregunta": "FINE-C mantenimiento motocicleta combustible instrumentos neumaticos electrico control revision previa", "esperado": "Combustible, Instrumentos, Neumaticos, Electrico, Control — revision previa", "categoria": "mantenimiento"},
-    {"pregunta": "presion llantas neumaticos motocicleta PSI recomendada revision fabricante", "esperado": "Segun el fabricante, generalmente entre 28-32 PSI", "categoria": "mantenimiento"},
+    {"pregunta": "FINE-C revision previa moto combustible instrumentos neumaticos electrico control seguridad", "esperado": "Combustible, Instrumentos, Neumaticos, Electrico, Control", "categoria": "mantenimiento"},
+    {"pregunta": "presion neumaticos llantas moto utilitaria PSI libras recomendacion fabricante inflado", "esperado": "Segun el fabricante, generalmente entre 28-32 PSI", "categoria": "mantenimiento"},
     # Primeros auxilios
     {"pregunta": "accidente transito Ecuador primer respondiente llamar 911 no mover herido senalizar", "esperado": "Llamar al 911, no mover al herido, senalizar el area", "categoria": "primeros_auxilios"},
     # Alcohol y pasajero
     {"pregunta": "alcohol conducir moto Ecuador limite 0 sancion grave LOTTTSV prohibido", "esperado": "No se debe conducir con alcohol en sangre, limite 0 para motos", "categoria": "normativa"},
-    {"pregunta": "pasajero acompanante motocicleta Ecuador casco obligatorio disenada permitido", "esperado": "Si, si la moto esta disenada para ello y el pasajero usa casco", "categoria": "normativa"},
+    {"pregunta": "pasajero acompanante moto Ecuador requisito casco obligatorio dos personas permitido ley", "esperado": "Si, si la moto esta disenada para ello y el pasajero usa casco", "categoria": "normativa"},
 ]
 
 
