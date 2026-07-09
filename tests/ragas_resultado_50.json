@@ -1,26 +1,26 @@
 {
-  "fecha": "2026-05-28T22:31:54.852320",
+  "fecha": "2026-07-08T21:40:23.050551",
   "total_preguntas": 55,
-  "faithfulness_mean": 0.889,
-  "faithfulness_std": 0.135,
-  "relevancia_mean": 0.745,
+  "faithfulness_mean": 0.902,
+  "faithfulness_std": 0.134,
+  "relevancia_mean": 0.736,
   "objetivo_pass_070": true,
   "objetivo_pass_080": true,
-  "tokens_totales": 116313,
-  "costo_estimado_usd": 0.3489,
+  "tokens_totales": 115804,
+  "costo_estimado_usd": 0.3474,
   "resumen_categorias": {
-    "velocidad": 0.9,
-    "documentos": 0.951,
-    "equipamiento": 0.892,
-    "sanciones": 0.749,
-    "normativa": 0.773,
-    "licencias": 1.0,
-    "conduccion": 0.923,
-    "lluvia": 0.867,
-    "mantenimiento": 0.865,
-    "primeros_auxilios": 0.927,
-    "tipos_moto": 0.938,
-    "normativa_avanzada": 0.946
+    "velocidad": 1.0,
+    "documentos": 0.893,
+    "equipamiento": 0.928,
+    "sanciones": 0.937,
+    "normativa": 0.758,
+    "licencias": 0.851,
+    "conduccion": 0.987,
+    "lluvia": 0.896,
+    "mantenimiento": 0.818,
+    "primeros_auxilios": 0.83,
+    "tipos_moto": 0.983,
+    "normativa_avanzada": 0.967
   },
   "modo": "claude_api",
   "resultados": [
@@ -31,7 +31,7 @@
       "docs": 10,
       "faithfulness": 1.0,
       "relevancia": 1.0,
-      "tokens": 2146,
+      "tokens": 2048,
       "modo": "claude_api"
     },
     {
@@ -39,9 +39,9 @@
       "categoria": "velocidad",
       "pregunta": "velocidad maxima carretera motocicletas 90 km/h 100 km/...",
       "docs": 10,
-      "faithfulness": 0.5,
-      "relevancia": 0.429,
-      "tokens": 2099,
+      "faithfulness": 1.0,
+      "relevancia": 1.0,
+      "tokens": 2088,
       "modo": "claude_api"
     },
     {
@@ -51,7 +51,7 @@
       "docs": 10,
       "faithfulness": 1.0,
       "relevancia": 1.0,
-      "tokens": 2136,
+      "tokens": 2122,
       "modo": "claude_api"
     },
     {
@@ -61,7 +61,7 @@
       "docs": 10,
       "faithfulness": 1.0,
       "relevancia": 0.857,
-      "tokens": 2067,
+      "tokens": 2123,
       "modo": "claude_api"
     },
     {
@@ -71,7 +71,7 @@
       "docs": 10,
       "faithfulness": 1.0,
       "relevancia": 0.875,
-      "tokens": 2053,
+      "tokens": 2056,
       "modo": "claude_api"
     },
     {
@@ -81,7 +81,7 @@
       "docs": 10,
       "faithfulness": 0.933,
       "relevancia": 0.667,
-      "tokens": 2061,
+      "tokens": 2095,
       "modo": "claude_api"
     },
     {
@@ -89,9 +89,9 @@
       "categoria": "documentos",
       "pregunta": "Que significa SOAT seguro obligatorio accidentes transi...",
       "docs": 10,
-      "faithfulness": 0.957,
-      "relevancia": 0.778,
-      "tokens": 2107,
+      "faithfulness": 0.814,
+      "relevancia": 0.556,
+      "tokens": 2088,
       "modo": "claude_api"
     },
     {
@@ -99,9 +99,9 @@
       "categoria": "documentos",
       "pregunta": "revision tecnica vehicular RTV moto Ecuador obligatoria...",
       "docs": 10,
-      "faithfulness": 0.933,
-      "relevancia": 0.4,
-      "tokens": 2035,
+      "faithfulness": 0.717,
+      "relevancia": 0.2,
+      "tokens": 2103,
       "modo": "claude_api"
     },
     {
@@ -109,9 +109,9 @@
       "categoria": "documentos",
       "pregunta": "matricula motocicleta Ecuador renovacion anual ANT requ...",
       "docs": 10,
-      "faithfulness": 0.933,
-      "relevancia": 0.714,
-      "tokens": 2083,
+      "faithfulness": 1.0,
+      "relevancia": 0.857,
+      "tokens": 2067,
       "modo": "claude_api"
     },
     {
@@ -121,7 +121,7 @@
       "docs": 10,
       "faithfulness": 1.0,
       "relevancia": 0.8,
-      "tokens": 2078,
+      "tokens": 2075,
       "modo": "claude_api"
     },
     {
@@ -129,9 +129,9 @@
       "categoria": "equipamiento",
       "pregunta": "casco obligatorio motociclistas Ecuador ley LOTTTSV cer...",
       "docs": 10,
-      "faithfulness": 0.983,
-      "relevancia": 0.875,
-      "tokens": 2190,
+      "faithfulness": 0.817,
+      "relevancia": 0.75,
+      "tokens": 2073,
       "modo": "claude_api"
     },
     {
@@ -139,9 +139,9 @@
       "categoria": "equipamiento",
       "pregunta": "chaleco reflectivo delivery Ecuador obligatorio carrete...",
       "docs": 10,
-      "faithfulness": 0.933,
-      "relevancia": 0.833,
-      "tokens": 2069,
+      "faithfulness": 0.983,
+      "relevancia": 0.5,
+      "tokens": 2078,
       "modo": "claude_api"
     },
     {
@@ -149,9 +149,9 @@
       "categoria": "equipamiento",
       "pregunta": "certificacion ECE 22.06 casco motocicleta estandar euro...",
       "docs": 10,
-      "faithfulness": 0.671,
-      "relevancia": 0.667,
-      "tokens": 2000,
+      "faithfulness": 1.0,
+      "relevancia": 0.778,
+      "tokens": 2037,
       "modo": "claude_api"
     },
     {
@@ -160,8 +160,8 @@
       "pregunta": "guantes motocicleta proteccion CE nivel 2 articulacione...",
       "docs": 10,
       "faithfulness": 1.0,
-      "relevancia": 0.875,
-      "tokens": 2131,
+      "relevancia": 0.75,
+      "tokens": 2139,
       "modo": "claude_api"
     },
     {
@@ -171,7 +171,7 @@
       "docs": 10,
       "faithfulness": 1.0,
       "relevancia": 1.0,
-      "tokens": 2044,
+      "tokens": 2095,
       "modo": "claude_api"
     },
     {
@@ -181,7 +181,7 @@
       "docs": 10,
       "faithfulness": 0.767,
       "relevancia": 0.556,
-      "tokens": 2065,
+      "tokens": 1970,
       "modo": "claude_api"
     },
     {
@@ -189,9 +189,9 @@
       "categoria": "sanciones",
       "pregunta": "sancion multa casco Ecuador LOTTTSV infraccion grave re...",
       "docs": 10,
-      "faithfulness": 0.629,
-      "relevancia": 0.667,
-      "tokens": 2145,
+      "faithfulness": 0.814,
+      "relevancia": 0.778,
+      "tokens": 2071,
       "modo": "claude_api"
     },
     {
@@ -201,7 +201,7 @@
       "docs": 10,
       "faithfulness": 1.0,
       "relevancia": 0.889,
-      "tokens": 2144,
+      "tokens": 2034,
       "modo": "claude_api"
     },
     {
@@ -211,7 +211,7 @@
       "docs": 10,
       "faithfulness": 0.933,
       "relevancia": 0.625,
-      "tokens": 2120,
+      "tokens": 2089,
       "modo": "claude_api"
     },
     {
@@ -219,9 +219,9 @@
       "categoria": "sanciones",
       "pregunta": "multa conducir embriagado alcohol motocicleta Ecuador s...",
       "docs": 10,
-      "faithfulness": 0.433,
-      "relevancia": 0.5,
-      "tokens": 2054,
+      "faithfulness": 1.0,
+      "relevancia": 0.7,
+      "tokens": 2105,
       "modo": "claude_api"
     },
     {
@@ -229,9 +229,9 @@
       "categoria": "normativa",
       "pregunta": "zigzag motocicleta Ecuador prohibido infraccion LOTTTSV...",
       "docs": 10,
-      "faithfulness": 0.817,
-      "relevancia": 0.625,
-      "tokens": 2123,
+      "faithfulness": 0.65,
+      "relevancia": 0.75,
+      "tokens": 2148,
       "modo": "claude_api"
     },
     {
@@ -239,9 +239,9 @@
       "categoria": "normativa",
       "pregunta": "adelantar izquierda derecha Ecuador prohibido rebasar m...",
       "docs": 10,
-      "faithfulness": 0.75,
+      "faithfulness": 0.6,
       "relevancia": 0.714,
-      "tokens": 2136,
+      "tokens": 2113,
       "modo": "claude_api"
     },
     {
@@ -250,8 +250,8 @@
       "pregunta": "alcohol conducir moto Ecuador limite cero sancion grave...",
       "docs": 10,
       "faithfulness": 0.767,
-      "relevancia": 0.5,
-      "tokens": 2023,
+      "relevancia": 0.7,
+      "tokens": 2107,
       "modo": "claude_api"
     },
     {
@@ -259,9 +259,9 @@
       "categoria": "normativa",
       "pregunta": "pasajero acompanante moto Ecuador casco obligatorio dos...",
       "docs": 10,
-      "faithfulness": 0.771,
+      "faithfulness": 1.0,
       "relevancia": 0.769,
-      "tokens": 2199,
+      "tokens": 2128,
       "modo": "claude_api"
     },
     {
@@ -269,9 +269,9 @@
       "categoria": "normativa",
       "pregunta": "celular telefono conducir moto Ecuador prohibido multa ...",
       "docs": 10,
-      "faithfulness": 0.767,
+      "faithfulness": 0.6,
       "relevancia": 0.75,
-      "tokens": 1952,
+      "tokens": 2075,
       "modo": "claude_api"
     },
     {
@@ -279,7 +279,7 @@
       "categoria": "normativa",
       "pregunta": "semaforo rojo moto Ecuador detenerse obligatorio infrac...",
       "docs": 10,
-      "faithfulness": 0.767,
+      "faithfulness": 0.933,
       "relevancia": 0.8,
       "tokens": 2228,
       "modo": "claude_api"
@@ -291,7 +291,7 @@
       "docs": 10,
       "faithfulness": 1.0,
       "relevancia": 0.857,
-      "tokens": 2122,
+      "tokens": 2070,
       "modo": "claude_api"
     },
     {
@@ -299,9 +299,9 @@
       "categoria": "licencias",
       "pregunta": "edad minima licencia moto Ecuador 18 anos tipo A requis...",
       "docs": 10,
-      "faithfulness": 1.0,
-      "relevancia": 0.778,
-      "tokens": 2161,
+      "faithfulness": 0.671,
+      "relevancia": 0.667,
+      "tokens": 2008,
       "modo": "claude_api"
     },
     {
@@ -309,9 +309,9 @@
       "categoria": "licencias",
       "pregunta": "renovar licencia motocicleta Ecuador periodicidad requi...",
       "docs": 10,
-      "faithfulness": 1.0,
+      "faithfulness": 0.883,
       "relevancia": 0.571,
-      "tokens": 2197,
+      "tokens": 2097,
       "modo": "claude_api"
     },
     {
@@ -319,9 +319,9 @@
       "categoria": "conduccion",
       "pregunta": "tecnica correcta frenado motocicleta freno delantero tr...",
       "docs": 10,
-      "faithfulness": 0.717,
-      "relevancia": 0.571,
-      "tokens": 2007,
+      "faithfulness": 1.0,
+      "relevancia": 0.714,
+      "tokens": 2068,
       "modo": "claude_api"
     },
     {
@@ -330,8 +330,8 @@
       "pregunta": "distancia seguimiento segundos moto velocidad 50 km/h s...",
       "docs": 10,
       "faithfulness": 0.95,
-      "relevancia": 0.714,
-      "tokens": 2108,
+      "relevancia": 0.857,
+      "tokens": 2035,
       "modo": "claude_api"
     },
     {
@@ -339,9 +339,9 @@
       "categoria": "conduccion",
       "pregunta": "punto ciego espejo moto peligro verificar hombro antes ...",
       "docs": 10,
-      "faithfulness": 1.0,
+      "faithfulness": 0.983,
       "relevancia": 0.917,
-      "tokens": 2165,
+      "tokens": 2062,
       "modo": "claude_api"
     },
     {
@@ -349,9 +349,9 @@
       "categoria": "conduccion",
       "pregunta": "curva moto tecnica inclinacion velocidad anticipacion t...",
       "docs": 10,
-      "faithfulness": 0.95,
-      "relevancia": 0.667,
-      "tokens": 2198,
+      "faithfulness": 1.0,
+      "relevancia": 0.778,
+      "tokens": 2140,
       "modo": "claude_api"
     },
     {
@@ -361,7 +361,7 @@
       "docs": 10,
       "faithfulness": 1.0,
       "relevancia": 0.667,
-      "tokens": 2110,
+      "tokens": 2122,
       "modo": "claude_api"
     },
     {
@@ -369,9 +369,9 @@
       "categoria": "lluvia",
       "pregunta": "Como frenar piso mojado lluvia motocicleta sin bloquear...",
       "docs": 10,
-      "faithfulness": 0.933,
-      "relevancia": 0.75,
-      "tokens": 2175,
+      "faithfulness": 0.6,
+      "relevancia": 0.625,
+      "tokens": 2137,
       "modo": "claude_api"
     },
     {
@@ -379,9 +379,9 @@
       "categoria": "lluvia",
       "pregunta": "aquaplaning motocicleta agua lluvia perdida traccion pr...",
       "docs": 10,
-      "faithfulness": 0.717,
-      "relevancia": 0.5,
-      "tokens": 2187,
+      "faithfulness": 0.983,
+      "relevancia": 0.625,
+      "tokens": 2224,
       "modo": "claude_api"
     },
     {
@@ -391,7 +391,7 @@
       "docs": 10,
       "faithfulness": 1.0,
       "relevancia": 0.875,
-      "tokens": 2292,
+      "tokens": 2054,
       "modo": "claude_api"
     },
     {
@@ -399,9 +399,9 @@
       "categoria": "lluvia",
       "pregunta": "hidroplanacion moto lluvia charcos agua velocidad reduc...",
       "docs": 10,
-      "faithfulness": 0.817,
+      "faithfulness": 1.0,
       "relevancia": 0.714,
-      "tokens": 2236,
+      "tokens": 2042,
       "modo": "claude_api"
     },
     {
@@ -410,8 +410,8 @@
       "pregunta": "FINE-C mantenimiento revision previa moto combustible i...",
       "docs": 10,
       "faithfulness": 1.0,
-      "relevancia": 0.714,
-      "tokens": 2177,
+      "relevancia": 0.429,
+      "tokens": 2327,
       "modo": "claude_api"
     },
     {
@@ -419,9 +419,9 @@
       "categoria": "mantenimiento",
       "pregunta": "presion neumaticos llantas moto PSI libras recomendacio...",
       "docs": 10,
-      "faithfulness": 0.957,
-      "relevancia": 0.714,
-      "tokens": 2065,
+      "faithfulness": 0.621,
+      "relevancia": 0.571,
+      "tokens": 2184,
       "modo": "claude_api"
     },
     {
@@ -429,9 +429,9 @@
       "categoria": "mantenimiento",
       "pregunta": "cambio aceite motor motocicleta kilometraje frecuencia ...",
       "docs": 10,
-      "faithfulness": 0.933,
-      "relevancia": 0.75,
-      "tokens": 2021,
+      "faithfulness": 0.717,
+      "relevancia": 0.5,
+      "tokens": 2039,
       "modo": "claude_api"
     },
     {
@@ -439,9 +439,9 @@
       "categoria": "mantenimiento",
       "pregunta": "tension cadena transmision moto ajuste mantenimiento de...",
       "docs": 10,
-      "faithfulness": 0.717,
+      "faithfulness": 0.767,
       "relevancia": 0.667,
-      "tokens": 2195,
+      "tokens": 2175,
       "modo": "claude_api"
     },
     {
@@ -449,9 +449,9 @@
       "categoria": "mantenimiento",
       "pregunta": "frenos pastillas desgaste moto revision mantenimiento s...",
       "docs": 10,
-      "faithfulness": 0.717,
-      "relevancia": 0.857,
-      "tokens": 2100,
+      "faithfulness": 0.983,
+      "relevancia": 0.714,
+      "tokens": 2012,
       "modo": "claude_api"
     },
     {
@@ -459,9 +459,9 @@
       "categoria": "primeros_auxilios",
       "pregunta": "accidente transito Ecuador 911 emergencia primer respon...",
       "docs": 10,
-      "faithfulness": 0.907,
-      "relevancia": 0.8,
-      "tokens": 2067,
+      "faithfulness": 0.621,
+      "relevancia": 0.7,
+      "tokens": 2165,
       "modo": "claude_api"
     },
     {
@@ -469,9 +469,9 @@
       "categoria": "primeros_auxilios",
       "pregunta": "posicion recuperacion accidente moto inconsciente herid...",
       "docs": 10,
-      "faithfulness": 0.933,
+      "faithfulness": 0.883,
       "relevancia": 0.778,
-      "tokens": 2040,
+      "tokens": 2125,
       "modo": "claude_api"
     },
     {
@@ -480,8 +480,8 @@
       "pregunta": "hemorragia herida accidente moto presion directa vendaj...",
       "docs": 10,
       "faithfulness": 0.933,
-      "relevancia": 0.667,
-      "tokens": 2036,
+      "relevancia": 0.556,
+      "tokens": 2134,
       "modo": "claude_api"
     },
     {
@@ -489,9 +489,9 @@
       "categoria": "primeros_auxilios",
       "pregunta": "casco quitar accidentado moto Ecuador cuando no mover l...",
       "docs": 10,
-      "faithfulness": 0.933,
-      "relevancia": 0.7,
-      "tokens": 2128,
+      "faithfulness": 0.883,
+      "relevancia": 0.6,
+      "tokens": 2061,
       "modo": "claude_api"
     },
     {
@@ -500,8 +500,8 @@
       "pregunta": "moto utilitaria delivery Ecuador cilindraje 100 150 cc ...",
       "docs": 10,
       "faithfulness": 1.0,
-      "relevancia": 1.0,
-      "tokens": 2173,
+      "relevancia": 0.889,
+      "tokens": 2332,
       "modo": "claude_api"
     },
     {
@@ -509,9 +509,9 @@
       "categoria": "tipos_moto",
       "pregunta": "moto adventure touring Ecuador carretera Sierra Costa l...",
       "docs": 10,
-      "faithfulness": 0.767,
-      "relevancia": 0.818,
-      "tokens": 2095,
+      "faithfulness": 0.933,
+      "relevancia": 0.909,
+      "tokens": 2148,
       "modo": "claude_api"
     },
     {
@@ -519,9 +519,9 @@
       "categoria": "tipos_moto",
       "pregunta": "moto enduro off-road Ecuador Sierra terreno irregular s...",
       "docs": 10,
-      "faithfulness": 0.983,
+      "faithfulness": 1.0,
       "relevancia": 0.9,
-      "tokens": 2102,
+      "tokens": 2010,
       "modo": "claude_api"
     },
     {
@@ -530,8 +530,8 @@
       "pregunta": "scooter moto automatica CVT ciudad Ecuador combustible ...",
       "docs": 10,
       "faithfulness": 1.0,
-      "relevancia": 0.75,
-      "tokens": 2180,
+      "relevancia": 0.625,
+      "tokens": 2201,
       "modo": "claude_api"
     },
     {
@@ -541,7 +541,7 @@
       "docs": 10,
       "faithfulness": 0.933,
       "relevancia": 0.778,
-      "tokens": 1952,
+      "tokens": 1954,
       "modo": "claude_api"
     },
     {
@@ -550,8 +550,8 @@
       "pregunta": "estacionamiento moto acera vereda Ecuador infraccion no...",
       "docs": 10,
       "faithfulness": 0.933,
-      "relevancia": 1.0,
-      "tokens": 2097,
+      "relevancia": 0.889,
+      "tokens": 2042,
       "modo": "claude_api"
     },
     {
@@ -559,9 +559,9 @@
       "categoria": "normativa_avanzada",
       "pregunta": "modificaciones ilegales moto Ecuador escape ruido luces...",
       "docs": 10,
-      "faithfulness": 0.933,
+      "faithfulness": 1.0,
       "relevancia": 0.75,
-      "tokens": 2303,
+      "tokens": 2259,
       "modo": "claude_api"
     },
     {
@@ -569,9 +569,9 @@
       "categoria": "normativa_avanzada",
       "pregunta": "conduccion nocturna moto Ecuador luces reflectivos visi...",
       "docs": 10,
-      "faithfulness": 0.983,
-      "relevancia": 0.571,
-      "tokens": 2136,
+      "faithfulness": 1.0,
+      "relevancia": 0.714,
+      "tokens": 2222,
       "modo": "claude_api"
     }
   ]

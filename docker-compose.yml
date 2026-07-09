@@ -31,7 +31,7 @@ services:
     ports:
       - "8003:8000"
     volumes:
-      - chromadb_data:/chroma/chroma
+      - chromadb_data:/data
     networks:
       - motoeduc_net
 
