@@ -6,7 +6,7 @@ Tutor: Omar Gustavo Bravo Quezada Ph.D
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import perfil, educacion, asistente, motos, llantas, historia, gamificacion, estadisticas, auth
+from routers import perfil, educacion, asistente, motos, llantas, historia, gamificacion, estadisticas
 
 app = FastAPI(
     title="MotoEdu EC — Tesis API",
@@ -48,7 +48,7 @@ app.include_router(llantas.router,      prefix="/m5/llantas",     tags=["M5 — 
 app.include_router(historia.router,     prefix="/m6/historia",    tags=["M6 — Historia Motera"])
 app.include_router(gamificacion.router, prefix="/m7/gamificacion",tags=["M7 — Gamificación"])
 app.include_router(estadisticas.router, prefix="/estadisticas",   tags=["Estadísticas"])
-app.include_router(auth.router,         tags=["Autenticación"])
+
 
 @app.get("/", tags=["Home"])
 def root():

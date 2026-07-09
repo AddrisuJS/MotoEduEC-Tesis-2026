@@ -1,0 +1,212 @@
+{
+  "fecha": "2026-05-28T21:49:33.903400",
+  "total_preguntas": 20,
+  "faithfulness_mean": 0.861,
+  "faithfulness_std": 0.168,
+  "relevancia_mean": 0.738,
+  "objetivo_pass": true,
+  "tokens_totales": 71443,
+  "modo": "claude_api",
+  "resultados": [
+    {
+      "id": 1,
+      "categoria": "velocidad",
+      "pregunta": "velocidad maxima permitida motocicletas zona urbana Ecuador ...",
+      "docs": 10,
+      "faithfulness": 1.0,
+      "relevancia": 1.0,
+      "modo": "claude_api",
+      "tokens": 3523
+    },
+    {
+      "id": 2,
+      "categoria": "velocidad",
+      "pregunta": "velocidad maxima carretera motocicletas 90 km/h 100 km/h Ecu...",
+      "docs": 10,
+      "faithfulness": 1.0,
+      "relevancia": 1.0,
+      "modo": "claude_api",
+      "tokens": 3311
+    },
+    {
+      "id": 3,
+      "categoria": "documentos",
+      "pregunta": "Que documentos debe portar obligatoriamente un motociclista ...",
+      "docs": 10,
+      "faithfulness": 0.933,
+      "relevancia": 0.333,
+      "modo": "claude_api",
+      "tokens": 3278
+    },
+    {
+      "id": 4,
+      "categoria": "documentos",
+      "pregunta": "Que significa SOAT seguro obligatorio accidentes transito pa...",
+      "docs": 10,
+      "faithfulness": 0.814,
+      "relevancia": 0.667,
+      "modo": "claude_api",
+      "tokens": 3247
+    },
+    {
+      "id": 5,
+      "categoria": "equipamiento",
+      "pregunta": "casco obligatorio motociclistas Ecuador ley LOTTTSV certific...",
+      "docs": 10,
+      "faithfulness": 0.6,
+      "relevancia": 0.75,
+      "modo": "claude_api",
+      "tokens": 3627
+    },
+    {
+      "id": 6,
+      "categoria": "equipamiento",
+      "pregunta": "chaleco reflectivo delivery Ecuador obligatorio carretera no...",
+      "docs": 10,
+      "faithfulness": 1.0,
+      "relevancia": 0.667,
+      "modo": "claude_api",
+      "tokens": 3394
+    },
+    {
+      "id": 7,
+      "categoria": "equipamiento",
+      "pregunta": "certificacion ECE 22.06 casco motocicleta estandar europeo s...",
+      "docs": 10,
+      "faithfulness": 0.957,
+      "relevancia": 0.778,
+      "modo": "claude_api",
+      "tokens": 3394
+    },
+    {
+      "id": 8,
+      "categoria": "sanciones",
+      "pregunta": "sancion multa casco Ecuador LOTTTSV infraccion grave retenci...",
+      "docs": 10,
+      "faithfulness": 0.656,
+      "relevancia": 0.667,
+      "modo": "claude_api",
+      "tokens": 3440
+    },
+    {
+      "id": 9,
+      "categoria": "normativa",
+      "pregunta": "zigzag motocicleta Ecuador prohibido infraccion LOTTTSV camb...",
+      "docs": 10,
+      "faithfulness": 0.6,
+      "relevancia": 0.625,
+      "modo": "claude_api",
+      "tokens": 3522
+    },
+    {
+      "id": 10,
+      "categoria": "normativa",
+      "pregunta": "adelantar izquierda derecha Ecuador prohibido rebasar motoci...",
+      "docs": 10,
+      "faithfulness": 1.0,
+      "relevancia": 0.857,
+      "modo": "claude_api",
+      "tokens": 3846
+    },
+    {
+      "id": 11,
+      "categoria": "licencias",
+      "pregunta": "licencia conducir moto tipo A Ecuador ANT cilindraje subcate...",
+      "docs": 10,
+      "faithfulness": 1.0,
+      "relevancia": 0.857,
+      "modo": "claude_api",
+      "tokens": 3833
+    },
+    {
+      "id": 12,
+      "categoria": "conduccion",
+      "pregunta": "tecnica correcta frenado motocicleta freno delantero trasero...",
+      "docs": 10,
+      "faithfulness": 0.717,
+      "relevancia": 0.714,
+      "modo": "claude_api",
+      "tokens": 3417
+    },
+    {
+      "id": 13,
+      "categoria": "conduccion",
+      "pregunta": "distancia seguimiento segundos moto velocidad 50 km/h seguri...",
+      "docs": 10,
+      "faithfulness": 1.0,
+      "relevancia": 0.857,
+      "modo": "claude_api",
+      "tokens": 3364
+    },
+    {
+      "id": 14,
+      "categoria": "lluvia",
+      "pregunta": "Como frenar piso mojado lluvia motocicleta sin bloquear rued...",
+      "docs": 10,
+      "faithfulness": 0.983,
+      "relevancia": 0.875,
+      "modo": "claude_api",
+      "tokens": 3843
+    },
+    {
+      "id": 15,
+      "categoria": "lluvia",
+      "pregunta": "aquaplaning motocicleta agua lluvia perdida traccion prevenc...",
+      "docs": 10,
+      "faithfulness": 0.983,
+      "relevancia": 0.625,
+      "modo": "claude_api",
+      "tokens": 4253
+    },
+    {
+      "id": 16,
+      "categoria": "mantenimiento",
+      "pregunta": "FINE-C mantenimiento revision previa moto combustible instru...",
+      "docs": 10,
+      "faithfulness": 1.0,
+      "relevancia": 0.571,
+      "modo": "claude_api",
+      "tokens": 3568
+    },
+    {
+      "id": 17,
+      "categoria": "mantenimiento",
+      "pregunta": "presion neumaticos llantas moto PSI libras recomendacion fab...",
+      "docs": 10,
+      "faithfulness": 0.621,
+      "relevancia": 0.571,
+      "modo": "claude_api",
+      "tokens": 3361
+    },
+    {
+      "id": 18,
+      "categoria": "primeros_auxilios",
+      "pregunta": "accidente transito Ecuador 911 emergencia primer respondient...",
+      "docs": 10,
+      "faithfulness": 0.764,
+      "relevancia": 0.8,
+      "modo": "claude_api",
+      "tokens": 3385
+    },
+    {
+      "id": 19,
+      "categoria": "normativa",
+      "pregunta": "alcohol conducir moto Ecuador limite cero sancion grave LOTT...",
+      "docs": 10,
+      "faithfulness": 0.6,
+      "relevancia": 0.7,
+      "modo": "claude_api",
+      "tokens": 3457
+    },
+    {
+      "id": 20,
+      "categoria": "normativa",
+      "pregunta": "pasajero acompanante moto Ecuador casco obligatorio dos pers...",
+      "docs": 10,
+      "faithfulness": 1.0,
+      "relevancia": 0.846,
+      "modo": "claude_api",
+      "tokens": 4380
+    }
+  ]
+}
