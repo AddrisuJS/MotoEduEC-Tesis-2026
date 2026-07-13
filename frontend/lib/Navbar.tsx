@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/educacion",  icon: "📚", label: "Aprender" },
   { href: "/asistente",  icon: "💬", label: "Asistente" },
   { href: "/arcade",     icon: "🕹️", label: "Arcade" },
+  { href: "/ruta",       icon: "🛣️", label: "Ruta" },
   { href: "/duelos",     icon: "⚔️", label: "Duelos" },
   { href: "/garaje",     icon: "🔧", label: "Garaje" },
   { href: "/top",        icon: "🏆", label: "Top" },

@@ -6,7 +6,7 @@ Tutor: Omar Gustavo Bravo Quezada Ph.D
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import perfil, educacion, asistente, motos, llantas, historia, gamificacion, estadisticas, auth, arcade, experimento, admin, garaje, duelos
+from routers import perfil, educacion, asistente, motos, llantas, historia, gamificacion, estadisticas, auth, arcade, experimento, admin, garaje, duelos, ruta_segura
 from services.claude_service import USE_MOCK
 
 app = FastAPI(
@@ -55,6 +55,7 @@ app.include_router(experimento.router)
 app.include_router(admin.router)
 app.include_router(garaje.router)
 app.include_router(duelos.router)
+app.include_router(ruta_segura.router)
 
 @app.get("/", tags=["Home"])
 def root():
