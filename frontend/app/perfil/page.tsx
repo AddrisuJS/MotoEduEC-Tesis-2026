@@ -113,7 +113,7 @@ export default function PerfilPage() {
             <div>
               <h2 style={{ color:"#f1f5f9", marginBottom:"0.5rem" }}>¿Como usas tu moto principalmente?</h2>
               <p style={{ color:"#94a3b8", marginBottom:"1.5rem", fontSize:"0.9rem" }}>Esto define tu perfil de riesgo y el contenido que verás</p>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.75rem" }}>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))", gap:"0.75rem" }}>
                 {TIPOS_USO.map(t => (
                   <button key={t.valor} onClick={() => actualizar("tipo_uso", t.valor)}
                     style={{
@@ -179,7 +179,7 @@ export default function PerfilPage() {
             <div>
               <h2 style={{ color:"#f1f5f9", marginBottom:"0.5rem" }}>¿En que zona del Ecuador manejas?</h2>
               <p style={{ color:"#94a3b8", marginBottom:"1.5rem", fontSize:"0.9rem" }}>Las condiciones viales varian segun la region</p>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.75rem" }}>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))", gap:"0.75rem" }}>
                 {ZONAS.map(z => (
                   <button key={z} onClick={() => actualizar("zona", z)}
                     style={{

@@ -64,11 +64,11 @@ export default function LlantasPage() {
         {/* FORMULARIO */}
         <div style={{ background:"#1e293b", borderRadius:"16px", padding:"2rem", border:"1px solid #334155", marginBottom:"1.5rem" }}>
           <h2 style={{ color:"#f1f5f9", marginBottom:"1.5rem" }}>Configura tu busqueda</h2>
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem" }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(280px, 1fr))", gap:"1rem" }}>
 
             <div style={{ gridColumn:"1/-1" }}>
               <label style={{ color:"#94a3b8", fontSize:"0.85rem" }}>Tipo de moto</label>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.5rem", marginTop:"0.5rem" }}>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(130px, 1fr))", gap:"0.5rem", marginTop:"0.5rem" }}>
                 {TIPOS_MOTO.map(t => (
                   <button key={t.valor} onClick={() => setForm(f => ({...f, tipo_moto:t.valor}))}
                     style={{
@@ -86,7 +86,7 @@ export default function LlantasPage() {
 
             <div>
               <label style={{ color:"#94a3b8", fontSize:"0.85rem" }}>Uso principal</label>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.5rem", marginTop:"0.5rem" }}>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(130px, 1fr))", gap:"0.5rem", marginTop:"0.5rem" }}>
                 {USOS.map(u => (
                   <button key={u} onClick={() => setForm(f => ({...f, uso:u}))}
                     style={{

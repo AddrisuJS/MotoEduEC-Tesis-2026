@@ -89,7 +89,7 @@ export default function EducacionPage() {
                 </span>
               )}
             </div>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem" }}>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(260px, 1fr))", gap:"1rem" }}>
               {categorias.map((cat: any) => (
                 <button key={cat.id} onClick={() => verLeccion(cat)}
                   style={{

@@ -79,7 +79,7 @@ export default function DashboardPage() {
       </div>
 
       {/* FILA 1: BRECHAS + PERFILES */}
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.5rem", marginBottom:"1.5rem" }}>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(300px, 1fr))", gap:"1.5rem", marginBottom:"1.5rem" }}>
 
         {/* Mapa de Brechas */}
         <div style={{ background:"#1e293b", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155" }}>
@@ -136,7 +136,7 @@ export default function DashboardPage() {
       </div>
 
       {/* FILA 2: INSIGNIAS + MODULOS */}
-      <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:"1.5rem", marginBottom:"1.5rem" }}>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(320px, 1fr))", gap:"1.5rem", marginBottom:"1.5rem" }}>
 
         {/* Insignias disponibles */}
         <div style={{ background:"#1e293b", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155" }}>
@@ -180,7 +180,7 @@ export default function DashboardPage() {
       {/* FILA 3: NIVELES DE COMPETENCIA */}
       <div style={{ background:"#1e293b", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155", marginBottom:"1.5rem" }}>
         <h2 style={{ color:"#f1f5f9", marginBottom:"1.25rem", fontSize:"1.1rem" }}>⭐ Niveles de Competencia Vial</h2>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(5,1fr)", gap:"1rem" }}>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))", gap:"1rem" }}>
           {[
             { nivel:1, nombre:"Principiante", min:0,   color:"#94a3b8", desc:"0 — 199 pts" },
             { nivel:2, nombre:"Basico",       min:200, color:"#22c55e", desc:"200 — 499 pts" },
@@ -200,7 +200,7 @@ export default function DashboardPage() {
       {/* FILA 4: INFO TESIS */}
       <div style={{ background:"#1e293b", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155" }}>
         <h2 style={{ color:"#f1f5f9", marginBottom:"1rem", fontSize:"1.1rem" }}>🎓 Informacion del Proyecto</h2>
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:"1rem" }}>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(240px, 1fr))", gap:"1rem" }}>
           {[
             { label:"Proyecto",    valor:"MotoEdu EC" },
             { label:"Institucion", valor:"UPS Cuenca 2026" },

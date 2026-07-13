@@ -217,7 +217,7 @@ export default function HistoriaPage() {
                   La comunidad motera ecuatoriana tiene historias increibles. Comparte la tuya y forma parte del archivo digital.
                 </p>
                 <div style={{ display:"flex", flexDirection:"column", gap:"1rem" }}>
-                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem" }}>
+                  <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(260px, 1fr))", gap:"1rem" }}>
                     <div>
                       <label style={{ color:"#94a3b8", fontSize:"0.85rem" }}>Tu nombre (o alias)</label>
                       <input value={form.nombre} onChange={e => setForm(f => ({...f, nombre: e.target.value}))}

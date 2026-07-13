@@ -6,7 +6,8 @@ Tutor: Omar Gustavo Bravo Quezada Ph.D
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import perfil, educacion, asistente, motos, llantas, historia, gamificacion, estadisticas, auth
+from routers import perfil, educacion, asistente, motos, llantas, historia, gamificacion, estadisticas, auth, arcade, experimento, admin, garaje, duelos
+from services.claude_service import USE_MOCK
 
 app = FastAPI(
     title="MotoEdu EC — Tesis API",
@@ -49,6 +50,11 @@ app.include_router(historia.router,     prefix="/m6/historia",    tags=["M6 — 
 app.include_router(gamificacion.router, prefix="/m7/gamificacion",tags=["M7 — Gamificación"])
 app.include_router(estadisticas.router, prefix="/estadisticas",   tags=["Estadísticas"])
 app.include_router(auth.router,         tags=["Autenticación"])
+app.include_router(arcade.router)
+app.include_router(experimento.router)
+app.include_router(admin.router)
+app.include_router(garaje.router)
+app.include_router(duelos.router)
 
 @app.get("/", tags=["Home"])
 def root():
@@ -64,4 +70,5 @@ def root():
 
 @app.get("/health", tags=["Home"])
 def health():
-    return {"status": "ok", "mensaje": "MotoEdu EC Tesis API activa"}
+    return {"status": "ok", "mensaje": "MotoEdu EC Tesis API activa",
+            "claude_api": "mock" if USE_MOCK else "real"}

@@ -19,11 +19,22 @@ COL_NAME    = "motoeduc_knowledge"
 historial_sesiones: dict = {}
 
 
-def _embed(text: str, dim: int = 64) -> list:
-    """Embedding deterministico por hash para busqueda en ChromaDB."""
+import hashlib, unicodedata
+
+def _normalizar_texto(t: str) -> str:
+    t = unicodedata.normalize("NFD", t.lower())
+    t = "".join(c for c in t if unicodedata.category(c) != "Mn")
+    return "".join(c if c.isalnum() else " " for c in t)
+
+def _embed(text: str, dim: int = 256) -> list:
+    """Embedding deterministico (MD5 estable entre procesos) — identico al de seed_tesis.py."""
     vec = [0.0] * dim
-    for word in text.lower().split():
-        vec[hash(word) % dim] += 1.0
+    palabras = [w for w in _normalizar_texto(text).split() if len(w) > 2]
+    for i, w in enumerate(palabras):
+        vec[int(hashlib.md5(w.encode()).hexdigest(), 16) % dim] += 1.0
+        if i + 1 < len(palabras):
+            big = w + "_" + palabras[i + 1]
+            vec[int(hashlib.md5(big.encode()).hexdigest(), 16) % dim] += 0.5
     norm = math.sqrt(sum(x * x for x in vec)) or 1.0
     return [x / norm for x in vec]
 

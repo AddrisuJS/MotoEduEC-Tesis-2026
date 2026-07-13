@@ -124,22 +124,29 @@ print(f"   Heartbeat: {r.status_code}")
 
 col_url = f"{CHROMA}/api/v2/tenants/{TENANT}/databases/{DATABASE}/collections"
 
-# Obtener o crear coleccion
-r_get = httpx.get(f"{col_url}/{COL_NAME}")
-if r_get.status_code == 200:
-    col_id = r_get.json()["id"]
-    print(f"✅ Coleccion existente: {col_id}")
-else:
-    r_new = httpx.post(col_url, json={"name": COL_NAME, "metadata": {"project":"MotoEduEC-Tesis","version":"2026"}})
-    col_id = r_new.json()["id"]
-    print(f"✅ Coleccion creada: {col_id}")
+# Borrar coleccion anterior (cambio de dimension 64 → 256) y crear fresca
+httpx.delete(f"{col_url}/{COL_NAME}")
+r_new = httpx.post(col_url, json={"name": COL_NAME, "metadata": {"project":"MotoEduEC-Tesis","version":"2026","embedding":"md5-256"}})
+col_id = r_new.json()["id"]
+print(f"✅ Coleccion creada (md5-256): {col_id}")
 
-def embed(text, dim=64):
-    vec = [0.0]*dim
-    for w in text.lower().split():
-        vec[hash(w)%dim] += 1.0
-    norm = math.sqrt(sum(x*x for x in vec)) or 1.0
-    return [x/norm for x in vec]
+import hashlib, unicodedata
+
+def _normalizar_texto(t):
+    t = unicodedata.normalize("NFD", t.lower())
+    t = "".join(c for c in t if unicodedata.category(c) != "Mn")
+    return "".join(c if c.isalnum() else " " for c in t)
+
+def embed(text, dim=256):
+    vec = [0.0] * dim
+    palabras = [w for w in _normalizar_texto(text).split() if len(w) > 2]
+    for i, w in enumerate(palabras):
+        vec[int(hashlib.md5(w.encode()).hexdigest(), 16) % dim] += 1.0
+        if i + 1 < len(palabras):
+            big = w + "_" + palabras[i + 1]
+            vec[int(hashlib.md5(big.encode()).hexdigest(), 16) % dim] += 0.5
+    norm = math.sqrt(sum(x * x for x in vec)) or 1.0
+    return [x / norm for x in vec]
 
 upsert_url = f"{CHROMA}/api/v2/tenants/{TENANT}/databases/{DATABASE}/collections/{col_id}/upsert"
 total = 0

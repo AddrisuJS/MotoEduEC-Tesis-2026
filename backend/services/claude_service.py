@@ -9,6 +9,7 @@ import os
 import json
 import re
 import anthropic
+from services.zonas_ecuador import contexto_geografico
 
 CLAUDE_API_KEY      = os.getenv("CLAUDE_API_KEY", "")
 CLAUDE_MODEL_SONNET = "claude-sonnet-4-5"
@@ -112,11 +113,13 @@ async def generar_leccion(categoria: str, perfil: dict, nivel: str) -> dict:
     zona     = perfil.get("zona", "Sierra")
     moto     = perfil.get("moto_actual", "motocicleta")
     nombre   = perfil.get("nombre", "Motociclista")
+    geo = contexto_geografico(perfil.get("ciudad",""), perfil.get("provincia",""), zona)
 
     prompt = f"""Eres MotoEdu EC, experto en educacion vial para motociclistas ecuatorianos.
 
 Genera una leccion sobre "{categoria}" para:
 - Nombre: {nombre}, Perfil: {tipo_uso}, Moto: {moto}, Zona: {zona}, Nivel: {nivel}
+{geo}
 
 IMPORTANTE: Responde SOLO con JSON valido y CONCISO. Sin caracteres especiales dentro de strings.
 
@@ -212,7 +215,8 @@ async def asistente_rag(pregunta: str, perfil: dict, contexto_chromadb: list, hi
     tipo_uso = perfil.get("tipo_uso", "urbano")
     zona     = perfil.get("zona", "Sierra")
     anos     = perfil.get("anos_experiencia", 1)
-
+    geo = contexto_geografico(perfil.get("ciudad",""), perfil.get("provincia",""), zona)
+    
     if contexto_chromadb:
         contexto_texto = "\n\n".join([
             f"[DOCUMENTO {i+1}] Fuente: {doc.get('fuente', 'LOTTTSV')} | Categoria: {doc.get('categoria', 'General')}\n{doc.get('texto', '')}"
@@ -238,10 +242,12 @@ INSTRUCCIONES CRITICAS:
 4. Menciona los articulos de la LOTTTSV cuando aparezcan en los documentos
 5. Si la informacion NO esta en los documentos, di: "Esta informacion no esta disponible en mi base de conocimiento actual"
 6. Personaliza la respuesta para un motociclista {tipo_uso} en {zona}
-7. Se concreto, claro y usa ejemplos del contexto ecuatoriano"""
+7. Se concreto, claro y usa ejemplos del contexto ecuatoriano
+8. {geo}
+9. El contexto geografico es SOLO para ambientar ejemplos y lenguaje cercano. Los datos normativos (velocidades, articulos, sanciones) SIEMPRE salen de los documentos recuperados, nunca del contexto geografico."""
 
     messages = historial[-6:] + [{"role": "user", "content": pregunta}]
-
+    
     try:
         response = client.messages.create(
             model=CLAUDE_MODEL_SONNET,

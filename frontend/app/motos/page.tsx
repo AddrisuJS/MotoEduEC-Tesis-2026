@@ -96,7 +96,7 @@ export default function MotosPage() {
             {/* Formulario */}
             <div style={{ background:"#1e293b", borderRadius:"16px", padding:"2rem", border:"1px solid #334155", marginBottom:"1.5rem" }}>
               <h2 style={{ color:"#f1f5f9", marginBottom:"1.5rem" }}>Configura tu perfil</h2>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem" }}>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(280px, 1fr))", gap:"1rem" }}>
                 <div>
                   <label style={{ color:"#94a3b8", fontSize:"0.85rem" }}>Tipo de uso</label>
                   <select value={perfil.tipo_uso} onChange={e => setPerfil(p => ({...p, tipo_uso:e.target.value}))}
