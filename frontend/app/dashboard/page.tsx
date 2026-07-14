@@ -70,7 +70,7 @@ export default function DashboardPage() {
           { label:"Brechas Criticas",valor: resumen?.brechas_conocimiento || 0,    icon:"⚠️", color:"#ef4444" },
           { label:"Llantas",         valor: resumen?.llantas || 0,                 icon:"🔵", color:"#06b6d4" },
         ].map(k => (
-          <div key={k.label} style={{ background:"#1e293b", borderRadius:"12px", padding:"1.25rem", border:`1px solid ${k.color}33`, textAlign:"center" }}>
+          <div key={k.label} style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"12px", padding:"1.25rem", border:`1px solid ${k.color}33`, textAlign:"center" }}>
             <div style={{ fontSize:"1.8rem" }}>{k.icon}</div>
             <div style={{ color: k.color, fontSize:"2rem", fontWeight:"bold" }}>{k.valor}</div>
             <div style={{ color:"#64748b", fontSize:"0.8rem" }}>{k.label}</div>
@@ -82,7 +82,7 @@ export default function DashboardPage() {
       <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(300px, 1fr))", gap:"1.5rem", marginBottom:"1.5rem" }}>
 
         {/* Mapa de Brechas */}
-        <div style={{ background:"#1e293b", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155" }}>
+        <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155" }}>
           <h2 style={{ color:"#f1f5f9", marginBottom:"1.25rem", fontSize:"1.1rem" }}>⚠️ Mapa de Brechas de Conocimiento</h2>
           {datos?.brechas?.slice(0,8).map((b: any, i: number) => (
             <div key={i} style={{ marginBottom:"0.75rem" }}>
@@ -114,7 +114,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Perfiles de Motociclistas */}
-        <div style={{ background:"#1e293b", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155" }}>
+        <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155" }}>
           <h2 style={{ color:"#f1f5f9", marginBottom:"1.25rem", fontSize:"1.1rem" }}>👤 Perfiles de Motociclistas</h2>
           <div style={{ display:"flex", flexDirection:"column", gap:"0.75rem" }}>
             {datos?.perfiles && Object.entries(datos.perfiles).map(([key, perfil]: any, i) => (
@@ -139,7 +139,7 @@ export default function DashboardPage() {
       <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(320px, 1fr))", gap:"1.5rem", marginBottom:"1.5rem" }}>
 
         {/* Insignias disponibles */}
-        <div style={{ background:"#1e293b", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155" }}>
+        <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155" }}>
           <h2 style={{ color:"#f1f5f9", marginBottom:"1.25rem", fontSize:"1.1rem" }}>🏅 Sistema de Insignias ({datos?.insignias?.length || 0} disponibles)</h2>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))", gap:"0.75rem" }}>
             {datos?.insignias?.map((ins: any) => (
@@ -153,7 +153,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Estado del sistema */}
-        <div style={{ background:"#1e293b", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155" }}>
+        <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155" }}>
           <h2 style={{ color:"#f1f5f9", marginBottom:"1.25rem", fontSize:"1.1rem" }}>🔧 Estado del Sistema</h2>
           {[
             { modulo:"M1 Perfil",      estado:"Activo",         color:"#22c55e" },
@@ -178,7 +178,7 @@ export default function DashboardPage() {
       </div>
 
       {/* FILA 3: NIVELES DE COMPETENCIA */}
-      <div style={{ background:"#1e293b", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155", marginBottom:"1.5rem" }}>
+      <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155", marginBottom:"1.5rem" }}>
         <h2 style={{ color:"#f1f5f9", marginBottom:"1.25rem", fontSize:"1.1rem" }}>⭐ Niveles de Competencia Vial</h2>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))", gap:"1rem" }}>
           {[
@@ -198,7 +198,7 @@ export default function DashboardPage() {
       </div>
 
       {/* FILA 4: INFO TESIS */}
-      <div style={{ background:"#1e293b", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155" }}>
+      <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", padding:"1.5rem", border:"1px solid #334155" }}>
         <h2 style={{ color:"#f1f5f9", marginBottom:"1rem", fontSize:"1.1rem" }}>🎓 Informacion del Proyecto</h2>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(240px, 1fr))", gap:"1rem" }}>
           {[

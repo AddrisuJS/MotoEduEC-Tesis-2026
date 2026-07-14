@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
 import { useAuth } from "../../lib/useAuth"
+import { LoaderMoto } from "../../lib/ui"
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8010"
 
@@ -62,7 +63,7 @@ export default function RutaSeguraPage() {
     ? JSON.parse(localStorage.getItem("motoeduc_perfil") || "{}") : {}
 
   const nuevo = async () => {
-    setCargando(true); setEleccion(null); setPremio(null)
+    setCargando(true); setEleccion(null); setPremio(null); setEsc(null)
     try {
       const r = await fetch(`${API}/m8/ruta/escenario`, {
         method: "POST", headers: { "Content-Type": "application/json" },
@@ -90,14 +91,20 @@ export default function RutaSeguraPage() {
 
   if (!listo || !usuario) return null
 
-  const card: any = { background: "rgba(30,41,59,0.9)", border: "1px solid #2a3852", borderRadius: 16, overflow: "hidden" }
+  const card: any = { background: "var(--glass)", border: "1px solid var(--glass-brd)", backdropFilter: "blur(16px)", borderRadius: 16, overflow: "hidden" }
   const btn: any = { padding: "0.85rem 1.1rem", borderRadius: 12, border: "none", fontWeight: 700, cursor: "pointer", width: "100%", fontSize: "0.92rem" }
 
   return (
     <div style={{ minHeight: "calc(100vh - 54px)", padding: "1.5rem clamp(0.6rem,3vw,1.5rem)", display: "flex", justifyContent: "center" }}>
       <div style={{ width: "100%", maxWidth: 620 }}>
 
-        {!esc && (
+        {cargando && (
+          <div className="fade-up" style={{ ...card, padding: "2.5rem 1rem" }}>
+            <LoaderMoto texto="Generando tu escenario en la vía..." />
+          </div>
+        )}
+
+        {!esc && !cargando && (
           <div className="fade-up" style={{ ...card, padding: "2rem", textAlign: "center" }}>
             <div style={{ fontSize: "2.8rem" }}>🛣️</div>
             <h1 style={{ color: "#f1f5f9", fontSize: "clamp(1.2rem,4vw,1.5rem)", fontWeight: 800, margin: "0.4rem 0" }}>Ruta Segura</h1>
@@ -112,7 +119,7 @@ export default function RutaSeguraPage() {
           </div>
         )}
 
-        {esc && (
+        {esc && !cargando && (
           <div className="fade-up" style={card}>
             <Escena clima={esc.clima} via={esc.via} />
             <div style={{ padding: "1.1rem 1.2rem" }}>

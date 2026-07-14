@@ -22,7 +22,7 @@ export default function TopPage() {
   const medalla = (pos: number) => pos === 1 ? "🥇" : pos === 2 ? "🥈" : pos === 3 ? "🥉" : `${pos}`
 
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg,#0f172a 0%,#1e293b 60%,#172554 100%)", padding: "2rem 1rem", display: "flex", justifyContent: "center" }}>
+    <div style={{ minHeight: "100vh", background: "transparent", padding: "2rem 1rem", display: "flex", justifyContent: "center" }}>
       <div style={{ width: "100%", maxWidth: 520 }}>
         <div style={{ textAlign: "center", marginBottom: "1.2rem" }}>
           <div style={{ fontSize: "2.6rem" }}>🏆</div>
@@ -30,7 +30,7 @@ export default function TopPage() {
           <p style={{ color: "#94a3b8", fontSize: "0.85rem" }}>Los que más saben de la vía 🏍️</p>
         </div>
 
-        <div style={{ background: "rgba(30,41,59,0.85)", border: "1px solid #334155", borderRadius: 20, padding: "0.8rem", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}>
+        <div style={{ background: "var(--glass)", border: "1px solid var(--glass-brd)", backdropFilter: "blur(16px)", borderRadius: 20, padding: "0.8rem", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}>
           {cargando && <p style={{ color: "#94a3b8", textAlign: "center", padding: "1rem" }}>Cargando ranking...</p>}
           {!cargando && top.length === 0 && (
             <p style={{ color: "#94a3b8", textAlign: "center", padding: "1.2rem", fontSize: "0.9rem" }}>

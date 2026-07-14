@@ -107,7 +107,7 @@ export default function PerfilPage() {
         </div>
 
         {/* Contenido del paso */}
-        <div style={{ background:"#1e293b", borderRadius:"16px", padding:"2rem", border:"1px solid #334155" }}>
+        <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", padding:"2rem", border:"1px solid #334155" }}>
 
           {paso === 1 && (
             <div>
@@ -221,7 +221,7 @@ export default function PerfilPage() {
         <div style={{ display:"flex", gap:"1rem", marginTop:"1.5rem" }}>
           {paso > 1 && (
             <button onClick={() => setPaso(p => p-1)}
-              style={{ flex:1, padding:"1rem", background:"#1e293b", border:"1px solid #334155", borderRadius:"10px", color:"#94a3b8", cursor:"pointer", fontSize:"1rem" }}>
+              style={{ flex:1, padding:"1rem", background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", border:"1px solid #334155", borderRadius:"10px", color:"#94a3b8", cursor:"pointer", fontSize:"1rem" }}>
               ← Anterior
             </button>
           )}
@@ -234,7 +234,7 @@ export default function PerfilPage() {
                 (paso===4 && !datos.zona)
               }
               style={{
-                flex:1, padding:"1rem", background:"#3b82f6", border:"none",
+                flex:1, padding:"1rem", background:"var(--race-grad)", border:"none",
                 borderRadius:"10px", color:"#fff", cursor:"pointer", fontSize:"1rem", fontWeight:"bold"
               }}>
               Siguiente →
@@ -264,7 +264,7 @@ function ResultadoPerfil({ data, onReset }: { data: any, onReset: () => void }) 
           <h1 style={{ color:"#f1f5f9", fontSize:"1.8rem", fontWeight:"bold" }}>Perfil Configurado</h1>
           <p style={{ color:"#94a3b8" }}>{data.mensaje}</p>
         </div>
-        <div style={{ background:"#1e293b", borderRadius:"16px", padding:"2rem", border:"1px solid #334155", marginBottom:"1.5rem" }}>
+        <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", padding:"2rem", border:"1px solid #334155", marginBottom:"1.5rem" }}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"1.5rem" }}>
             <div>
               <h2 style={{ color:"#f1f5f9", fontSize:"1.5rem" }}>Perfil: {data.perfil_asignado}</h2>
@@ -295,13 +295,13 @@ function ResultadoPerfil({ data, onReset }: { data: any, onReset: () => void }) 
         </div>
         <div style={{ display:"flex", gap:"1rem" }}>
           <a href="/educacion" style={{
-            flex:2, display:"block", padding:"1rem", background:"#3b82f6", borderRadius:"10px",
+            flex:2, display:"block", padding:"1rem", background:"var(--race-grad)", borderRadius:"10px",
             color:"#fff", textAlign:"center", fontWeight:"bold", textDecoration:"none"
           }}>
             📚 Iniciar Educacion Vial →
           </a>
           <button onClick={onReset} style={{
-            flex:1, padding:"1rem", background:"#1e293b", border:"1px solid #334155",
+            flex:1, padding:"1rem", background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", border:"1px solid #334155",
             borderRadius:"10px", color:"#94a3b8", cursor:"pointer"
           }}>
             Reiniciar

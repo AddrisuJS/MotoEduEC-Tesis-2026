@@ -93,7 +93,7 @@ export default function EducacionPage() {
               {categorias.map((cat: any) => (
                 <button key={cat.id} onClick={() => verLeccion(cat)}
                   style={{
-                    background:"#1e293b", border:"1px solid #334155", borderRadius:"12px",
+                    background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", border:"1px solid #334155", borderRadius:"12px",
                     padding:"1.5rem", cursor:"pointer", textAlign:"left", color:"#f1f5f9",
                     transition:"transform 0.2s"
                   }}
@@ -120,7 +120,7 @@ export default function EducacionPage() {
               style={{ background:"none", border:"none", color:"#64748b", cursor:"pointer", marginBottom:"1rem", fontSize:"0.9rem" }}>
               ← Volver a categorias
             </button>
-            <div style={{ background:"#1e293b", borderRadius:"16px", padding:"2rem", border:"1px solid #334155" }}>
+            <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", padding:"2rem", border:"1px solid #334155" }}>
               {loadingIA ? (
                 <div style={{ textAlign:"center", padding:"3rem" }}>
                   <div style={{ fontSize:"2rem", marginBottom:"1rem" }}>🤖</div>
@@ -187,7 +187,7 @@ export default function EducacionPage() {
             ) : (
               <>
                 {quiz.map((q: any, i: number) => (
-                  <div key={i} style={{ background:"#1e293b", borderRadius:"12px", padding:"1.5rem", marginBottom:"1rem", border:"1px solid #334155" }}>
+                  <div key={i} style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"12px", padding:"1.5rem", marginBottom:"1rem", border:"1px solid #334155" }}>
                     <p style={{ color:"#f1f5f9", fontWeight:"bold", marginBottom:"1rem" }}>
                       {i+1}. {q.pregunta}
                     </p>
@@ -222,7 +222,7 @@ export default function EducacionPage() {
         {/* RESULTADO */}
         {modo === "resultado" && (
           <div style={{ textAlign:"center" }}>
-            <div style={{ background:"#1e293b", borderRadius:"16px", padding:"2rem", marginBottom:"1.5rem" }}>
+            <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", padding:"2rem", marginBottom:"1.5rem" }}>
               <div style={{ fontSize:"4rem", marginBottom:"1rem" }}>
                 {puntaje >= 7 ? "🏆" : puntaje >= 5 ? "👍" : "📖"}
               </div>
@@ -237,11 +237,11 @@ export default function EducacionPage() {
             </div>
             <div style={{ display:"flex", gap:"1rem" }}>
               <button onClick={() => setModo("lista")}
-                style={{ flex:1, padding:"1rem", background:"#1e293b", border:"1px solid #334155", borderRadius:"10px", color:"#94a3b8", cursor:"pointer" }}>
+                style={{ flex:1, padding:"1rem", background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", border:"1px solid #334155", borderRadius:"10px", color:"#94a3b8", cursor:"pointer" }}>
                 ← Otras categorias
               </button>
               <button onClick={() => verLeccion(seleccionada)}
-                style={{ flex:1, padding:"1rem", background:"#3b82f6", border:"none", borderRadius:"10px", color:"#fff", cursor:"pointer", fontWeight:"bold" }}>
+                style={{ flex:1, padding:"1rem", background:"var(--race-grad)", border:"none", borderRadius:"10px", color:"#fff", cursor:"pointer", fontWeight:"bold" }}>
                 Repasar leccion
               </button>
             </div>

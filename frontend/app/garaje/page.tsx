@@ -37,7 +37,7 @@ export default function GarajePage() {
 
   if (!listo || !usuario) return null
 
-  const fondo: any = { minHeight: "100vh", background: "linear-gradient(135deg,#0f172a,#1e293b 60%,#172554)", padding: "2rem clamp(0.5rem,3vw,2rem)" }
+  const fondo: any = { minHeight: "100vh", background: "transparent", padding: "2rem clamp(0.5rem,3vw,2rem)" }
 
   const Item = ({ it }: any) => {
     const r = RAREZA[it.rareza] || RAREZA.comun

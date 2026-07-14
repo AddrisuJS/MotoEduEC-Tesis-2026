@@ -94,7 +94,7 @@ export default function MotosPage() {
         {modo === "recomendador" && (
           <div>
             {/* Formulario */}
-            <div style={{ background:"#1e293b", borderRadius:"16px", padding:"2rem", border:"1px solid #334155", marginBottom:"1.5rem" }}>
+            <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", padding:"2rem", border:"1px solid #334155", marginBottom:"1.5rem" }}>
               <h2 style={{ color:"#f1f5f9", marginBottom:"1.5rem" }}>Configura tu perfil</h2>
               <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(280px, 1fr))", gap:"1rem" }}>
                 <div>
@@ -138,7 +138,7 @@ export default function MotosPage() {
             {/* RESULTADO con tabla comparativa */}
             {resultado && (
               <div>
-                <div style={{ background:"#1e293b", borderRadius:"12px", padding:"1rem", marginBottom:"1rem", border:"1px solid #334155" }}>
+                <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"12px", padding:"1rem", marginBottom:"1rem", border:"1px solid #334155" }}>
                   <p style={{ color:"#64748b", fontSize:"0.85rem" }}>
                     Analizado <strong style={{ color:"#f59e0b" }}>{resultado.catalogo_consultado}</strong> motos
                     de tipo {resultado.tipos_buscados?.join(", ")} |
@@ -148,7 +148,7 @@ export default function MotosPage() {
                 </div>
 
                 {/* Tabla comparativa */}
-                <div style={{ background:"#1e293b", borderRadius:"16px", overflow:"hidden", border:"1px solid #334155", marginBottom:"1.5rem" }}>
+                <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", overflow:"hidden", border:"1px solid #334155", marginBottom:"1.5rem" }}>
                   <table style={{ width:"100%", borderCollapse:"collapse" }}>
                     <thead>
                       <tr style={{ background:"#0f172a" }}>
@@ -200,7 +200,7 @@ export default function MotosPage() {
 
                 {/* Panel detalle moto seleccionada */}
                 {seleccionada && (
-                  <div style={{ background:"#1e293b", borderRadius:"12px", padding:"1.5rem", marginBottom:"1rem", border:"1px solid #f59e0b44" }}>
+                  <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"12px", padding:"1.5rem", marginBottom:"1rem", border:"1px solid #f59e0b44" }}>
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"1rem" }}>
                       <h3 style={{ color:"#f59e0b" }}>{seleccionada.moto}</h3>
                       <button onClick={() => setSel(null)} style={{ background:"none", border:"none", color:"#64748b", cursor:"pointer", fontSize:"1.2rem" }}>✕</button>
@@ -225,7 +225,7 @@ export default function MotosPage() {
 
                 {/* Razonamiento IA */}
                 {resultado.razonamiento && (
-                  <div style={{ background:"#1e293b", borderRadius:"12px", padding:"1rem", border:"1px solid #f59e0b44" }}>
+                  <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"12px", padding:"1rem", border:"1px solid #f59e0b44" }}>
                     <p style={{ color:"#f59e0b", fontSize:"0.8rem", marginBottom:"0.5rem" }}>🤖 RAZONAMIENTO IA</p>
                     <p style={{ color:"#94a3b8", fontSize:"0.9rem" }}>{resultado.razonamiento}</p>
                     {resultado.modo === "mock" && (
@@ -244,7 +244,7 @@ export default function MotosPage() {
         {modo === "catalogo" && (
           <div>
             {/* Filtros */}
-            <div style={{ background:"#1e293b", borderRadius:"12px", padding:"1rem", marginBottom:"1.5rem", display:"flex", gap:"0.75rem", flexWrap:"wrap", alignItems:"flex-end" }}>
+            <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"12px", padding:"1rem", marginBottom:"1.5rem", display:"flex", gap:"0.75rem", flexWrap:"wrap", alignItems:"flex-end" }}>
               <div style={{ flex:1, minWidth:"140px" }}>
                 <label style={{ color:"#64748b", fontSize:"0.75rem" }}>TIPO</label>
                 <input placeholder="Utilitaria, Naked..." value={filtro.tipo}
@@ -277,7 +277,7 @@ export default function MotosPage() {
 
             <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))", gap:"1rem" }}>
               {catalogo.map((m: any) => (
-                <div key={m.id} style={{ background:"#1e293b", borderRadius:"12px", padding:"1.25rem", border:"1px solid #334155" }}
+                <div key={m.id} style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"12px", padding:"1.25rem", border:"1px solid #334155" }}
                   onMouseEnter={e => (e.currentTarget.style.borderColor="#f59e0b")}
                   onMouseLeave={e => (e.currentTarget.style.borderColor="#334155")}>
                   <div style={{ display:"flex", justifyContent:"space-between", marginBottom:"0.5rem" }}>

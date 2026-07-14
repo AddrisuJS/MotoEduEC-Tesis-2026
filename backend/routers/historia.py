@@ -77,14 +77,38 @@ def contribuir_historia(
 
 @router.get("/contribuciones/lista", summary="Lista las contribuciones comunitarias")
 def listar_contribuciones(db: Session = Depends(get_db)):
+    """Devuelve el muro de historias. Incluye el texto completo y el estado
+    de moderacion para que el frontend pueda marcarlas como 'en revision'."""
     result = db.execute(text("""
-        SELECT id, nombre, ciudad, anio,
-               LEFT(historia, 100) || '...' AS preview,
+        SELECT id, nombre, ciudad, anio, historia,
+               LEFT(historia, 140) AS preview,
                estado, fecha_envio
         FROM contribuciones_historia
         ORDER BY fecha_envio DESC
     """)).mappings().all()
+    contribuciones = []
+    for r in result:
+        d = dict(r)
+        if d.get("fecha_envio"):
+            d["fecha_envio"] = str(d["fecha_envio"])[:16]
+        contribuciones.append(d)
+    aprobadas = sum(1 for c in contribuciones if c.get("estado") == "aprobada")
     return {
-        "total":          len(result),
-        "contribuciones": [dict(r) for r in result]
+        "total":          len(contribuciones),
+        "aprobadas":      aprobadas,
+        "en_revision":    len(contribuciones) - aprobadas,
+        "contribuciones": contribuciones
     }
+
+
+@router.patch("/contribuciones/{contribucion_id}/aprobar", summary="Aprueba una contribucion (moderacion)")
+def aprobar_contribucion(contribucion_id: int, db: Session = Depends(get_db)):
+    """Modera una historia comunitaria: la marca como aprobada y publicable."""
+    try:
+        db.execute(text("UPDATE contribuciones_historia SET estado='aprobada' WHERE id=:i"),
+                   {"i": contribucion_id})
+        db.commit()
+        return {"ok": True, "id": contribucion_id, "estado": "aprobada"}
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}

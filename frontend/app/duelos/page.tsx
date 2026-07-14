@@ -77,8 +77,8 @@ export default function DuelosPage() {
 
   if (!listo || !usuario) return null
 
-  const fondo: any = { minHeight: "100vh", background: "linear-gradient(135deg,#0f172a,#1e293b 60%,#172554)", padding: "2rem clamp(0.5rem,3vw,2rem)", display: "flex", justifyContent: "center" }
-  const card: any = { background: "rgba(30,41,59,0.85)", border: "1px solid #334155", borderRadius: 16, padding: "1.1rem" }
+  const fondo: any = { minHeight: "100vh", background: "transparent", padding: "2rem clamp(0.5rem,3vw,2rem)", display: "flex", justifyContent: "center" }
+  const card: any = { background: "var(--glass)", border: "1px solid var(--glass-brd)", backdropFilter: "blur(16px)", borderRadius: 16, padding: "1.1rem" }
   const btn: any = { padding: "0.85rem 1.1rem", borderRadius: 12, border: "none", fontWeight: 700, cursor: "pointer", width: "100%", fontSize: "0.95rem" }
 
   // ─── JUGANDO ─────────────────────────────────────────────
@@ -88,7 +88,7 @@ export default function DuelosPage() {
       <div style={fondo}><div style={{ width: "100%", maxWidth: 560 }}>
         <div style={{ display: "flex", justifyContent: "space-between", color: "#94a3b8", fontSize: "0.85rem", marginBottom: "0.5rem" }}>
           <button onClick={() => { if (confirm("¿Abandonar el duelo? Podrás jugarlo después desde el lobby.")) setVista("lobby") }}
-            style={{ background: "rgba(30,41,59,0.9)", border: "1px solid #334155", color: "#94a3b8", borderRadius: 8, padding: "0.25rem 0.6rem", fontSize: "0.72rem", cursor: "pointer" }}>✕ Salir</button>
+            style={{ background: "var(--glass)", border: "1px solid var(--glass-brd)", backdropFilter: "blur(16px)", color: "#94a3b8", borderRadius: 8, padding: "0.25rem 0.6rem", fontSize: "0.72rem", cursor: "pointer" }}>✕ Salir</button>
           <span>⚔️ Duelo — {idx + 1}/{preguntas.length}</span>
           <span>✅ {aciertos}</span>
           <span style={{ color: segundos <= 5 ? "#ef4444" : "#f1f5f9", fontWeight: 800 }}>⏱️ {segundos}s</span>
@@ -133,7 +133,7 @@ export default function DuelosPage() {
         </p>
       )}
       {resultado?.mensaje && <p style={{ color: "#94a3b8", fontSize: "0.85rem" }}>{resultado.mensaje}</p>}
-      <button onClick={() => setVista("lobby")} style={{ ...btn, background: "linear-gradient(90deg,#3b82f6,#2563eb)", color: "#fff", marginTop: "0.6rem" }}>Volver al lobby</button>
+      <button onClick={() => setVista("lobby")} style={{ ...btn, background: "var(--race-grad)", color: "#fff", marginTop: "0.6rem" }}>Volver al lobby</button>
     </div></div>
   )
 

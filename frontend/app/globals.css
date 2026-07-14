@@ -1,52 +1,125 @@
-/* ═══ MotoEdu EC — Design System ═══ */
+/* ═══════════════════════════════════════════════════════════
+   MotoEdu EC — RACING GLASS Design System
+   Racing (velocímetro rojo→ámbar) + iOS glassmorphism
+   ═══════════════════════════════════════════════════════════ */
 :root {
-  --bg-0: #0b1220;
-  --bg-1: #0f172a;
-  --bg-2: #1e293b;
-  --line: #2a3852;
-  --txt-0: #f1f5f9;
-  --txt-1: #94a3b8;
-  --txt-2: #64748b;
-  --azul: #3b82f6;
-  --azul-2: #60a5fa;
-  --verde: #22c55e;
-  --oro: #facc15;
-  --rojo: #ef4444;
-  --naranja: #fb923c;
+  /* Base carbono */
+  --bg-0: #0a0e1a;
+  --bg-1: #0f1424;
+  --bg-2: #141b2e;
+  --glass: rgba(255,255,255,0.06);
+  --glass-brd: rgba(255,255,255,0.14);
+  --glass-hi: rgba(255,255,255,0.15);
+
+  /* Racing (velocímetro) */
+  --race-1: #ff3b30;
+  --race-2: #ff5930;
+  --race-3: #ff9500;
+  --race-grad: linear-gradient(90deg,#ff5930,#ff8c42);
+  --race-grad-v: linear-gradient(135deg,#ff5930,#ff9500);
+
+  /* Eléctrico / datos */
+  --blue: #3b82f6;
+  --blue-2: #60a5fa;
+  --cyan: #22d3ee;
+
+  /* Estados */
+  --gold: #facc15;
+  --green: #4ade80;
+  --purple: #c084fc;
+
+  /* Texto */
+  --t0: #f1f5f9;
+  --t1: #94a3b8;
+  --t2: #64748b;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(37,99,235,0.18), transparent 60%),
-    radial-gradient(900px 500px at -10% 110%, rgba(14,165,233,0.10), transparent 55%),
-    linear-gradient(160deg, var(--bg-1) 0%, #101a30 55%, #131b3a 100%);
+    radial-gradient(900px 500px at 85% -10%, rgba(255,89,48,0.10), transparent 60%),
+    radial-gradient(700px 500px at -10% 110%, rgba(59,130,246,0.10), transparent 55%),
+    linear-gradient(160deg, var(--bg-0) 0%, var(--bg-1) 55%, #1a1330 100%);
   background-attachment: fixed;
-  color: #e2e8f0;
+  color: var(--t0);
   min-height: 100vh;
 }
-a { color: var(--azul-2); text-decoration: none; }
-button { font-family: inherit; }
-button:not(:disabled):active { transform: scale(0.98); }
-::selection { background: rgba(59,130,246,0.35); }
-:focus-visible { outline: 2px solid var(--azul); outline-offset: 2px; border-radius: 6px; }
+a { color: var(--blue-2); text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+button:not(:disabled):active { transform: scale(0.97); }
+:focus-visible { outline: 2px solid var(--race-2); outline-offset: 2px; border-radius: 8px; }
+::selection { background: rgba(255,89,48,0.35); }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: var(--bg-1); }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 6px; border: 2px solid var(--bg-1); }
-::-webkit-scrollbar-thumb:hover { background: #475569; }
+::-webkit-scrollbar-track { background: var(--bg-0); }
+::-webkit-scrollbar-thumb { background: #2a3852; border-radius: 6px; border: 2px solid var(--bg-0); }
+::-webkit-scrollbar-thumb:hover { background: #3b4d6b; }
 
-/* Animaciones compartidas */
-@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+/* ═══ Glass ═══ */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-brd);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 var(--glass-hi);
+}
+.glass-sm {
+  background: var(--glass);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-brd);
+  border-radius: 14px;
+}
+
+/* ═══ Botones ═══ */
+.btn-race {
+  background: var(--race-grad); color: #fff; border: none;
+  border-radius: 14px; padding: 0.85rem 1.2rem; font-weight: 800; font-size: 0.95rem;
+  box-shadow: 0 10px 24px rgba(255,89,48,0.38);
+  transition: transform .15s, box-shadow .15s;
+}
+.btn-race:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(255,89,48,0.5); }
+.btn-ghost {
+  background: rgba(255,255,255,0.05); color: var(--t0);
+  border: 1px solid var(--glass-brd); border-radius: 14px;
+  padding: 0.85rem 1.2rem; font-weight: 700; font-size: 0.9rem;
+  transition: all .15s;
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,89,48,0.4); }
+
+/* ═══ Animaciones ═══ */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes popIn { 0% { opacity: 0; transform: scale(0.85); } 60% { transform: scale(1.04); } 100% { opacity: 1; transform: scale(1); } }
 @keyframes pulseDot { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
-.fade-up { animation: fadeUp .35s ease both; }
+@keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+@keyframes spinWheel { to { transform: rotate(360deg); } }
+@keyframes speedLine { 0% { transform: translateX(-100%); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateX(200%); opacity: 0; } }
+@keyframes glowPulse { 0%,100% { box-shadow: 0 0 20px rgba(250,204,21,0.3); } 50% { box-shadow: 0 0 40px rgba(250,204,21,0.6); } }
 
-/* Navbar helpers (usados por lib/Navbar.tsx) */
-.nav-links { display: flex; gap: 0.25rem; align-items: center; }
+.fade-up { animation: fadeUp .4s ease both; }
+.pop-in { animation: popIn .5s cubic-bezier(.34,1.56,.64,1) both; }
+
+/* Skeleton shimmer */
+.skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.04) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite; border-radius: 10px;
+}
+
+/* Navbar responsive helper */
+.nav-links { display: flex; }
 .nav-burger { display: none; }
-@media (max-width: 860px) {
-  .nav-links { display: none; }
-  .nav-burger { display: inline-flex; }
+@media (max-width: 900px) {
+  .nav-links { display: none !important; }
+  .nav-burger { display: inline-flex !important; }
+}
+
+/* Toast (notificaciones de duelo) */
+.toast-wrap { position: fixed; top: 66px; right: 14px; z-index: 200; display: flex; flex-direction: column; gap: 8px; }
+.toast {
+  background: rgba(20,27,46,0.95); backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,89,48,0.5); border-radius: 14px;
+  padding: 0.7rem 1rem; box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+  animation: fadeUp .35s ease both; max-width: 300px;
 }

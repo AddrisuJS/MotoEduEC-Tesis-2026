@@ -1,11 +1,31 @@
 "use client"
 import { useState, useEffect } from "react"
+import { CountUp } from "../../lib/ui"
 import Link from "next/link"
 import { useAuth } from "../../lib/useAuth"
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8010"
 
 type Pregunta = { orden: number; pregunta_id: number; pregunta: string; opciones: string[]; categoria: string }
+
+
+function AnilloMejora({ pct }: { pct: number }) {
+  const CIRC = 2 * Math.PI * 76
+  const fill = Math.min(Math.abs(pct), 100)
+  return (
+    <div style={{ position: "relative", width: 170, height: 170, margin: "0 auto 0.4rem" }}>
+      <svg viewBox="0 0 180 180" style={{ width: "100%", height: "100%", transform: "rotate(135deg)" }}>
+        <circle cx="90" cy="90" r="76" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="12" strokeDasharray={`${CIRC*0.75} ${CIRC}`} strokeLinecap="round" />
+        <circle cx="90" cy="90" r="76" fill="none" stroke="url(#gm)" strokeWidth="12" strokeDasharray={`${CIRC*0.75*(fill/100)} ${CIRC}`} strokeLinecap="round" style={{ transition: "stroke-dasharray 1s ease" }} />
+        <defs><linearGradient id="gm" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#ff5930" /><stop offset="100%" stopColor="#ffb020" /></linearGradient></defs>
+      </svg>
+      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", textAlign: "center" }}>
+        <div style={{ color: "#4ade80", fontSize: "2.4rem", fontWeight: 800, lineHeight: 1 }}>{pct > 0 ? "+" : ""}<CountUp to={pct} />%</div>
+        <div style={{ color: "#94a3b8", fontSize: "0.68rem", letterSpacing: "0.05em" }}>MEJORA</div>
+      </div>
+    </div>
+  )
+}
 
 export default function EvaluacionPage() {
   const { usuario, listo } = useAuth()
@@ -120,7 +140,7 @@ export default function EvaluacionPage() {
             <div style={{ color: "#64748b", fontSize: "1.5rem", alignSelf: "center" }}>→</div>
             <div><div style={{ color: "#94a3b8", fontSize: "0.72rem" }}>FINAL</div><div style={{ color: "#4ade80", fontSize: "1.5rem", fontWeight: 800 }}>{r.postest}/{r.total}</div></div>
           </div>
-          <div style={{ color: "#facc15", fontSize: "2rem", fontWeight: 800 }}>{r.mejora_pct > 0 ? "+" : ""}{r.mejora_pct}%</div>
+          <AnilloMejora pct={r.mejora_pct} />
           <p style={{ color: "#94a3b8", fontSize: "0.85rem" }}>de mejora en tu conocimiento vial 🏍️ ¡Gracias por participar!</p>
         </>}
         <Link href="/arcade"><button style={{ ...btn, background: "linear-gradient(90deg,#3b82f6,#2563eb)", color: "#fff", marginTop: "0.8rem" }}>Seguir aprendiendo en el Arcade</button></Link>
@@ -185,7 +205,7 @@ export default function EvaluacionPage() {
         <div style={{ color: "#64748b", fontSize: "1.6rem", alignSelf: "center" }}>→</div>
         <div><div style={{ color: "#94a3b8", fontSize: "0.72rem" }}>FINAL</div><div style={{ color: "#4ade80", fontSize: "1.6rem", fontWeight: 800 }}>{resultado?.postest}/{resultado?.total}</div></div>
       </div>
-      <div style={{ color: "#facc15", fontSize: "2.2rem", fontWeight: 800 }}>{resultado?.mejora_pct > 0 ? "+" : ""}{resultado?.mejora_pct}%</div>
+      <AnilloMejora pct={resultado?.mejora_pct || 0} />
       <p style={{ color: "#94a3b8", fontSize: "0.85rem" }}>de mejora en tu conocimiento vial. ¡Gracias por ser parte del piloto! 🏍️</p>
       <Link href="/arcade"><button style={{ ...btn, background: "linear-gradient(90deg,#3b82f6,#2563eb)", color: "#fff", marginTop: "0.8rem" }}>Seguir en el Arcade</button></Link>
     </div></div>

@@ -92,8 +92,8 @@ export default function ArcadePage() {
 
   if (!listo || !usuario) return null
 
-  const card: any = { background: "rgba(30,41,59,0.85)", border: "1px solid #334155", borderRadius: 20, padding: "1.6rem", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }
-  const fondo: any = { minHeight: "100vh", background: "linear-gradient(135deg,#0f172a 0%,#1e293b 60%,#172554 100%)", padding: "2rem 1rem", display: "flex", justifyContent: "center" }
+  const card: any = { background: "var(--glass)", border: "1px solid var(--glass-brd)", backdropFilter: "blur(16px)", borderRadius: 20, padding: "1.6rem", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }
+  const fondo: any = { minHeight: "100vh", background: "transparent", padding: "2rem 1rem", display: "flex", justifyContent: "center" }
   const btn: any = { padding: "0.9rem 1.2rem", borderRadius: 12, border: "none", fontWeight: 700, fontSize: "1rem", cursor: "pointer", width: "100%" }
 
   // ─── MENÚ ────────────────────────────────────────────────
@@ -127,7 +127,7 @@ export default function ArcadePage() {
         <h2 style={{ color: "#f1f5f9", fontSize: "1.1rem", margin: "0 0 0.3rem" }}>⚡ Duelo Relámpago</h2>
         <p style={{ color: "#94a3b8", fontSize: "0.82rem", margin: "0 0 0.9rem" }}>10 preguntas, 15 segundos cada una. Acierta rápido: la velocidad da bonus.</p>
         <button onClick={() => empezar("relampago")} disabled={cargando}
-          style={{ ...btn, background: "linear-gradient(90deg,#3b82f6,#2563eb)", color: "#fff" }}>
+          style={{ ...btn, background: "var(--race-grad)", color: "#fff" }}>
           {cargando ? "Cargando..." : "JUGAR"}
         </button>
       </div>
@@ -158,7 +158,7 @@ export default function ArcadePage() {
       <div style={fondo}><div style={{ width: "100%", maxWidth: 560 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", color: "#94a3b8", fontSize: "0.85rem", marginBottom: "0.5rem" }}>
           <button onClick={() => { if (confirm("¿Abandonar la partida? Perderás el progreso.")) setFase("menu") }}
-            style={{ background: "rgba(30,41,59,0.9)", border: "1px solid #334155", color: "#94a3b8", borderRadius: 8, padding: "0.25rem 0.6rem", fontSize: "0.72rem", cursor: "pointer" }}>✕ Salir</button>
+            style={{ background: "var(--glass)", border: "1px solid var(--glass-brd)", backdropFilter: "blur(16px)", color: "#94a3b8", borderRadius: 8, padding: "0.25rem 0.6rem", fontSize: "0.72rem", cursor: "pointer" }}>✕ Salir</button>
           <span>Pregunta {idx + 1}/{preguntas.length}</span>
           <span>✅ {aciertos}</span>
           <span style={{ color: segundos <= 5 ? "#ef4444" : "#f1f5f9", fontWeight: 800 }}>⏱️ {segundos}s</span>
@@ -189,7 +189,7 @@ export default function ArcadePage() {
                 {seleccion === "__timeout__" ? "⏱️ ¡Se acabó el tiempo! " : seleccion === p.correcta ? `✅ ¡Correcto! +${100 + segundos * 10} pts. ` : "❌ Incorrecto. "}
                 {p.explicacion}
               </div>
-              <button onClick={siguiente} style={{ ...btn, background: "linear-gradient(90deg,#3b82f6,#2563eb)", color: "#fff" }}>
+              <button onClick={siguiente} style={{ ...btn, background: "var(--race-grad)", color: "#fff" }}>
                 {idx + 1 < preguntas.length ? "Siguiente →" : "Ver resultado 🏁"}
               </button>
             </div>
@@ -214,7 +214,7 @@ export default function ArcadePage() {
           <div><div style={{ color: "#facc15", fontSize: "1.2rem", fontWeight: 800 }}>{resultado?.xp_total}</div><div style={{ color: "#94a3b8", fontSize: "0.7rem" }}>XP TOTAL</div></div>
           <div><div style={{ color: "#60a5fa", fontSize: "1.2rem", fontWeight: 800 }}>#{resultado?.posicion_ranking}</div><div style={{ color: "#94a3b8", fontSize: "0.7rem" }}>RANKING</div></div>
         </div>
-        <button onClick={() => setFase("menu")} style={{ ...btn, background: "linear-gradient(90deg,#3b82f6,#2563eb)", color: "#fff", marginBottom: "0.6rem" }}>Jugar de nuevo</button>
+        <button onClick={() => setFase("menu")} style={{ ...btn, background: "var(--race-grad)", color: "#fff", marginBottom: "0.6rem" }}>Jugar de nuevo</button>
         <Link href="/top"><button style={{ ...btn, background: "#0f172a", border: "1px solid #facc15", color: "#facc15" }}>🏆 Ver el Top</button></Link>
       </div>
     </div></div>

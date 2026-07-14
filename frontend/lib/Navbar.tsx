@@ -23,10 +23,33 @@ export default function Navbar() {
   const router = useRouter()
   const [stats, setStats] = useState<any>(null)
   const [menu, setMenu] = useState(false)
+  const [pendientes, setPendientes] = useState(0)
+  const [toast, setToast] = useState<string>("")
 
   useEffect(() => { setMenu(false) }, [pathname])
   useEffect(() => {
     if (usuario) fetch(`${API}/m8/arcade/stats/${usuario.id}`).then(r => r.json()).then(setStats).catch(() => {})
+  }, [usuario, pathname])
+
+  // Polling de duelos pendientes (badge + toast en vivo)
+  useEffect(() => {
+    if (!usuario) return
+    let previo = -1
+    const check = () => {
+      fetch(`${API}/m8/duelos/mis-duelos/${usuario.id}`).then(r => r.json()).then(d => {
+        const p = d.pendientes ?? 0
+        setPendientes(p)
+        if (previo >= 0 && p > previo && pathname !== "/duelos") {
+          const nuevo = (d.duelos || []).find((x: any) => x.me_toca_jugar)
+          setToast(`⚔️ ¡${nuevo?.oponente || "Alguien"} te retó a un duelo!`)
+          setTimeout(() => setToast(""), 6000)
+        }
+        previo = p
+      }).catch(() => {})
+    }
+    check()
+    const id = setInterval(check, 25000)
+    return () => clearInterval(id)
   }, [usuario, pathname])
 
   // En login/registro solo mostramos la marca
@@ -82,6 +105,13 @@ export default function Navbar() {
                 <span style={{ color: "#fb923c", fontSize: "0.78rem", fontWeight: 800 }}>🔥 {stats.racha_actual ?? 0}</span>
               </Link>
             )}
+            <button onClick={() => router.push("/duelos")} title="Duelos pendientes"
+              style={{ position: "relative", background: "rgba(30,41,59,0.9)", border: "1px solid #334155", color: pendientes > 0 ? "#ff9575" : "#94a3b8", borderRadius: 10, padding: "0.4rem 0.55rem", cursor: "pointer", display: "flex", alignItems: "center" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.7 21a2 2 0 01-3.4 0" /></svg>
+              {pendientes > 0 && (
+                <span style={{ position: "absolute", top: -5, right: -5, background: "#ff3b30", color: "#fff", fontSize: "0.58rem", fontWeight: 800, minWidth: 16, height: 16, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 4px", boxShadow: "0 0 8px rgba(255,59,48,0.6)" }}>{pendientes}</span>
+              )}
+            </button>
             {usuario.rol === "admin" && (
               <button onClick={() => router.push("/admin")} title="Panel del investigador"
                 style={{ background: "rgba(250,204,21,0.12)", border: "1px solid rgba(250,204,21,0.5)", color: "#fde68a", borderRadius: 10, padding: "0.4rem 0.7rem", fontSize: "0.8rem", cursor: "pointer", fontWeight: 700 }}>
@@ -131,6 +161,18 @@ export default function Navbar() {
           ))}
         </div>
       )}
-    </>
+    
+      {toast && (
+        <div className="toast-wrap">
+          <div className="toast" onClick={() => { setToast(""); router.push("/duelos") }} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: "1.1rem" }}>⚔️</span>
+            <div>
+              <div style={{ color: "#f1f5f9", fontSize: "0.82rem", fontWeight: 700 }}>{toast}</div>
+              <div style={{ color: "#94a3b8", fontSize: "0.68rem" }}>Toca para ir a Duelos</div>
+            </div>
+          </div>
+        </div>
+      )}
+      </>
   )
 }

@@ -62,7 +62,7 @@ export default function LlantasPage() {
         </div>
 
         {/* FORMULARIO */}
-        <div style={{ background:"#1e293b", borderRadius:"16px", padding:"2rem", border:"1px solid #334155", marginBottom:"1.5rem" }}>
+        <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", padding:"2rem", border:"1px solid #334155", marginBottom:"1.5rem" }}>
           <h2 style={{ color:"#f1f5f9", marginBottom:"1.5rem" }}>Configura tu busqueda</h2>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(280px, 1fr))", gap:"1rem" }}>
 
@@ -239,7 +239,7 @@ export default function LlantasPage() {
                 ))}
               </div>
             ) : (
-              <div style={{ background:"#1e293b", borderRadius:"12px", padding:"2rem", textAlign:"center" }}>
+              <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"12px", padding:"2rem", textAlign:"center" }}>
                 <p style={{ color:"#94a3b8", marginBottom:"1rem" }}>
                   No se encontraron llantas con esos filtros.
                 </p>

@@ -2,6 +2,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { Logo, SpeedBG, IconSalir } from "../../lib/ui"
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8010"
 
@@ -30,54 +31,47 @@ export default function LoginPage() {
     } finally { setCargando(false) }
   }
 
-  return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
-      background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #172554 100%)", padding: "1rem" }}>
-      <div style={{ width: "100%", maxWidth: 420, background: "rgba(30,41,59,0.85)", backdropFilter: "blur(8px)",
-        border: "1px solid #334155", borderRadius: 20, padding: "2.5rem 2rem", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}>
+  const inp: any = { flex: 1, background: "transparent", border: "none", outline: "none", color: "#f1f5f9", fontSize: "0.9rem" }
+  const wrap: any = (focus: boolean) => ({ display: "flex", alignItems: "center", gap: 9, background: "rgba(0,0,0,0.25)", border: `1px solid ${focus ? "rgba(255,89,48,0.5)" : "rgba(255,255,255,0.12)"}`, borderRadius: 13, padding: "0.7rem 0.9rem", marginBottom: "0.8rem" })
 
-        <div style={{ textAlign: "center", marginBottom: "1.8rem" }}>
-          <div style={{ fontSize: "2.8rem" }}>🏍️</div>
-          <h1 style={{ color: "#f1f5f9", fontSize: "1.6rem", fontWeight: 800, margin: "0.4rem 0 0.2rem" }}>
-            MotoEdu <span style={{ color: "#3b82f6" }}>EC</span>
-          </h1>
-          <p style={{ color: "#94a3b8", fontSize: "0.85rem", margin: 0 }}>
-            Educación vial inteligente para motociclistas
-          </p>
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem", position: "relative" }}>
+      <SpeedBG />
+      <div className="fade-up" style={{ width: "100%", maxWidth: 360, position: "relative" }}>
+
+        <div style={{ textAlign: "center", marginBottom: "1.4rem" }}>
+          <div style={{ display: "inline-block", marginBottom: "0.7rem" }}><Logo size={64} /></div>
+          <div style={{ color: "#f1f5f9", fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.02em" }}>MotoEdu <span style={{ color: "#ff5930" }}>EC</span></div>
+          <div style={{ color: "#94a3b8", fontSize: "0.8rem", marginTop: 2 }}>Educación vial inteligente 🏍️</div>
         </div>
 
-        <label style={{ color: "#cbd5e1", fontSize: "0.8rem", fontWeight: 600 }}>Correo electrónico</label>
-        <input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="tu@correo.com"
-          style={{ width: "100%", boxSizing: "border-box", margin: "0.35rem 0 1rem", padding: "0.75rem 1rem",
-            background: "#0f172a", border: "1px solid #334155", borderRadius: 12, color: "#f1f5f9", fontSize: "0.95rem", outline: "none" }} />
+        <div className="glass" style={{ padding: "1.5rem" }}>
+          <div style={{ color: "#e2e8f0", fontSize: "1.05rem", fontWeight: 700, marginBottom: "1.1rem" }}>Inicia sesión</div>
 
-        <label style={{ color: "#cbd5e1", fontSize: "0.8rem", fontWeight: 600 }}>Contraseña</label>
-        <input value={password} onChange={e => setPassword(e.target.value)} type="password" placeholder="••••••••"
-          onKeyDown={e => e.key === "Enter" && entrar()}
-          style={{ width: "100%", boxSizing: "border-box", margin: "0.35rem 0 1.2rem", padding: "0.75rem 1rem",
-            background: "#0f172a", border: "1px solid #334155", borderRadius: 12, color: "#f1f5f9", fontSize: "0.95rem", outline: "none" }} />
-
-        {error && (
-          <div style={{ background: "rgba(239,68,68,0.12)", border: "1px solid #ef4444", color: "#fca5a5",
-            borderRadius: 10, padding: "0.6rem 0.9rem", fontSize: "0.82rem", marginBottom: "1rem" }}>
-            ⚠️ {error}
+          <div style={{ color: "#94a3b8", fontSize: "0.72rem", fontWeight: 600, marginBottom: 5 }}>CORREO</div>
+          <div style={wrap(false)}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></svg>
+            <input style={inp} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="tu@correo.com" />
           </div>
-        )}
 
-        <button onClick={entrar} disabled={cargando || !email || !password}
-          style={{ width: "100%", padding: "0.85rem", background: cargando ? "#334155" : "linear-gradient(90deg,#3b82f6,#2563eb)",
-            border: "none", borderRadius: 12, color: "#fff", fontWeight: 700, fontSize: "1rem",
-            cursor: cargando ? "wait" : "pointer", transition: "all .2s" }}>
-          {cargando ? "Entrando..." : "Iniciar sesión"}
-        </button>
+          <div style={{ color: "#94a3b8", fontSize: "0.72rem", fontWeight: 600, marginBottom: 5 }}>CONTRASEÑA</div>
+          <div style={wrap(false)}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#ff9575" strokeWidth="2"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 018 0v4" /></svg>
+            <input style={inp} type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" onKeyDown={e => e.key === "Enter" && entrar()} />
+          </div>
 
-        <p style={{ color: "#94a3b8", fontSize: "0.85rem", textAlign: "center", marginTop: "1.3rem" }}>
-          ¿No tienes cuenta?{" "}
-          <Link href="/registro" style={{ color: "#60a5fa", fontWeight: 700, textDecoration: "none" }}>Regístrate gratis</Link>
-        </p>
-        <p style={{ color: "#475569", fontSize: "0.7rem", textAlign: "center", marginTop: "1rem" }}>
-          UPS Cuenca 2026 — Proyecto de titulación
-        </p>
+          {error && <div style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.4)", color: "#fca5a5", borderRadius: 10, padding: "0.55rem 0.8rem", fontSize: "0.8rem", marginBottom: "0.9rem" }}>⚠️ {error}</div>}
+
+          <button onClick={entrar} disabled={cargando} className="btn-race" style={{ width: "100%", opacity: cargando ? 0.7 : 1 }}>
+            {cargando ? "Entrando..." : "Entrar a la pista →"}
+          </button>
+
+          <div style={{ textAlign: "center", color: "#64748b", fontSize: "0.8rem", marginTop: "1rem" }}>
+            ¿No tienes cuenta? <Link href="/registro" style={{ color: "#ff9575", fontWeight: 700 }}>Regístrate gratis</Link>
+          </div>
+        </div>
+
+        <div style={{ textAlign: "center", color: "#475569", fontSize: "0.68rem", marginTop: "1rem" }}>UPS Cuenca 2026 · Proyecto de titulación</div>
       </div>
     </div>
   )

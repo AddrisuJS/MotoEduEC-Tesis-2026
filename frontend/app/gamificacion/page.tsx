@@ -70,7 +70,7 @@ export default function GamificacionPage() {
         {tab === "dashboard" && (
           <div>
             {!usuarioId ? (
-              <div style={{ background:"#1e293b", borderRadius:"16px", padding:"2rem", textAlign:"center", border:"1px solid #334155" }}>
+              <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", padding:"2rem", textAlign:"center", border:"1px solid #334155" }}>
                 <p style={{ color:"#94a3b8", marginBottom:"1rem" }}>Completa tu perfil para ver tu progreso</p>
                 <a href="/perfil" style={{ background:"#f97316", color:"#fff", padding:"0.75rem 2rem", borderRadius:"8px", textDecoration:"none", fontWeight:"bold" }}>
                   Crear mi perfil →
@@ -81,7 +81,7 @@ export default function GamificacionPage() {
             ) : (
               <div>
                 {/* Nivel actual */}
-                <div style={{ background:"#1e293b", borderRadius:"16px", padding:"2rem", marginBottom:"1.5rem", border:`1px solid ${nivelAct.color}44` }}>
+                <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", padding:"2rem", marginBottom:"1.5rem", border:`1px solid ${nivelAct.color}44` }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"1rem" }}>
                     <div>
                       <p style={{ color:"#64748b", fontSize:"0.8rem" }}>NIVEL ACTUAL</p>
@@ -111,7 +111,7 @@ export default function GamificacionPage() {
                     { label:"Correctas",    valor: dashboard?.evaluaciones?.correctas || 0,         icon:"✅" },
                     { label:"% Acierto",    valor: `${dashboard?.evaluaciones?.pct_acierto || 0}%`, icon:"🎯" },
                   ].map(s => (
-                    <div key={s.label} style={{ background:"#1e293b", borderRadius:"12px", padding:"1.25rem", textAlign:"center", border:"1px solid #334155" }}>
+                    <div key={s.label} style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"12px", padding:"1.25rem", textAlign:"center", border:"1px solid #334155" }}>
                       <div style={{ fontSize:"1.5rem" }}>{s.icon}</div>
                       <div style={{ color:"#f1f5f9", fontSize:"1.5rem", fontWeight:"bold" }}>{s.valor}</div>
                       <div style={{ color:"#64748b", fontSize:"0.8rem" }}>{s.label}</div>
@@ -136,7 +136,7 @@ export default function GamificacionPage() {
             <p style={{ color:"#94a3b8", marginBottom:"1.5rem" }}>{insignias.length} insignias disponibles para desbloquear</p>
             <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))", gap:"1rem" }}>
               {insignias.map((ins: any) => (
-                <div key={ins.id} style={{ background:"#1e293b", borderRadius:"12px", padding:"1.25rem", textAlign:"center", border:"1px solid #334155" }}>
+                <div key={ins.id} style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"12px", padding:"1.25rem", textAlign:"center", border:"1px solid #334155" }}>
                   <div style={{ fontSize:"2.5rem", marginBottom:"0.5rem" }}>{ins.icono}</div>
                   <h3 style={{ color:"#f1f5f9", fontSize:"0.95rem", marginBottom:"0.25rem" }}>{ins.nombre}</h3>
                   <p style={{ color:"#94a3b8", fontSize:"0.8rem", marginBottom:"0.75rem" }}>{ins.descripcion}</p>
@@ -154,7 +154,7 @@ export default function GamificacionPage() {
           <div>
             {NIVELES.map((n, i) => (
               <div key={n.nivel} style={{
-                background:"#1e293b", borderRadius:"12px", padding:"1.25rem", marginBottom:"1rem",
+                background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"12px", padding:"1.25rem", marginBottom:"1rem",
                 border: `2px solid ${n.nivel === nivelAct.nivel ? n.color : "#334155"}`
               }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>

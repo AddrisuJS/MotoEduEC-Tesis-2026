@@ -2,15 +2,15 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { Logo, SpeedBG } from "../../lib/ui"
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8010"
 
-const PERFILES = [
-  { id: "delivery", nombre: "🛵 Delivery / Trabajo" },
-  { id: "urbano", nombre: "🏙️ Urbano diario" },
-  { id: "touring", nombre: "🛣️ Touring / Viajes" },
-  { id: "enduro", nombre: "⛰️ Aventura / Enduro" },
-  { id: "deportivo", nombre: "🏁 Deportivo" },
+const USOS = [
+  { v: "urbano", l: "Ciudad", icon: "🏙️" },
+  { v: "delivery", l: "Delivery", icon: "📦" },
+  { v: "carretera", l: "Carretera", icon: "🛣️" },
+  { v: "aventura", l: "Aventura", icon: "⛰️" },
 ]
 
 export default function RegistroPage() {
@@ -42,64 +42,53 @@ export default function RegistroPage() {
     } finally { setCargando(false) }
   }
 
-  const inputStyle = { width: "100%", boxSizing: "border-box" as const, margin: "0.35rem 0 1rem", padding: "0.75rem 1rem",
-    background: "#0f172a", border: "1px solid #334155", borderRadius: 12, color: "#f1f5f9", fontSize: "0.95rem", outline: "none" }
-  const labelStyle = { color: "#cbd5e1", fontSize: "0.8rem", fontWeight: 600 }
+  const inp: any = { width: "100%", boxSizing: "border-box", marginBottom: "0.8rem", padding: "0.7rem 0.9rem", background: "rgba(0,0,0,0.25)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 13, color: "#f1f5f9", fontSize: "0.9rem", outline: "none" }
+  const lbl: any = { color: "#94a3b8", fontSize: "0.72rem", fontWeight: 600, marginBottom: 5, display: "block" }
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
-      background: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #172554 100%)", padding: "1rem" }}>
-      <div style={{ width: "100%", maxWidth: 460, background: "rgba(30,41,59,0.85)", backdropFilter: "blur(8px)",
-        border: "1px solid #334155", borderRadius: 20, padding: "2.2rem 2rem", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}>
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem", position: "relative" }}>
+      <SpeedBG />
+      <div className="fade-up" style={{ width: "100%", maxWidth: 380, position: "relative" }}>
 
-        <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-          <div style={{ fontSize: "2.4rem" }}>🏍️</div>
-          <h1 style={{ color: "#f1f5f9", fontSize: "1.45rem", fontWeight: 800, margin: "0.3rem 0 0.2rem" }}>
-            Crea tu cuenta en MotoEdu <span style={{ color: "#3b82f6" }}>EC</span>
-          </h1>
-          <p style={{ color: "#94a3b8", fontSize: "0.82rem", margin: 0 }}>Contenido de seguridad vial hecho a tu medida</p>
+        <div style={{ textAlign: "center", marginBottom: "1.2rem" }}>
+          <div style={{ display: "inline-block", marginBottom: "0.6rem" }}><Logo size={58} /></div>
+          <div style={{ color: "#f1f5f9", fontSize: "1.4rem", fontWeight: 800 }}>Únete a MotoEdu <span style={{ color: "#ff5930" }}>EC</span></div>
+          <div style={{ color: "#94a3b8", fontSize: "0.78rem", marginTop: 2 }}>Empieza a dominar la vía 🏍️</div>
         </div>
 
-        <label style={labelStyle}>Nombre completo</label>
-        <input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Carlos Pérez" style={inputStyle} />
+        <div className="glass" style={{ padding: "1.4rem" }}>
+          <label style={lbl}>NOMBRE COMPLETO</label>
+          <input style={inp} value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Tu nombre" />
 
-        <label style={labelStyle}>Correo electrónico</label>
-        <input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="tu@correo.com" style={inputStyle} />
+          <label style={lbl}>CORREO</label>
+          <input style={inp} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="tu@correo.com" />
 
-        <label style={labelStyle}>Contraseña (mínimo 6 caracteres)</label>
-        <input value={password} onChange={e => setPassword(e.target.value)} type="password" placeholder="••••••••" style={inputStyle} />
+          <label style={lbl}>CONTRASEÑA</label>
+          <input style={inp} type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Mínimo 6 caracteres" />
 
-        <label style={labelStyle}>¿Cómo usas tu moto?</label>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", margin: "0.5rem 0 1.2rem" }}>
-          {PERFILES.map(p => (
-            <button key={p.id} onClick={() => setTipoUso(p.id)}
-              style={{ padding: "0.6rem 0.5rem", borderRadius: 10, fontSize: "0.8rem", cursor: "pointer",
-                background: tipoUso === p.id ? "rgba(59,130,246,0.25)" : "#0f172a",
-                border: tipoUso === p.id ? "1.5px solid #3b82f6" : "1px solid #334155",
-                color: tipoUso === p.id ? "#93c5fd" : "#cbd5e1", fontWeight: tipoUso === p.id ? 700 : 400 }}>
-              {p.nombre}
-            </button>
-          ))}
-        </div>
-
-        {error && (
-          <div style={{ background: "rgba(239,68,68,0.12)", border: "1px solid #ef4444", color: "#fca5a5",
-            borderRadius: 10, padding: "0.6rem 0.9rem", fontSize: "0.82rem", marginBottom: "1rem" }}>
-            ⚠️ {error}
+          <label style={lbl}>¿CÓMO USAS TU MOTO?</label>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", marginBottom: "0.9rem" }}>
+            {USOS.map(u => (
+              <button key={u.v} onClick={() => setTipoUso(u.v)}
+                style={{ display: "flex", alignItems: "center", gap: 7, padding: "0.6rem 0.7rem", borderRadius: 12, fontSize: "0.82rem", fontWeight: 600, cursor: "pointer",
+                  background: tipoUso === u.v ? "linear-gradient(90deg,rgba(255,89,48,0.22),rgba(255,149,0,0.12))" : "rgba(0,0,0,0.2)",
+                  border: `1px solid ${tipoUso === u.v ? "rgba(255,89,48,0.5)" : "rgba(255,255,255,0.1)"}`,
+                  color: tipoUso === u.v ? "#fff" : "#94a3b8" }}>
+                <span>{u.icon}</span>{u.l}
+              </button>
+            ))}
           </div>
-        )}
 
-        <button onClick={registrar} disabled={cargando || !nombre || !email || !password}
-          style={{ width: "100%", padding: "0.85rem", background: cargando ? "#334155" : "linear-gradient(90deg,#22c55e,#16a34a)",
-            border: "none", borderRadius: 12, color: "#fff", fontWeight: 700, fontSize: "1rem",
-            cursor: cargando ? "wait" : "pointer" }}>
-          {cargando ? "Creando cuenta..." : "Crear cuenta gratis"}
-        </button>
+          {error && <div style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.4)", color: "#fca5a5", borderRadius: 10, padding: "0.55rem 0.8rem", fontSize: "0.8rem", marginBottom: "0.9rem" }}>⚠️ {error}</div>}
 
-        <p style={{ color: "#94a3b8", fontSize: "0.85rem", textAlign: "center", marginTop: "1.2rem" }}>
-          ¿Ya tienes cuenta?{" "}
-          <Link href="/login" style={{ color: "#60a5fa", fontWeight: 700, textDecoration: "none" }}>Inicia sesión</Link>
-        </p>
+          <button onClick={registrar} disabled={cargando} className="btn-race" style={{ width: "100%", opacity: cargando ? 0.7 : 1 }}>
+            {cargando ? "Creando cuenta..." : "Crear cuenta y arrancar 🏁"}
+          </button>
+
+          <div style={{ textAlign: "center", color: "#64748b", fontSize: "0.8rem", marginTop: "1rem" }}>
+            ¿Ya tienes cuenta? <Link href="/login" style={{ color: "#ff9575", fontWeight: 700 }}>Inicia sesión</Link>
+          </div>
+        </div>
       </div>
     </div>
   )
