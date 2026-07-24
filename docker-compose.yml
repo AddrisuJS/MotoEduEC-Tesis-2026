@@ -13,8 +13,7 @@ services:
       - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
-      - ./backend/db/seed.sql:/docker-entrypoint-initdb.d/02_seed.sql
+      - ./postgres-init:/docker-entrypoint-initdb.d
     networks:
       - motoeduc_net
     healthcheck:
