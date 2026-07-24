@@ -92,14 +92,14 @@ def _embed(text: str, idf: dict = None, dim: int = EMBED_DIM) -> list:
 
 # ─── Conexion a BD TESIS (puerto 5434) ───────────────────────
 DB = {
-    "host": "localhost", "port": 5434,
+    "host": "postgres", "port": 5432,
     "dbname": "motoeduc_tesis",
     "user": "motoeduc_user",
     "password": "MotoEduC_2026$"
 }
 
 # ─── ChromaDB TESIS (puerto 8003) ────────────────────────────
-CHROMA   = "http://localhost:8003"
+CHROMA   = "http://chromadb:8000"
 TENANT   = "default_tenant"
 DATABASE = "default_database"
 COL_NAME = "motoeduc_knowledge"
