@@ -11,3 +11,4 @@ postgres_data/
 Thumbs.db
 venv/
 .venv/
+_basura/

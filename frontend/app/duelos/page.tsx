@@ -6,7 +6,7 @@ import { useAuth } from "../../lib/useAuth"
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8010"
 
 export default function DuelosPage() {
-  const { usuario, listo } = useAuth()
+  const { usuario, listo } = useAuth(true, true)
   const [rivales, setRivales] = useState<any[]>([])
   const [duelos, setDuelos] = useState<any[]>([])
   const [vista, setVista] = useState<"lobby" | "jugando" | "final">("lobby")

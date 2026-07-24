@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8010'
@@ -57,8 +57,8 @@ export default function GamificacionPage() {
             <button key={t} onClick={() => setTab(t as any)}
               style={{
                 flex:1, padding:"0.6rem", borderRadius:"8px", cursor:"pointer",
-                background: tab === t ? "#f97316" : "#1e293b",
-                border: `1px solid ${tab === t ? "#f97316" : "#334155"}`,
+                background: tab === t ? "#FDB500" : "#1e293b",
+                border: `1px solid ${tab === t ? "#FDB500" : "#334155"}`,
                 color: tab === t ? "#fff" : "#94a3b8", fontWeight: tab === t ? "bold" : "normal"
               }}>
               {t === "dashboard" ? "📊 Mi Progreso" : t === "insignias" ? "🏅 Insignias" : "⭐ Niveles"}
@@ -72,7 +72,7 @@ export default function GamificacionPage() {
             {!usuarioId ? (
               <div style={{ background:"rgba(255,255,255,0.05)",backdropFilter:"blur(14px)", borderRadius:"16px", padding:"2rem", textAlign:"center", border:"1px solid #334155" }}>
                 <p style={{ color:"#94a3b8", marginBottom:"1rem" }}>Completa tu perfil para ver tu progreso</p>
-                <a href="/perfil" style={{ background:"#f97316", color:"#fff", padding:"0.75rem 2rem", borderRadius:"8px", textDecoration:"none", fontWeight:"bold" }}>
+                <a href="/perfil" style={{ background:"#FDB500", color:"#fff", padding:"0.75rem 2rem", borderRadius:"8px", textDecoration:"none", fontWeight:"bold" }}>
                   Crear mi perfil →
                 </a>
               </div>
@@ -120,7 +120,7 @@ export default function GamificacionPage() {
                 </div>
 
                 <a href="/educacion" style={{
-                  display:"block", padding:"1rem", background:"#f97316", borderRadius:"10px",
+                  display:"block", padding:"1rem", background:"#FDB500", borderRadius:"10px",
                   color:"#fff", textAlign:"center", fontWeight:"bold", textDecoration:"none"
                 }}>
                   📚 Ir a Educacion Vial para ganar puntos →
@@ -140,7 +140,7 @@ export default function GamificacionPage() {
                   <div style={{ fontSize:"2.5rem", marginBottom:"0.5rem" }}>{ins.icono}</div>
                   <h3 style={{ color:"#f1f5f9", fontSize:"0.95rem", marginBottom:"0.25rem" }}>{ins.nombre}</h3>
                   <p style={{ color:"#94a3b8", fontSize:"0.8rem", marginBottom:"0.75rem" }}>{ins.descripcion}</p>
-                  <span style={{ background:"#f9731622", color:"#f97316", padding:"2px 10px", borderRadius:"20px", fontSize:"0.8rem", fontWeight:"bold" }}>
+                  <span style={{ background:"#FDB50022", color:"#FDB500", padding:"2px 10px", borderRadius:"20px", fontSize:"0.8rem", fontWeight:"bold" }}>
                     +{ins.puntos} pts
                   </span>
                 </div>

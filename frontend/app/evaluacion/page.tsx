@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 import { useState, useEffect } from "react"
 import { CountUp } from "../../lib/ui"
 import Link from "next/link"
@@ -17,7 +17,7 @@ function AnilloMejora({ pct }: { pct: number }) {
       <svg viewBox="0 0 180 180" style={{ width: "100%", height: "100%", transform: "rotate(135deg)" }}>
         <circle cx="90" cy="90" r="76" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="12" strokeDasharray={`${CIRC*0.75} ${CIRC}`} strokeLinecap="round" />
         <circle cx="90" cy="90" r="76" fill="none" stroke="url(#gm)" strokeWidth="12" strokeDasharray={`${CIRC*0.75*(fill/100)} ${CIRC}`} strokeLinecap="round" style={{ transition: "stroke-dasharray 1s ease" }} />
-        <defs><linearGradient id="gm" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#ff5930" /><stop offset="100%" stopColor="#ffb020" /></linearGradient></defs>
+        <defs><linearGradient id="gm" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#FDB500" /><stop offset="100%" stopColor="#ffb020" /></linearGradient></defs>
       </svg>
       <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", textAlign: "center" }}>
         <div style={{ color: "#4ade80", fontSize: "2.4rem", fontWeight: 800, lineHeight: 1 }}>{pct > 0 ? "+" : ""}<CountUp to={pct} />%</div>
@@ -143,7 +143,13 @@ export default function EvaluacionPage() {
           <AnilloMejora pct={r.mejora_pct} />
           <p style={{ color: "#94a3b8", fontSize: "0.85rem" }}>de mejora en tu conocimiento vial 🏍️ ¡Gracias por participar!</p>
         </>}
-        <Link href="/arcade"><button style={{ ...btn, background: "linear-gradient(90deg,#3b82f6,#2563eb)", color: "#fff", marginTop: "0.8rem" }}>Seguir aprendiendo en el Arcade</button></Link>
+        {usuario?.grupo === "control" ? (
+          <p style={{ color: "#94a3b8", fontSize: "0.82rem", marginTop: "0.8rem" }}>
+            Has completado ambas evaluaciones. ¡Gracias por tu participación en el estudio! 🏍️
+          </p>
+        ) : (
+          <Link href="/arcade"><button style={{ ...btn, background: "linear-gradient(90deg,#3b82f6,#2563eb)", color: "#fff", marginTop: "0.8rem" }}>Seguir aprendiendo en el Arcade</button></Link>
+        )}
       </div></div>
     )
   }

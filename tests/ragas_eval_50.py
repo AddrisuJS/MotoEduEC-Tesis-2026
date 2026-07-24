@@ -7,7 +7,9 @@ Ejecutar: python tests/ragas_eval.py
 """
 import httpx
 import json
+import re
 import statistics
+import unicodedata
 from datetime import datetime
 
 BASE = "http://localhost:8010"
@@ -162,11 +164,105 @@ def calcular_faithfulness(respuesta: str, terminos_fe: list) -> float:
     return round(min(1.0, score + bonus), 3)
 
 
+def _norm(t: str) -> str:
+    t = unicodedata.normalize("NFD", t.lower())
+    return "".join(c for c in t if unicodedata.category(c) != "Mn")
+
+
+def calcular_faithfulness_anclada(respuesta: str, contexto_docs: list, terminos_fe: list) -> float:
+    """Faithfulness segun la definicion de Es et al. (2023): de las afirmaciones
+    que hace la respuesta, ¿que fraccion esta respaldada por el contexto
+    recuperado?
+
+    Operacionalizacion: se toman los terminos clave que la respuesta AFIRMA y se
+    verifica cuantos de ellos aparecen efectivamente en los documentos
+    recuperados. Un valor de 1.0 significa que todo lo que la respuesta afirma
+    tiene respaldo documental; 0.0 significa que la respuesta afirma cosas que
+    el contexto no contiene, es decir, proviene de la memoria parametrica del
+    modelo y no de la base de conocimiento.
+
+    Diferencia con calcular_faithfulness(): aquella mide si la respuesta es
+    CORRECTA y si exhibe conducta de citacion, pero no verifica el respaldo. Un
+    modelo puede alucinar con buenos modales y obtener 1.0. Esta metrica no lo
+    permite: si el contexto no lo dice, no cuenta.
+
+    La BRECHA entre ambas metricas cuantifica cuanto responde el modelo de
+    memoria en lugar de sus documentos.
+    """
+    if not terminos_fe:
+        return 0.0
+    resp_norm = _norm(respuesta)
+    # Terminos clave que la respuesta efectivamente afirma
+    afirmados = [t for t in terminos_fe if _norm(t) in resp_norm]
+    if not afirmados:
+        return 0.0
+    if not contexto_docs:
+        return 0.0
+    ctx_norm = _norm(" ".join(contexto_docs))
+    respaldados = sum(1 for t in afirmados if _norm(t) in ctx_norm)
+    return round(respaldados / len(afirmados), 3)
+
+
+def calcular_context_recall(contexto_docs: list, terminos_fe: list) -> float:
+    """Context recall (Es et al., 2023): fraccion del contexto relevante que el
+    recuperador efectivamente trajo. Operacionalizado de forma lexica: de los
+    terminos que definen la respuesta correcta, cuantos aparecen en los
+    documentos recuperados de ChromaDB.
+
+    Un valor bajo indica un fallo del RECUPERADOR (no trajo la informacion),
+    a diferencia de faithfulness bajo, que indica un fallo del GENERADOR
+    (tenia la informacion y aun asi no se anclo a ella). Distinguirlos permite
+    saber que componente del pipeline corregir.
+    """
+    if not contexto_docs or not terminos_fe:
+        return 0.0
+    # Se normalizan tildes en ambos lados: el corpus almacena "circulacion" o
+    # "circulación" segun la fuente, y el termino esperado puede traer tilde.
+    def _norm(t):
+        t = unicodedata.normalize("NFD", t.lower())
+        return "".join(c for c in t if unicodedata.category(c) != "Mn")
+
+    corpus = _norm(" ".join(contexto_docs))
+    encontrados = sum(1 for t in terminos_fe if _norm(t) in corpus)
+    return round(encontrados / len(terminos_fe), 3)
+
+
+# Palabras vacias del espanol: no aportan significado y distorsionan la medida
+STOPWORDS = {
+    "el","la","los","las","un","una","unos","unas","de","del","al","a","ante",
+    "con","en","para","por","segun","sin","sobre","tras","y","o","u","e","que",
+    "es","son","esta","estan","ser","hay","su","sus","se","lo","le","les","como",
+    "mas","pero","si","no","este","esta","estos","estas","tu","tus"
+}
+
+
+def _tokenizar(texto: str) -> list:
+    """Extrae palabras de contenido: minusculas, sin tildes, sin puntuacion y
+    sin palabras vacias.
+
+    Corrige un defecto de medicion de la version anterior, que usaba
+    .split() sobre el texto crudo: los signos de puntuacion quedaban pegados
+    al token ("licencia," en lugar de "licencia") y por lo tanto nunca
+    coincidian con la respuesta, subestimando la metrica. Ademas, las palabras
+    vacias ("de", "la", "es") coincidian casi siempre, introduciendo ruido.
+    """
+    t = unicodedata.normalize("NFD", texto.lower())
+    t = "".join(c for c in t if unicodedata.category(c) != "Mn")
+    t = re.sub(r"[^a-z0-9\s]", " ", t)
+    return [w for w in t.split() if len(w) > 1 and w not in STOPWORDS]
+
+
 def calcular_relevancia(respuesta: str, esperado: str) -> float:
-    terminos = esperado.lower().split()
-    respuesta_lower = respuesta.lower()
-    encontrados = sum(1 for t in terminos if t in respuesta_lower)
-    return round(encontrados / max(len(terminos), 1), 3)
+    """Answer relevance (Es et al., 2023): pertinencia de la respuesta respecto
+    a lo que la pregunta requiere. Se mide como la fraccion de los terminos de
+    contenido de la respuesta esperada que aparecen en la respuesta generada.
+    """
+    terminos = _tokenizar(esperado)
+    if not terminos:
+        return 0.0
+    cuerpo = " ".join(_tokenizar(respuesta))
+    encontrados = sum(1 for t in terminos if t in cuerpo)
+    return round(encontrados / len(terminos), 3)
 
 
 def evaluar_ragas():
@@ -185,8 +281,10 @@ def evaluar_ragas():
         return
 
     resultados   = []
-    faith_scores = []
-    relev_scores = []
+    faith_scores  = []
+    relev_scores  = []
+    recall_scores = []
+    anclada_scores = []
     tokens_total = 0
 
     # Agrupar por categoria para resumen
@@ -199,7 +297,8 @@ def evaluar_ragas():
             r = httpx.post(f"{BASE}/m3/asistente/consultar", json={
                 "pregunta":   eval_item["pregunta"],
                 "usuario_id": f"ragas50_eval_{i}",
-                "perfil":     {"tipo_uso": "urbano", "anos_experiencia": 2, "zona": "Sierra"}
+                "perfil":     {"tipo_uso": "urbano", "anos_experiencia": 2, "zona": "Sierra"},
+                "incluir_contexto": True
             }, timeout=45)
 
             data      = r.json()
@@ -208,11 +307,17 @@ def evaluar_ragas():
             tokens    = data.get("tokens_usados", 0)
             tokens_total += tokens
 
-            faith = calcular_faithfulness(respuesta, eval_item["terminos_fe"])
-            relev = calcular_relevancia(respuesta, eval_item["esperado"])
+            contexto_docs = data.get("contexto_completo") or []
+
+            faith  = calcular_faithfulness(respuesta, eval_item["terminos_fe"])
+            relev  = calcular_relevancia(respuesta, eval_item["esperado"])
+            recall = calcular_context_recall(contexto_docs, eval_item["terminos_fe"])
+            anclada = calcular_faithfulness_anclada(respuesta, contexto_docs, eval_item["terminos_fe"])
 
             faith_scores.append(faith)
             relev_scores.append(relev)
+            recall_scores.append(recall)
+            anclada_scores.append(anclada)
 
             cat = eval_item["categoria"]
             if cat not in categorias:
@@ -220,13 +325,16 @@ def evaluar_ragas():
             categorias[cat].append(faith)
 
             icon = "✅" if faith >= 0.60 else "⚠️"
-            print(f"  {icon} P{i+1:02d} [{cat[:14]:14}] docs:{docs_raw} faith:{faith:.2f} relev:{relev:.2f}")
+            brecha = faith - anclada
+            alerta = "  ⚠️ MEMORIA" if brecha >= 0.50 else ""
+            print(f"  {icon} P{i+1:02d} [{cat[:14]:14}] faith:{faith:.2f} anclada:{anclada:.2f} recall:{recall:.2f} relev:{relev:.2f}{alerta}")
 
             resultados.append({
                 "id": i+1, "categoria": cat,
                 "pregunta": eval_item["pregunta"][:55] + "...",
                 "docs": docs_raw, "faithfulness": faith,
-                "relevancia": relev, "tokens": tokens,
+                "faithfulness_anclada": anclada, "brecha_memoria": round(faith - anclada, 3),
+                "context_recall": recall, "answer_relevance": relev, "tokens": tokens,
                 "modo": data.get("modo", "unknown")
             })
 
@@ -234,10 +342,15 @@ def evaluar_ragas():
             print(f"  ❌ P{i+1:02d} [{eval_item['categoria'][:14]:14}] Error: {e}")
             faith_scores.append(0.0)
             relev_scores.append(0.0)
+            recall_scores.append(0.0)
+            anclada_scores.append(0.0)
 
-    faith_mean = statistics.mean(faith_scores) if faith_scores else 0
-    relev_mean = statistics.mean(relev_scores) if relev_scores else 0
-    faith_std  = statistics.stdev(faith_scores) if len(faith_scores) > 1 else 0
+    faith_mean  = statistics.mean(faith_scores)  if faith_scores  else 0
+    relev_mean  = statistics.mean(relev_scores)  if relev_scores  else 0
+    recall_mean  = statistics.mean(recall_scores)  if recall_scores  else 0
+    anclada_mean = statistics.mean(anclada_scores) if anclada_scores else 0
+    faith_std   = statistics.stdev(faith_scores)  if len(faith_scores)  > 1 else 0
+    recall_std  = statistics.stdev(recall_scores) if len(recall_scores) > 1 else 0
     costo_est  = tokens_total * 0.000003
 
     print("\n" + "=" * 65)
@@ -251,12 +364,43 @@ def evaluar_ragas():
     print("\n" + "=" * 65)
     print("  RESULTADOS RAGAS FORMALES — 50 PREGUNTAS")
     print("=" * 65)
-    print(f"  Faithfulness media:     {faith_mean:.3f} (objetivo >= 0.80)")
-    print(f"  Faithfulness std:       {faith_std:.3f}")
-    print(f"  Answer Relevance media: {relev_mean:.3f}")
+    print("  Las tres metricas del framework RAGAS (Es et al., 2023):")
+    print("")
+    print(f"  1. Faithfulness:        {faith_mean:.3f}  (umbral declarado >= 0.80)  std {faith_std:.3f}")
+    print(f"     [lexica] Terminos esperados presentes en la respuesta + citacion")
+    print(f"  1b. Faithfulness ANCLADA: {anclada_mean:.3f}")
+    print(f"     [estricta] De lo que la respuesta AFIRMA, cuanto respalda el contexto")
+    print(f"     BRECHA DE MEMORIA:    {faith_mean - anclada_mean:.3f}  <- cuanto responde de memoria")
+    print(f"  2. Context Recall:      {recall_mean:.3f}                             std {recall_std:.3f}")
+    print(f"     Fraccion del contexto relevante efectivamente recuperada")
+    print(f"  3. Answer Relevance:    {relev_mean:.3f}")
+    print(f"     Pertinencia de la respuesta respecto a la pregunta")
+    print("")
     print(f"  Preguntas evaluadas:    {len(resultados)}")
     print(f"  Tokens usados:          {tokens_total:,}")
     print(f"  Costo estimado:         ~${costo_est:.4f} USD")
+
+    # Diagnostico: separa fallos del recuperador de fallos del generador
+    print("  " + "-" * 61)
+    brecha = faith_mean - anclada_mean
+    if brecha >= 0.30:
+        print(f"  🚨 ALERTA: brecha de memoria {brecha:.3f}")
+        print(f"     El modelo esta respondiendo de su conocimiento propio, no del")
+        print(f"     corpus. Faithfulness lexica ({faith_mean:.3f}) sobrestima el anclaje")
+        print(f"     real ({anclada_mean:.3f}). En un dominio normativo esto es riesgo:")
+        print(f"     el asistente puede afirmar la ley sin respaldo documental.")
+        print("  " + "-" * 61)
+    if recall_mean < 0.60:
+        print(f"  🔍 DIAGNOSTICO: context recall bajo ({recall_mean:.3f}).")
+        print(f"     El RECUPERADOR no esta trayendo la informacion necesaria.")
+        print(f"     Revisar: funcion de embedding, k de recuperacion, corpus.")
+    elif faith_mean < 0.80 and recall_mean >= 0.60:
+        print(f"  🔍 DIAGNOSTICO: el recuperador trae la informacion (recall {recall_mean:.3f})")
+        print(f"     pero el GENERADOR no se ancla a ella (faithfulness {faith_mean:.3f}).")
+        print(f"     Revisar: prompt de sintesis y reglas de anclaje.")
+    else:
+        print(f"  🔍 DIAGNOSTICO: recuperador y generador operan correctamente.")
+    print("  " + "-" * 61)
 
     if faith_mean >= 0.80:
         print(f"\n  ✅ RAGAS FORMAL PASS — faithfulness {faith_mean:.3f} >= 0.80")
@@ -268,8 +412,20 @@ def evaluar_ragas():
     reporte = {
         "fecha":             datetime.now().isoformat(),
         "total_preguntas":   len(resultados),
+        "metricas_ragas": {
+            "faithfulness":     {"media": round(faith_mean, 3), "std": round(faith_std, 3), "umbral": 0.80, "cumple": faith_mean >= 0.80},
+            "faithfulness_anclada": {"media": round(anclada_mean, 3)},
+            "brecha_memoria":   {"valor": round(faith_mean - anclada_mean, 3),
+                                 "interpretacion": "diferencia entre la faithfulness lexica y la anclada al contexto; cuantifica cuanto responde el modelo de memoria parametrica"},
+            "context_recall":   {"media": round(recall_mean, 3), "std": round(recall_std, 3)},
+            "answer_relevance": {"media": round(relev_mean, 3)}
+        },
         "faithfulness_mean": round(faith_mean, 3),
         "faithfulness_std":  round(faith_std, 3),
+        "faithfulness_anclada_mean": round(anclada_mean, 3),
+        "brecha_memoria":            round(faith_mean - anclada_mean, 3),
+        "context_recall_mean":   round(recall_mean, 3),
+        "answer_relevance_mean": round(relev_mean, 3),
         "relevancia_mean":   round(relev_mean, 3),
         "objetivo_pass_070": faith_mean >= 0.70,
         "objetivo_pass_080": faith_mean >= 0.80,

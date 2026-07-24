@@ -72,17 +72,33 @@ def dashboard_usuario(usuario_id: str, db: Session = Depends(get_db)):
     }
 
 
+@router.get("/mis-insignias/{usuario_id}", summary="Insignias conseguidas por un usuario")
+def mis_insignias(usuario_id: int, db: Session = Depends(get_db)):
+    ganadas = {r[0] for r in db.execute(text(
+        "SELECT insignia_id FROM insignias_usuario WHERE usuario_id=:u"), {"u": usuario_id}).fetchall()}
+    return {"conseguidas": len(ganadas), "total": len(INSIGNIAS),
+            "insignias": [{**i, "conseguida": i["id"] in ganadas} for i in INSIGNIAS]}
+
+
 @router.post("/otorgar-insignia", summary="Otorga una insignia al usuario")
 def otorgar_insignia(datos: dict = Body(...), db: Session = Depends(get_db)):
     try:
         insignia = next((i for i in INSIGNIAS if i["id"] == datos.get("insignia_id")), None)
         if not insignia:
             return {"error": "Insignia no encontrada"}
-        db.execute(text("""
-            UPDATE usuarios SET puntos_acumulados = puntos_acumulados + :puntos WHERE id = :uid
-        """), {"puntos": insignia["puntos"], "uid": datos.get("usuario_id")})
+        # Registrar la insignia (idempotente: si ya la tiene, no se duplica)
+        ya = db.execute(text(
+            "SELECT 1 FROM insignias_usuario WHERE usuario_id=:u AND insignia_id=:i"),
+            {"u": datos.get("usuario_id"), "i": insignia["id"]}).fetchone()
+        if ya:
+            return {"insignia": insignia, "ya_conseguida": True,
+                    "mensaje": f"Ya tenias la insignia {insignia['nombre']}"}
+        db.execute(text(
+            "INSERT INTO insignias_usuario (usuario_id, insignia_id) VALUES (:u, :i)"),
+            {"u": datos.get("usuario_id"), "i": insignia["id"]})
         db.commit()
-        return {"insignia": insignia, "puntos_ganados": insignia["puntos"], "mensaje": f"Insignia {insignia['icono']} {insignia['nombre']} otorgada"}
+        return {"insignia": insignia, "puntos_ganados": insignia["puntos"],
+                "mensaje": f"Insignia {insignia['icono']} {insignia['nombre']} otorgada"}
     except Exception as e:
         db.rollback()
         return {"error": str(e)}

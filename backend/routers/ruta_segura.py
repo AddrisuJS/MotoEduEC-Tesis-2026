@@ -20,23 +20,46 @@ router = APIRouter(prefix="/m8/ruta", tags=["M8 — Ruta Segura"])
 XP_CORRECTO, XP_INCORRECTO = 150, 30
 
 # Escenografías variadas para forzar diversidad en la generación
-ESCENOGRAFIAS = [
-    "una playa de Manabi con arena arrastrada sobre el asfalto",
-    "un camino de tercer orden de tierra y lastre en la sierra",
-    "el centro historico de Cuenca con adoquin mojado",
-    "la Av. de las Americas de Guayaquil con trafico pesado",
-    "una via de montana entre Quito y los valles con neblina",
-    "la carretera Cuenca-Molleturo bajando de El Cajas",
-    "una calle empinada del centro de Quito bajo lluvia",
-    "un tramo recto de la costa entre Manta y Portoviejo con sol fuerte",
-    "un desvio de tierra hacia Paute lleno de baches",
-    "el malecon de Guayaquil de noche con poca iluminacion",
-    "una curva ciega en la via Cuenca-Giron",
-    "un cruce escolar en una parroquia de Azuay a la hora de salida",
-    "la panamericana cerca de Riobamba con viento cruzado fuerte",
-    "una via inundada tras aguacero en Los Rios",
-    "el ingreso a un mercado de Loja con peatones y triciclos",
-]
+ESCENOGRAFIAS_POR_ZONA = {
+    "Cuenca": [
+        "la Av. de las Americas (Circunvalacion de Cuenca), una avenida ancha de alto trafico",
+        "una calle adoquinada del Centro Historico de Cuenca, angosta y con pendiente",
+        "la subida a Turi, una via en cuesta a las afueras de Cuenca",
+        "la via Cuenca-Molleturo bajando de El Cajas, carretera de montana",
+        "la via Cuenca-Giron, carretera interprovincial con curvas",
+        "la Av. Ordonez Lasso, una avenida amplia del noroeste de Cuenca",
+        "la autopista Cuenca-Azogues, via rapida de dos carriles",
+        "la Av. Loja de Cuenca, avenida urbana de doble sentido",
+    ],
+    "Quito": [
+        "la Av. Gonzalez Suarez de Quito junto al bordillo del valle",
+        "la Av. de los Shyris de Quito con trafico denso",
+        "la bajada de la Av. Simon Bolivar con neblina",
+        "el Centro Historico de Quito con calles empinadas y adoquin",
+        "la Av. Mariscal Sucre (Occidental) en hora pico",
+        "la via a los valles (Cumbaya-Tumbaco) con curvas",
+    ],
+    "Guayaquil": [
+        "la Av. de las Americas de Guayaquil con trafico pesado",
+        "la Perimetral de Guayaquil junto a camiones de carga",
+        "el centro de Guayaquil con calor y trafico denso",
+        "la via a Samborondon con lluvia tropical repentina",
+        "la via a la costa (Guayaquil-Salinas) con sol fuerte",
+    ],
+    "Costa": [
+        "una playa de Manabi con arena arrastrada sobre el asfalto",
+        "un tramo recto entre Manta y Portoviejo con sol fuerte",
+        "la via Jipijapa-Guayaquil con lluvia tropical",
+    ],
+    "Sierra": [
+        "un camino de tercer orden de tierra y lastre en la sierra",
+        "una via de paramo con neblina espesa",
+        "una calle empinada de pueblo andino con adoquin",
+    ],
+}
+
+# Lista plana de respaldo (si no hay zona reconocida)
+ESCENOGRAFIAS = ESCENOGRAFIAS_POR_ZONA["Cuenca"]
 
 CLIMAS = ["lluvia", "neblina", "sol", "noche"]
 
@@ -116,28 +139,47 @@ def nuevo_escenario(datos: EscenarioIn, db: Session = Depends(get_db)):
     if USE_MOCK:
         return {"modo": "mock", "escenario": random.choice(ESCENARIOS_MOCK)}
 
-    geo = contexto_geografico(perfil.get("ciudad", ""), perfil.get("provincia", ""), perfil.get("zona", "Sierra"))
-    tipo_uso = perfil.get("tipo_uso", "urbano")
-    # Rotamos escenografia y clima al azar para forzar variedad
-    escenografia = random.choice(ESCENOGRAFIAS)
+    ciudad = perfil.get("ciudad", "") or ""
+    zona_raw = perfil.get("zona", "Sierra") or "Sierra"
+    zona = random.choice(zona_raw) if isinstance(zona_raw, list) and zona_raw else (zona_raw or "Sierra")
+    geo = contexto_geografico(ciudad, perfil.get("provincia", ""), zona)
+    # Soporta multiples perfiles: si el usuario eligio varios tipos de uso,
+    # alterna al azar entre ellos en cada escenario -- asi alguien con
+    # "aventura + urbano" ve ambos contextos con el tiempo, no solo uno.
+    tipo_uso_raw = perfil.get("tipo_uso", "urbano")
+    tipo_uso = random.choice(tipo_uso_raw) if isinstance(tipo_uso_raw, list) and tipo_uso_raw else (tipo_uso_raw or "urbano")
+
+    # Elegir escenografia COHERENTE con la ubicacion del motociclista.
+    # Antes se elegia al azar de TODAS las ciudades, lo que mezclaba lugares de
+    # distintas urbes (p.ej. Av. Gonzalez Suarez de Quito "cerca de Turi" de Cuenca).
+    ciudad_l = ciudad.lower()
+    if "cuenca" in ciudad_l:       claves = "Cuenca"
+    elif "quito" in ciudad_l:      claves = "Quito"
+    elif "guayaquil" in ciudad_l:  claves = "Guayaquil"
+    elif zona.lower() == "costa":  claves = "Costa"
+    else:                          claves = "Cuenca"  # default del proyecto (UPS Cuenca)
+    pool = ESCENOGRAFIAS_POR_ZONA.get(claves, ESCENOGRAFIAS_POR_ZONA["Cuenca"])
+    escenografia = random.choice(pool)
     clima_sug = random.choice(CLIMAS)
 
     prompt = f"""Genera UN escenario UNICO y variado de decision de seguridad vial para un motociclista ecuatoriano.
 
 Perfil del motociclista: {tipo_uso}, {perfil.get('anos_experiencia', 1)} anos de experiencia.
-{geo}
+Contexto: motociclista ecuatoriano. Clima serrano variable (neblina matinal, lluvia vespertina).
 
-AMBIENTA el escenario EN O CERCA DE: {escenografia}.
+UBICA el escenario EXACTAMENTE en: {escenografia}.
+Usa SOLO ese lugar. NO lo combines con otro sector, avenida o barrio. NO digas "en el corazon de" ni "cerca de" otro lugar. El unico lugar mencionado en toda la narrativa debe ser ese.
 Clima sugerido: {clima_sug}.
-NO uses siempre El Cajas ni el mismo lugar; VARIA la ubicacion, el clima y el tipo de riesgo.
+NO uses siempre El Cajas ni el mismo lugar; VARIA el clima y el tipo de riesgo.
+IMPORTANTE: usa UNICAMENTE el lugar indicado arriba. NO combines calles ni sectores de ciudades distintas. Si nombras una via, debe ser real y pertenecer a esa misma ciudad.
 Riesgos posibles (elige uno distinto cada vez): superficie resbalosa, punto ciego, peaton imprevisto,
 adelantamiento, curva ciega, animal en via, viento, bache, vehiculo detenido, zona escolar, agua en via.
 
 Responde SOLO con JSON valido, sin markdown ni texto extra, con esta estructura EXACTA:
-{{"titulo":"titulo corto y evocador (menciona el lugar)",
+{{"titulo":"titulo corto y evocador (usa SOLO el lugar indicado, sin combinarlo con otro)",
 "clima":"{clima_sug}",
 "via":"urbana|carretera|curva",
-"narrativa":"situacion en segunda persona, 2-3 frases, tension real, mencionando el lugar especifico",
+"narrativa":"situacion en segunda persona, 2-3 frases, tension real. Menciona UNICAMENTE el lugar indicado, sin agregar otros sectores ni barrios",
 "opciones":[{{"id":"a","texto":"..."}},{{"id":"b","texto":"..."}},{{"id":"c","texto":"..."}}],
 "correcta":"a|b|c",
 "consecuencias":{{"a":"que pasa si elige a (1-2 frases)","b":"...","c":"..."}},

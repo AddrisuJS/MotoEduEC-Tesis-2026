@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { useAuth } from "../../lib/useAuth"
@@ -8,7 +8,7 @@ const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8010"
 type Pregunta = { id: number; pregunta: string; opciones: string[]; correcta: string; explicacion: string; categoria: string }
 
 export default function ArcadePage() {
-  const { usuario, listo } = useAuth()
+  const { usuario, listo } = useAuth(true, true)
   const [fase, setFase] = useState<"menu" | "jugando" | "resultado">("menu")
   const [modo, setModo] = useState<"relampago" | "desafio">("relampago")
   const [preguntas, setPreguntas] = useState<Pregunta[]>([])
@@ -108,7 +108,7 @@ export default function ArcadePage() {
       {stats && (
         <div style={{ ...card, display: "flex", justifyContent: "space-around", textAlign: "center", marginBottom: "1rem", padding: "1rem" }}>
           <div><div style={{ color: "#facc15", fontSize: "1.3rem", fontWeight: 800 }}>{stats.xp_total}</div><div style={{ color: "#94a3b8", fontSize: "0.7rem" }}>XP</div></div>
-          <div><div style={{ color: "#fb923c", fontSize: "1.3rem", fontWeight: 800 }}>🔥 {stats.racha_actual}</div><div style={{ color: "#94a3b8", fontSize: "0.7rem" }}>RACHA</div></div>
+          <div><div style={{ color: "#FAC74C", fontSize: "1.3rem", fontWeight: 800 }}>🔥 {stats.racha_actual}</div><div style={{ color: "#94a3b8", fontSize: "0.7rem" }}>RACHA</div></div>
           <div><div style={{ color: "#60a5fa", fontSize: "1.3rem", fontWeight: 800 }}>#{stats.posicion ?? "—"}</div><div style={{ color: "#94a3b8", fontSize: "0.7rem" }}>RANKING</div></div>
         </div>
       )}
@@ -118,7 +118,7 @@ export default function ArcadePage() {
         </div>
       )}
       {stats?.racha_en_riesgo && (
-        <div style={{ background: "rgba(251,146,60,0.12)", border: "1px solid #fb923c", color: "#fdba74", borderRadius: 10, padding: "0.6rem 0.9rem", fontSize: "0.82rem", marginBottom: "1rem", textAlign: "center" }}>
+        <div style={{ background: "rgba(251,146,60,0.12)", border: "1px solid #FAC74C", color: "#fdba74", borderRadius: 10, padding: "0.6rem 0.9rem", fontSize: "0.82rem", marginBottom: "1rem", textAlign: "center" }}>
           🔥 ¡Tu racha de {stats.racha_actual} días está en riesgo! Juega hoy para no perderla.
         </div>
       )}
@@ -210,7 +210,7 @@ export default function ArcadePage() {
         <div style={{ color: "#facc15", fontSize: "2rem", fontWeight: 800, margin: "0.6rem 0" }}>+{resultado?.puntos_partida ?? 0} XP</div>
         {resultado?.bonus_velocidad > 0 && <p style={{ color: "#94a3b8", fontSize: "0.82rem" }}>⚡ Incluye {resultado.bonus_velocidad} pts de bonus por velocidad</p>}
         <div style={{ display: "flex", justifyContent: "space-around", margin: "1.2rem 0", textAlign: "center" }}>
-          <div><div style={{ color: "#fb923c", fontSize: "1.2rem", fontWeight: 800 }}>🔥 {resultado?.racha_actual}</div><div style={{ color: "#94a3b8", fontSize: "0.7rem" }}>RACHA</div></div>
+          <div><div style={{ color: "#FAC74C", fontSize: "1.2rem", fontWeight: 800 }}>🔥 {resultado?.racha_actual}</div><div style={{ color: "#94a3b8", fontSize: "0.7rem" }}>RACHA</div></div>
           <div><div style={{ color: "#facc15", fontSize: "1.2rem", fontWeight: 800 }}>{resultado?.xp_total}</div><div style={{ color: "#94a3b8", fontSize: "0.7rem" }}>XP TOTAL</div></div>
           <div><div style={{ color: "#60a5fa", fontSize: "1.2rem", fontWeight: 800 }}>#{resultado?.posicion_ranking}</div><div style={{ color: "#94a3b8", fontSize: "0.7rem" }}>RANKING</div></div>
         </div>

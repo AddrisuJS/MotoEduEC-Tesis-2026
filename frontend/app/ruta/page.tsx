@@ -53,7 +53,7 @@ function Escena({ clima, via }: { clima: string, via: string }) {
 }
 
 export default function RutaSeguraPage() {
-  const { usuario, listo } = useAuth()
+  const { usuario, listo } = useAuth(true, true)
   const [esc, setEsc] = useState<any>(null)
   const [eleccion, setEleccion] = useState<string | null>(null)
   const [premio, setPremio] = useState<any>(null)

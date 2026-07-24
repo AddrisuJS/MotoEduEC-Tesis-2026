@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useAuth } from "../../lib/useAuth"
@@ -6,7 +6,7 @@ import { useAuth } from "../../lib/useAuth"
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8010"
 
 export default function TopPage() {
-  const { usuario, listo } = useAuth()
+  const { usuario, listo } = useAuth(true, true)
   const [top, setTop] = useState<any[]>([])
   const [cargando, setCargando] = useState(true)
 
@@ -55,7 +55,7 @@ export default function TopPage() {
                   </div>
                   <div style={{ color: "#64748b", fontSize: "0.72rem" }}>{j.partidas} partidas · {j.aciertos} aciertos</div>
                 </div>
-                {j.racha > 0 && <div style={{ color: "#fb923c", fontSize: "0.82rem", fontWeight: 700 }}>🔥{j.racha}</div>}
+                {j.racha > 0 && <div style={{ color: "#FAC74C", fontSize: "0.82rem", fontWeight: 700 }}>🔥{j.racha}</div>}
                 <div style={{ color: "#facc15", fontWeight: 800, fontSize: "0.95rem" }}>{j.xp} XP</div>
               </div>
             )

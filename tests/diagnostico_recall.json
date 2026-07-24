@@ -1,0 +1,847 @@
+{
+  "fecha": "2026-07-15T00:18:40.045678",
+  "terminos_evaluados": 313,
+  "hits": 231,
+  "recall_global": 0.738,
+  "corpus_gap": 39,
+  "retrieval_miss": 43,
+  "pct_fallos_por_corpus": 47.6,
+  "pct_fallos_por_recuperacion": 52.4,
+  "techo_alcanzable_afinando_recuperacion": 0.875,
+  "detalle": [
+    {
+      "id": 4,
+      "categoria": "velocidad",
+      "recall": 1.0,
+      "hits": [
+        "multa",
+        "puntos",
+        "licencia",
+        "exceso",
+        "velocidad"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": []
+    },
+    {
+      "id": 5,
+      "categoria": "velocidad",
+      "recall": 0.8,
+      "hits": [
+        "20",
+        "km/h",
+        "velocidad",
+        "zona"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": [
+        "peatonal"
+      ]
+    },
+    {
+      "id": 6,
+      "categoria": "documentos",
+      "recall": 1.0,
+      "hits": [
+        "licencia",
+        "matrícula",
+        "matricula",
+        "soat",
+        "documentos",
+        "obligatorio"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": []
+    },
+    {
+      "id": 7,
+      "categoria": "documentos",
+      "recall": 1.0,
+      "hits": [
+        "soat",
+        "seguro",
+        "accidentes",
+        "tránsito",
+        "transito",
+        "obligatorio",
+        "gastos"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": []
+    },
+    {
+      "id": 8,
+      "categoria": "documentos",
+      "recall": 1.0,
+      "hits": [
+        "revisión",
+        "tecnica",
+        "vehicular",
+        "rtv",
+        "obligatoria",
+        "ant"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": []
+    },
+    {
+      "id": 9,
+      "categoria": "documentos",
+      "recall": 0.667,
+      "hits": [
+        "matrícula",
+        "matricula",
+        "anual",
+        "ant"
+      ],
+      "corpus_gap": [
+        "renovación"
+      ],
+      "retrieval_miss": [
+        "requisitos"
+      ]
+    },
+    {
+      "id": 10,
+      "categoria": "documentos",
+      "recall": 0.6,
+      "hits": [
+        "soat",
+        "seguro",
+        "obligatorio"
+      ],
+      "corpus_gap": [
+        "privado",
+        "complementa"
+      ],
+      "retrieval_miss": []
+    },
+    {
+      "id": 11,
+      "categoria": "equipamiento",
+      "recall": 1.0,
+      "hits": [
+        "casco",
+        "obligatorio",
+        "lotttsv",
+        "ley",
+        "ece",
+        "certificación"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": []
+    },
+    {
+      "id": 12,
+      "categoria": "equipamiento",
+      "recall": 0.5,
+      "hits": [
+        "chaleco",
+        "reflectivo",
+        "obligatorio"
+      ],
+      "corpus_gap": [
+        "nocturno",
+        "comercial"
+      ],
+      "retrieval_miss": [
+        "delivery"
+      ]
+    },
+    {
+      "id": 13,
+      "categoria": "equipamiento",
+      "recall": 1.0,
+      "hits": [
+        "ece",
+        "22.06",
+        "europeo",
+        "estándar",
+        "estandar",
+        "casco",
+        "seguridad"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": []
+    },
+    {
+      "id": 14,
+      "categoria": "equipamiento",
+      "recall": 0.833,
+      "hits": [
+        "guantes",
+        "protección",
+        "ce",
+        "nivel",
+        "seguridad"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": [
+        "articulaciones"
+      ]
+    },
+    {
+      "id": 15,
+      "categoria": "equipamiento",
+      "recall": 0.5,
+      "hits": [
+        "chaqueta",
+        "protecciones",
+        "ce"
+      ],
+      "corpus_gap": [
+        "espalda"
+      ],
+      "retrieval_miss": [
+        "hombros",
+        "codos"
+      ]
+    },
+    {
+      "id": 16,
+      "categoria": "equipamiento",
+      "recall": 0.833,
+      "hits": [
+        "botas",
+        "tobillo",
+        "protección",
+        "conduccion",
+        "seguridad"
+      ],
+      "corpus_gap": [
+        "rigida"
+      ],
+      "retrieval_miss": []
+    },
+    {
+      "id": 17,
+      "categoria": "sanciones",
+      "recall": 1.0,
+      "hits": [
+        "multa",
+        "retención",
+        "retencion",
+        "casco",
+        "infracción",
+        "sanción",
+        "vehiculo"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": []
+    },
+    {
+      "id": 18,
+      "categoria": "sanciones",
+      "recall": 1.0,
+      "hits": [
+        "puntos",
+        "licencia",
+        "descuento",
+        "infracciones",
+        "sistema"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": []
+    },
+    {
+      "id": 19,
+      "categoria": "sanciones",
+      "recall": 0.667,
+      "hits": [
+        "retención",
+        "vehiculo",
+        "motocicleta",
+        "ant"
+      ],
+      "corpus_gap": [
+        "procedimiento"
+      ],
+      "retrieval_miss": [
+        "causas"
+      ]
+    },
+    {
+      "id": 20,
+      "categoria": "sanciones",
+      "recall": 0.5,
+      "hits": [
+        "multa",
+        "alcohol",
+        "sanción"
+      ],
+      "corpus_gap": [
+        "embriagado",
+        "privación",
+        "libertad"
+      ],
+      "retrieval_miss": []
+    },
+    {
+      "id": 21,
+      "categoria": "normativa",
+      "recall": 0.333,
+      "hits": [
+        "prohibido",
+        "carril"
+      ],
+      "corpus_gap": [
+        "prohibida"
+      ],
+      "retrieval_miss": [
+        "zigzag",
+        "peligrosa",
+        "lotttsv"
+      ]
+    },
+    {
+      "id": 22,
+      "categoria": "normativa",
+      "recall": 0.6,
+      "hits": [
+        "adelantar",
+        "prohibido",
+        "rebasar"
+      ],
+      "corpus_gap": [
+        "izquierda"
+      ],
+      "retrieval_miss": [
+        "derecha"
+      ]
+    },
+    {
+      "id": 23,
+      "categoria": "normativa",
+      "recall": 1.0,
+      "hits": [
+        "alcohol",
+        "alcoholemia",
+        "cero",
+        "prohibido",
+        "sanción",
+        "conducir"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": []
+    },
+    {
+      "id": 24,
+      "categoria": "normativa",
+      "recall": 0.714,
+      "hits": [
+        "pasajero",
+        "casco",
+        "obligatorio",
+        "dos",
+        "personas"
+      ],
+      "corpus_gap": [
+        "acompañante"
+      ],
+      "retrieval_miss": [
+        "permitido"
+      ]
+    },
+    {
+      "id": 25,
+      "categoria": "normativa",
+      "recall": 0.833,
+      "hits": [
+        "celular",
+        "telefono",
+        "prohibido",
+        "multa",
+        "conducir"
+      ],
+      "corpus_gap": [
+        "distracción"
+      ],
+      "retrieval_miss": []
+    },
+    {
+      "id": 26,
+      "categoria": "normativa",
+      "recall": 1.0,
+      "hits": [
+        "semáforo",
+        "semaforo",
+        "rojo",
+        "detenerse",
+        "obligatorio",
+        "infraccion"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": []
+    },
+    {
+      "id": 27,
+      "categoria": "licencias",
+      "recall": 0.667,
+      "hits": [
+        "licencia",
+        "tipo",
+        "motocicleta",
+        "ant"
+      ],
+      "corpus_gap": [
+        "cilindraje",
+        "categoría"
+      ],
+      "retrieval_miss": []
+    },
+    {
+      "id": 28,
+      "categoria": "licencias",
+      "recall": 0.571,
+      "hits": [
+        "18",
+        "años",
+        "licencia",
+        "ant"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": [
+        "edad",
+        "minima",
+        "requisitos"
+      ]
+    },
+    {
+      "id": 29,
+      "categoria": "licencias",
+      "recall": 0.833,
+      "hits": [
+        "renovar",
+        "licencia",
+        "médico",
+        "ant",
+        "examen"
+      ],
+      "corpus_gap": [
+        "periodicidad"
+      ],
+      "retrieval_miss": []
+    },
+    {
+      "id": 30,
+      "categoria": "conduccion",
+      "recall": 1.0,
+      "hits": [
+        "freno",
+        "delantero",
+        "trasero",
+        "ambos",
+        "gradualmente",
+        "frenado"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": []
+    },
+    {
+      "id": 31,
+      "categoria": "conduccion",
+      "recall": 0.8,
+      "hits": [
+        "distancia",
+        "segundos",
+        "seguimiento",
+        "velocidad"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": [
+        "seguridad"
+      ]
+    },
+    {
+      "id": 32,
+      "categoria": "conduccion",
+      "recall": 0.833,
+      "hits": [
+        "punto",
+        "ciego",
+        "espejo",
+        "carril",
+        "verificar"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": [
+        "hombro"
+      ]
+    },
+    {
+      "id": 33,
+      "categoria": "conduccion",
+      "recall": 0.8,
+      "hits": [
+        "curva",
+        "inclinación",
+        "velocidad",
+        "anticipación"
+      ],
+      "corpus_gap": [
+        "trazada"
+      ],
+      "retrieval_miss": []
+    },
+    {
+      "id": 34,
+      "categoria": "conduccion",
+      "recall": 0.8,
+      "hits": [
+        "fatiga",
+        "horas",
+        "seguridad",
+        "conducción"
+      ],
+      "corpus_gap": [
+        "descanso"
+      ],
+      "retrieval_miss": []
+    },
+    {
+      "id": 35,
+      "categoria": "lluvia",
+      "recall": 0.833,
+      "hits": [
+        "mojado",
+        "lluvia",
+        "ruedas",
+        "suavemente",
+        "frenos"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": [
+        "bloquear"
+      ]
+    },
+    {
+      "id": 36,
+      "categoria": "lluvia",
+      "recall": 0.833,
+      "hits": [
+        "aquaplaning",
+        "tracción",
+        "traccion",
+        "agua",
+        "velocidad"
+      ],
+      "corpus_gap": [
+        "prevención"
+      ],
+      "retrieval_miss": []
+    },
+    {
+      "id": 37,
+      "categoria": "lluvia",
+      "recall": 0.833,
+      "hits": [
+        "visibilidad",
+        "lluvia",
+        "luces",
+        "encendidas",
+        "obligatorio"
+      ],
+      "corpus_gap": [
+        "neblina"
+      ],
+      "retrieval_miss": []
+    },
+    {
+      "id": 38,
+      "categoria": "lluvia",
+      "recall": 0.667,
+      "hits": [
+        "lluvia",
+        "velocidad",
+        "reducir",
+        "peligro"
+      ],
+      "corpus_gap": [
+        "hidroplanación"
+      ],
+      "retrieval_miss": [
+        "charcos"
+      ]
+    },
+    {
+      "id": 39,
+      "categoria": "mantenimiento",
+      "recall": 1.0,
+      "hits": [
+        "fine-c",
+        "fine",
+        "combustible",
+        "instrumentos",
+        "neumáticos",
+        "eléctrico",
+        "control"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": []
+    },
+    {
+      "id": 40,
+      "categoria": "mantenimiento",
+      "recall": 0.714,
+      "hits": [
+        "presión",
+        "presion",
+        "psi",
+        "neumáticos",
+        "fabricante"
+      ],
+      "corpus_gap": [
+        "32"
+      ],
+      "retrieval_miss": [
+        "28"
+      ]
+    },
+    {
+      "id": 41,
+      "categoria": "mantenimiento",
+      "recall": 0.333,
+      "hits": [
+        "motor",
+        "mantenimiento"
+      ],
+      "corpus_gap": [
+        "kilometraje"
+      ],
+      "retrieval_miss": [
+        "aceite",
+        "frecuencia",
+        "cambio"
+      ]
+    },
+    {
+      "id": 42,
+      "categoria": "mantenimiento",
+      "recall": 0.667,
+      "hits": [
+        "cadena",
+        "tensión",
+        "tension",
+        "desgaste"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": [
+        "ajuste",
+        "revision"
+      ]
+    },
+    {
+      "id": 43,
+      "categoria": "mantenimiento",
+      "recall": 0.667,
+      "hits": [
+        "frenos",
+        "pastillas",
+        "mantenimiento",
+        "seguridad"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": [
+        "desgaste",
+        "revision"
+      ]
+    },
+    {
+      "id": 44,
+      "categoria": "primeros_auxilios",
+      "recall": 1.0,
+      "hits": [
+        "911",
+        "accidente",
+        "herido",
+        "señalizar",
+        "senalizar",
+        "mover",
+        "emergencia"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": []
+    },
+    {
+      "id": 45,
+      "categoria": "primeros_auxilios",
+      "recall": 0.667,
+      "hits": [
+        "posición",
+        "inconsciente",
+        "lateral",
+        "seguridad"
+      ],
+      "corpus_gap": [
+        "recuperación"
+      ],
+      "retrieval_miss": [
+        "herido"
+      ]
+    },
+    {
+      "id": 46,
+      "categoria": "primeros_auxilios",
+      "recall": 0.833,
+      "hits": [
+        "hemorragia",
+        "herida",
+        "presión",
+        "directa",
+        "auxilios"
+      ],
+      "corpus_gap": [
+        "vendaje"
+      ],
+      "retrieval_miss": []
+    },
+    {
+      "id": 47,
+      "categoria": "primeros_auxilios",
+      "recall": 0.833,
+      "hits": [
+        "casco",
+        "quitar",
+        "accidentado",
+        "cervical",
+        "lesión"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": [
+        "experto"
+      ]
+    },
+    {
+      "id": 48,
+      "categoria": "tipos_moto",
+      "recall": 0.714,
+      "hits": [
+        "utilitaria",
+        "delivery",
+        "100",
+        "150",
+        "consumo"
+      ],
+      "corpus_gap": [
+        "cilindraje",
+        "económico"
+      ],
+      "retrieval_miss": []
+    },
+    {
+      "id": 49,
+      "categoria": "tipos_moto",
+      "recall": 0.333,
+      "hits": [
+        "carretera",
+        "distancia"
+      ],
+      "corpus_gap": [
+        "cilindraje"
+      ],
+      "retrieval_miss": [
+        "adventure",
+        "touring",
+        "larga"
+      ]
+    },
+    {
+      "id": 50,
+      "categoria": "tipos_moto",
+      "recall": 0.0,
+      "hits": [],
+      "corpus_gap": [],
+      "retrieval_miss": [
+        "enduro",
+        "off-road",
+        "sierra",
+        "terreno",
+        "suspensión",
+        "competición"
+      ]
+    },
+    {
+      "id": 51,
+      "categoria": "tipos_moto",
+      "recall": 0.833,
+      "hits": [
+        "scooter",
+        "automática",
+        "cvt",
+        "ciudad",
+        "combustible"
+      ],
+      "corpus_gap": [],
+      "retrieval_miss": [
+        "eficiencia"
+      ]
+    },
+    {
+      "id": 52,
+      "categoria": "normativa_avanzada",
+      "recall": 0.667,
+      "hits": [
+        "carril",
+        "motocicleta",
+        "permitido",
+        "prohibido"
+      ],
+      "corpus_gap": [
+        "exclusivo"
+      ],
+      "retrieval_miss": [
+        "bus"
+      ]
+    },
+    {
+      "id": 53,
+      "categoria": "normativa_avanzada",
+      "recall": 0.5,
+      "hits": [
+        "estacionamiento",
+        "infracción",
+        "prohibido"
+      ],
+      "corpus_gap": [
+        "acera",
+        "vereda",
+        "normativa"
+      ],
+      "retrieval_miss": []
+    },
+    {
+      "id": 54,
+      "categoria": "normativa_avanzada",
+      "recall": 0.333,
+      "hits": [
+        "escape",
+        "ruido"
+      ],
+      "corpus_gap": [
+        "modificaciones",
+        "ilegales",
+        "alteraciones"
+      ],
+      "retrieval_miss": [
+        "sanción"
+      ]
+    },
+    {
+      "id": 55,
+      "categoria": "normativa_avanzada",
+      "recall": 0.333,
+      "hits": [
+        "obligatorio",
+        "conducción"
+      ],
+      "corpus_gap": [
+        "nocturna",
+        "reflectivos"
+      ],
+      "retrieval_miss": [
+        "luces",
+        "visibilidad"
+      ]
+    }
+  ]
+}

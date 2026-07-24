@@ -161,6 +161,18 @@ INSTRUCCIONES:
 
 # ─── ENDPOINTS ───────────────────────────────────────────────
 
+@router.get("/existe/{email}", summary="Indica si un email ya tiene perfil creado")
+def perfil_existe(email: str, db: Session = Depends(get_db)):
+    row = db.execute(text(
+        "SELECT id, provincia, tipo_moto, anos_experiencia, nivel FROM usuarios WHERE email=:e"),
+        {"e": email}).fetchone()
+    if not row:
+        return {"existe": False}
+    return {"existe": True, "usuario_id": str(row[0]),
+            "perfil": {"provincia": row[1], "tipo_moto": row[2],
+                       "anos_experiencia": row[3], "nivel": row[4]}}
+
+
 @router.post("/crear", summary="Onboarding completo — crea el perfil del motociclista")
 def crear_perfil(
     datos: dict = Body(..., example={
@@ -183,6 +195,19 @@ def crear_perfil(
     4. zona (Sierra/Costa/Amazonia)
     5. objetivos[] de aprendizaje
     """
+    # ── Soporte de MULTIPLES tipos de uso (aditivo, no rompe lo existente) ──
+    # tipo_uso puede venir como string ("delivery") -- comportamiento de siempre --
+    # o como lista (["delivery","aventura"]) -- nuevo, para quien elige varios.
+    tipo_uso_raw = datos.get("tipo_uso", "urbano")
+    tipos_uso = tipo_uso_raw if isinstance(tipo_uso_raw, list) else [tipo_uso_raw]
+    tipos_uso = [t for t in tipos_uso if t] or ["urbano"]
+    datos["tipo_uso"] = tipos_uso[0]  # el primero sigue siendo el "principal" para clasificar (sin romper nada)
+
+    # Igual para zona: puede venir como string (siempre) o lista (nuevo, viaja/recorre varias)
+    zona_raw = datos.get("zona", "Sierra")
+    zonas_lista = zona_raw if isinstance(zona_raw, list) else [zona_raw]
+    zonas_lista = [z for z in zonas_lista if z] or ["Sierra"]
+
     # Clasificar perfil
     perfil_key  = _clasificar_perfil(datos)
     perfil_info = PERFILES[perfil_key]
@@ -199,11 +224,20 @@ def crear_perfil(
             "id":        usuario_id,
             "nombre":    datos.get("nombre", "Motociclista"),
             "email":     datos.get("email", f"{usuario_id[:8]}@motoedu.ec"),
-            "provincia": datos.get("zona", "Azuay"),
+            "provincia": zonas_lista[0],
             "tipo_moto": datos.get("tipo_uso", "urbano"),
             "anos":      datos.get("anos_experiencia", 0),
             "nivel":     nivel
         })
+        db.commit()
+
+        # Guardar TODOS los tipos de uso elegidos (tabla aditiva)
+        for i, t in enumerate(tipos_uso):
+            db.execute(text("""
+                INSERT INTO usuario_perfiles (usuario_id, tipo_uso, es_principal)
+                VALUES (:uid, :t, :principal)
+                ON CONFLICT (usuario_id, tipo_uso) DO NOTHING
+            """), {"uid": usuario_id, "t": t, "principal": (i == 0)})
         db.commit()
     except Exception as e:
         db.rollback()
@@ -216,7 +250,7 @@ def crear_perfil(
         "perfil_asignado":     perfil_info["nombre"],
         "perfil_key":          perfil_key,
         "nivel":               nivel,
-        "zona":                datos.get("zona", "Sierra"),
+        "zona":                zonas_lista,
         "moto_actual":         datos.get("moto_actual", "No especificada"),
         "descripcion_perfil":  perfil_info["descripcion"],
         "motos_tipicas":       perfil_info["motos_tipicas"],
@@ -229,6 +263,22 @@ def crear_perfil(
         "siguiente_paso":      "/m2/educacion/categorias",
         "mensaje":             f"Bienvenido {datos.get('nombre','Motociclista')} — perfil {perfil_info['nombre']} configurado exitosamente"
     }
+
+
+@router.get("/{usuario_id}/tipos-uso", summary="Lista TODOS los tipos de uso elegidos por el usuario")
+def tipos_uso_usuario(usuario_id: str, db: Session = Depends(get_db)):
+    """Devuelve todos los tipos de uso del usuario (uno o varios). Si no
+    tiene registros en usuario_perfiles (participantes anteriores al
+    multi-perfil), cae al tipo_moto unico de la tabla usuarios."""
+    filas = db.execute(text(
+        "SELECT tipo_uso, es_principal FROM usuario_perfiles WHERE usuario_id=:u ORDER BY es_principal DESC"),
+        {"u": usuario_id}).fetchall()
+    if filas:
+        return {"tipos_uso": [f[0] for f in filas], "principal": filas[0][0], "multiple": len(filas) > 1}
+    # compatibilidad con usuarios ya existentes (un solo perfil, sin fila en la tabla nueva)
+    row = db.execute(text("SELECT tipo_moto FROM usuarios WHERE id=:u"), {"u": usuario_id}).fetchone()
+    tipo = row[0] if row else "urbano"
+    return {"tipos_uso": [tipo], "principal": tipo, "multiple": False}
 
 
 @router.get("/perfiles", summary="Lista los 6 perfiles de motociclista disponibles")

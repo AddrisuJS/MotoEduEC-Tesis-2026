@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect, useRef } from 'react'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8010'
@@ -146,7 +146,7 @@ export default function DashboardPage() {
               <div key={ins.id} style={{ background:"#0f172a", borderRadius:"10px", padding:"0.75rem", textAlign:"center", border:"1px solid #334155" }}>
                 <div style={{ fontSize:"1.5rem" }}>{ins.icono}</div>
                 <p style={{ color:"#f1f5f9", fontSize:"0.75rem", margin:"4px 0 2px" }}>{ins.nombre}</p>
-                <span style={{ color:"#f97316", fontSize:"0.7rem" }}>+{ins.puntos} pts</span>
+                <span style={{ color:"#FDB500", fontSize:"0.7rem" }}>+{ins.puntos} pts</span>
               </div>
             ))}
           </div>
@@ -157,15 +157,15 @@ export default function DashboardPage() {
           <h2 style={{ color:"#f1f5f9", marginBottom:"1.25rem", fontSize:"1.1rem" }}>🔧 Estado del Sistema</h2>
           {[
             { modulo:"M1 Perfil",      estado:"Activo",         color:"#22c55e" },
-            { modulo:"M2 Educacion",   estado:"Mock activo",    color:"#f59e0b" },
+            { modulo:"M2 Educacion",   estado:"Claude API",     color:"#22c55e" },
             { modulo:"M3 RAG",         estado:"ChromaDB OK",    color:"#22c55e" },
             { modulo:"M4 Motos",       estado:"48 modelos",     color:"#22c55e" },
             { modulo:"M5 Llantas",     estado:"16 modelos",     color:"#22c55e" },
-            { modulo:"M6 Historia",    estado:"Mock activo",    color:"#f59e0b" },
+            { modulo:"M6 Historia",    estado:"Activo",         color:"#22c55e" },
             { modulo:"M7 Gamificacion",estado:"12 insignias",   color:"#22c55e" },
-            { modulo:"Claude API",     estado:"Pendiente key",  color:"#ef4444" },
+            { modulo:"Claude API",     estado:"Conectada",      color:"#22c55e" },
             { modulo:"PostgreSQL",     estado:"Healthy",        color:"#22c55e" },
-            { modulo:"ChromaDB",       estado:"200 docs",       color:"#22c55e" },
+            { modulo:"ChromaDB",       estado:"220 docs",       color:"#22c55e" },
           ].map(s => (
             <div key={s.modulo} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"0.5rem" }}>
               <span style={{ color:"#94a3b8", fontSize:"0.8rem" }}>{s.modulo}</span>

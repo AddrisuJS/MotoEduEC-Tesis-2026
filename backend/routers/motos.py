@@ -3,7 +3,7 @@ M4 — Recomendador de Motocicletas
 Sprint 2 — Con catalogo real + Claude API mock
 MotoEdu EC — UPS Cuenca 2026
 """
-from fastapi import APIRouter, Depends, Body, Query
+from fastapi import APIRouter, Depends, Body, Query, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from models.database import get_db
@@ -35,10 +35,19 @@ async def recomendar(
     db: Session = Depends(get_db)
 ):
     perfil     = datos.get("perfil", {})
-    tipo_uso   = perfil.get("tipo_uso", "urbano").lower()
+    # Soporta tipo_uso como string ("aventura") o lista (["aventura","urbano"])
+    # -- retrocompatible: si viene un solo string, funciona exactamente igual que antes.
+    tipo_uso_raw = perfil.get("tipo_uso", "urbano")
+    tipos_uso_lista = [t.lower() for t in (tipo_uso_raw if isinstance(tipo_uso_raw, list) else [tipo_uso_raw])]
     precio_max = perfil.get("presupuesto_max", 5000)
 
-    tipos = TIPO_POR_PERFIL.get(tipo_uso, ["Utilitaria", "Naked/Street"])
+    # Unir los tipos de moto de TODOS los perfiles elegidos (sin duplicar)
+    tipos = []
+    for tu in tipos_uso_lista:
+        for t in TIPO_POR_PERFIL.get(tu, ["Utilitaria", "Naked/Street"]):
+            if t not in tipos:
+                tipos.append(t)
+    tipo_uso = tipos_uso_lista[0]  # para el prompt/contexto, se usa el principal
     tipos_str = ", ".join([f"'{t}'" for t in tipos])
 
     catalogo = db.execute(text(f"""
@@ -133,3 +142,88 @@ def listar_tipos(db: Session = Depends(get_db)):
         "SELECT t.nombre, t.descripcion, COUNT(m.id) AS cantidad FROM tipos_moto t LEFT JOIN motocicletas m ON t.id = m.tipo_id GROUP BY t.id ORDER BY cantidad DESC"
     )).mappings().all()
     return {"tipos": [dict(r) for r in result]}
+
+
+# ═══════════════════════════════════════════════════════════════
+#  CRUD DE ADMIN + AUTOCOMPLETADO CON IA (motos y llantas)
+#  El admin puede subir modelos nuevos. Claude sugiere cilindrada,
+#  potencia, peso y rango de precio como PUNTO DE PARTIDA editable
+#  -- el admin siempre revisa y confirma antes de guardar.
+# ═══════════════════════════════════════════════════════════════
+from services.claude_service import client, CLAUDE_MODEL_HAIKU, USE_MOCK, limpiar_json
+from fastapi import Body, Depends
+from sqlalchemy.orm import Session
+import json as _json
+
+
+@router.post("/admin/autocompletar", summary="Sugiere datos tecnicos de una moto con IA (editable)")
+def autocompletar_moto(datos: dict = Body(...)):
+    marca = datos.get("marca", "")
+    modelo = datos.get("modelo", "")
+    if not marca or not modelo:
+        raise HTTPException(400, "marca y modelo son requeridos")
+
+    if USE_MOCK:
+        return {"sugerencia": {"cilindrada_cc": 150, "potencia_hp": 12.5, "peso_kg": 130,
+                "precio_min_usd": 1800, "precio_max_usd": 2400,
+                "uso_recomendado": "Uso urbano y de carretera ligera"},
+                "advertencia": "Modo simulado (sin API key). Verifica estos datos manualmente."}
+
+    prompt = f"""Eres un experto en motocicletas del mercado ecuatoriano 2026.
+Para la moto {marca} {modelo}, da tu MEJOR ESTIMACION de sus datos tecnicos tipicos.
+Si no conoces el modelo exacto, estima segun motos similares de esa marca/segmento.
+Responde SOLO este JSON, sin texto adicional:
+{{"cilindrada_cc": numero, "potencia_hp": numero, "peso_kg": numero,
+ "precio_min_usd": numero, "precio_max_usd": numero,
+ "uso_recomendado": "texto corto"}}"""
+    try:
+        r = client.messages.create(model=CLAUDE_MODEL_HAIKU, max_tokens=300,
+                                    messages=[{"role": "user", "content": prompt}])
+        data = _json.loads(limpiar_json(r.content[0].text))
+        return {"sugerencia": data,
+                "advertencia": "Estimacion generada por IA. Verifica y corrige antes de guardar."}
+    except Exception as e:
+        raise HTTPException(500, f"No se pudo generar la sugerencia: {e}")
+
+
+@router.post("/admin/crear", summary="Admin: crea una moto nueva en el catalogo")
+def crear_moto(datos: dict = Body(...), db: Session = Depends(get_db)):
+    marca_row = db.execute(text("SELECT id FROM marcas_moto WHERE nombre ILIKE :n"),
+                            {"n": datos["marca"].strip()}).fetchone()
+    if not marca_row:
+        marca_row = db.execute(text("INSERT INTO marcas_moto (nombre) VALUES (:n) RETURNING id"),
+                                {"n": datos["marca"]}).fetchone()
+    tipo_row = db.execute(text("SELECT id FROM tipos_moto WHERE nombre ILIKE :n"),
+                           {"n": datos.get("tipo", "Naked/Street").strip()}).fetchone()
+    db.execute(text("""
+        INSERT INTO motocicletas (marca_id, tipo_id, modelo, anio, cilindrada_cc,
+            potencia_hp, peso_kg, precio_usd, uso_recomendado, disponible_ec)
+        VALUES (:marca_id, :tipo_id, :modelo, :anio, :cc, :hp, :peso, :precio, :uso, true)
+    """), {"marca_id": marca_row[0], "tipo_id": tipo_row[0] if tipo_row else None,
+           "modelo": datos["modelo"], "anio": datos.get("anio", 2026),
+           "cc": datos.get("cilindrada_cc"), "hp": datos.get("potencia_hp"),
+           "peso": datos.get("peso_kg"),
+           "precio": datos.get("precio_usd") or datos.get("precio_min_usd"),
+           "uso": datos.get("uso_recomendado", "")})
+    db.commit()
+    return {"ok": True, "mensaje": f"Moto {datos['marca']} {datos['modelo']} agregada al catalogo"}
+
+
+@router.put("/admin/{moto_id}", summary="Admin: edita una moto existente")
+def editar_moto(moto_id: int, datos: dict = Body(...), db: Session = Depends(get_db)):
+    db.execute(text("""
+        UPDATE motocicletas SET modelo=:modelo, anio=:anio, cilindrada_cc=:cc,
+            potencia_hp=:hp, peso_kg=:peso, precio_usd=:precio, uso_recomendado=:uso
+        WHERE id=:id
+    """), {"id": moto_id, "modelo": datos.get("modelo"), "anio": datos.get("anio"),
+           "cc": datos.get("cilindrada_cc"), "hp": datos.get("potencia_hp"),
+           "peso": datos.get("peso_kg"), "precio": datos.get("precio_usd"),
+           "uso": datos.get("uso_recomendado")})
+    db.commit()
+    return {"ok": True}
+
+@router.get("/admin/opciones", summary="Marcas y tipos existentes, para los selectores del CRUD")
+def opciones_admin(db: Session = Depends(get_db)):
+    marcas = db.execute(text("SELECT nombre FROM marcas_moto ORDER BY nombre")).fetchall()
+    tipos = db.execute(text("SELECT nombre FROM tipos_moto ORDER BY nombre")).fetchall()
+    return {"marcas": [m[0] for m in marcas], "tipos": [t[0] for t in tipos]}

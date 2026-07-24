@@ -6,11 +6,22 @@ Tutor: Omar Gustavo Bravo Quezada Ph.D
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import perfil, educacion, asistente, motos, llantas, historia, gamificacion, estadisticas, auth, arcade, experimento, admin, garaje, duelos, ruta_segura
+from fastapi.responses import JSONResponse
+from routers import perfil, educacion, asistente, motos, llantas, historia, gamificacion, estadisticas, auth, arcade, experimento, admin, garaje, duelos, ruta_segura, admin_grupos, revision, ubicacion, perfil_estado
 from services.claude_service import USE_MOCK
+from middleware_control import instalar_guardia_control
+
+
+class UTF8JSONResponse(JSONResponse):
+    """Declara charset=utf-8 explicito en Content-Type. Sin esto, algunos
+    clientes HTTP en Windows (ej. PowerShell Invoke-RestMethod) pueden asumir
+    una codificacion distinta y corromper tildes/enies (mojibake tipo 'Ã©')."""
+    media_type = "application/json; charset=utf-8"
+
 
 app = FastAPI(
     title="MotoEdu EC — Tesis API",
+    default_response_class=UTF8JSONResponse,
     description="""
     ## Plataforma Inteligente de Educación Vial con IA Generativa
     
@@ -40,6 +51,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Guardia del experimento: bloquea al grupo CONTROL en los modulos de
+# aprendizaje y juego a nivel de API, no solo en el frontend.
+instalar_guardia_control(app)
+
 # Módulos de la tesis
 app.include_router(perfil.router,       prefix="/m1/perfil",      tags=["M1 — Perfil Inteligente"])
 app.include_router(educacion.router,    prefix="/m2/educacion",   tags=["M2 — Educación Vial"])
@@ -56,6 +71,10 @@ app.include_router(admin.router)
 app.include_router(garaje.router)
 app.include_router(duelos.router)
 app.include_router(ruta_segura.router)
+app.include_router(admin_grupos.router)
+app.include_router(revision.router)
+app.include_router(ubicacion.router)
+app.include_router(perfil_estado.router)
 
 @app.get("/", tags=["Home"])
 def root():

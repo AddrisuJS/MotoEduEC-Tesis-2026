@@ -1,92 +1,111 @@
 /* ═══════════════════════════════════════════════════════════
-   MotoEdu EC — RACING GLASS Design System
-   Racing (velocímetro rojo→ámbar) + iOS glassmorphism
+   MotoEdu EC — Design System
+   Paleta derivada del logo institucional:
+     azul marino #012350  ·  amarillo #FDB500  ·  dorado #FAC74C
+   Los nombres de variable se conservan (--race-*) para que ningun
+   componente existente deje de funcionar: solo cambia su valor.
    ═══════════════════════════════════════════════════════════ */
 :root {
-  /* Base carbono */
-  --bg-0: #0a0e1a;
-  --bg-1: #0f1424;
-  --bg-2: #141b2e;
+  /* Base — familia del azul marino del logo */
+  --bg-0: #04122B;
+  --bg-1: #061A3B;
+  --bg-2: #012350;
   --glass: rgba(255,255,255,0.06);
-  --glass-brd: rgba(255,255,255,0.14);
+  --glass-brd: rgba(253,181,0,0.16);
   --glass-hi: rgba(255,255,255,0.15);
 
-  /* Racing (velocímetro) */
-  --race-1: #ff3b30;
-  --race-2: #ff5930;
-  --race-3: #ff9500;
-  --race-grad: linear-gradient(90deg,#ff5930,#ff8c42);
-  --race-grad-v: linear-gradient(135deg,#ff5930,#ff9500);
+  /* Acento institucional (antes naranja "racing") */
+  --race-1: #E8A200;
+  --race-2: #FDB500;
+  --race-3: #FAC74C;
+  --race-grad:   linear-gradient(90deg,#FDB500,#FAC74C);
+  --race-grad-v: linear-gradient(135deg,#FDB500,#E8A200);
+
+  /* Alias semanticos — usar estos en codigo nuevo */
+  --azul:      #012350;
+  --azul-alto: #0A3372;
+  --amarillo:  #FDB500;
+  --dorado:    #FAC74C;
+  --grad-marca: linear-gradient(135deg,#012350,#FDB500);
 
   /* Eléctrico / datos */
   --blue: #3b82f6;
-  --blue-2: #60a5fa;
+  --blue-2: #7FB2FF;
   --cyan: #22d3ee;
 
   /* Estados */
-  --gold: #facc15;
+  --gold: #FDB500;
   --green: #4ade80;
   --purple: #c084fc;
 
   /* Texto */
-  --t0: #f1f5f9;
-  --t1: #94a3b8;
-  --t2: #64748b;
+  --t0: #F3F6FB;
+  --t1: #9FB2CE;
+  --t2: #6B82A6;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background:
-    radial-gradient(900px 500px at 85% -10%, rgba(255,89,48,0.10), transparent 60%),
-    radial-gradient(700px 500px at -10% 110%, rgba(59,130,246,0.10), transparent 55%),
-    linear-gradient(160deg, var(--bg-0) 0%, var(--bg-1) 55%, #1a1330 100%);
+    radial-gradient(900px 500px at 85% -10%, rgba(253,181,0,0.10), transparent 60%),
+    radial-gradient(700px 500px at -10% 110%, rgba(1,35,80,0.55), transparent 55%),
+    linear-gradient(160deg, var(--bg-0) 0%, var(--bg-1) 55%, #012350 100%);
   background-attachment: fixed;
   color: var(--t0);
   min-height: 100vh;
 }
-a { color: var(--blue-2); text-decoration: none; }
+a { color: var(--dorado); text-decoration: none; }
 button { font-family: inherit; cursor: pointer; }
 button:not(:disabled):active { transform: scale(0.97); }
-:focus-visible { outline: 2px solid var(--race-2); outline-offset: 2px; border-radius: 8px; }
-::selection { background: rgba(255,89,48,0.35); }
+:focus-visible { outline: 2px solid var(--amarillo); outline-offset: 2px; border-radius: 8px; }
+::selection { background: rgba(253,181,0,0.35); color: #04122B; }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--bg-0); }
-::-webkit-scrollbar-thumb { background: #2a3852; border-radius: 6px; border: 2px solid var(--bg-0); }
-::-webkit-scrollbar-thumb:hover { background: #3b4d6b; }
+::-webkit-scrollbar-thumb { background: #123B72; border-radius: 6px; border: 2px solid var(--bg-0); }
+::-webkit-scrollbar-thumb:hover { background: #1B5099; }
 
 /* ═══ Glass ═══ */
 .glass {
   background: var(--glass);
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-brd);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 var(--glass-hi);
 }
 .glass-sm {
   background: var(--glass);
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  border: 1px solid var(--glass-brd);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 14px;
 }
 
 /* ═══ Botones ═══ */
+/* El amarillo es claro: el texto va en azul marino para contraste AA */
 .btn-race {
-  background: var(--race-grad); color: #fff; border: none;
+  background: var(--race-grad); color: #04122B; border: none;
   border-radius: 14px; padding: 0.85rem 1.2rem; font-weight: 800; font-size: 0.95rem;
-  box-shadow: 0 10px 24px rgba(255,89,48,0.38);
+  box-shadow: 0 10px 24px rgba(253,181,0,0.30);
   transition: transform .15s, box-shadow .15s;
 }
-.btn-race:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(255,89,48,0.5); }
+.btn-race:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(253,181,0,0.45); }
 .btn-ghost {
   background: rgba(255,255,255,0.05); color: var(--t0);
-  border: 1px solid var(--glass-brd); border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.14); border-radius: 14px;
   padding: 0.85rem 1.2rem; font-weight: 700; font-size: 0.9rem;
   transition: all .15s;
 }
-.btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,89,48,0.4); }
+.btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: rgba(253,181,0,0.45); }
+
+/* Boton secundario azul marino, para acciones sobre superficie amarilla */
+.btn-azul {
+  background: var(--azul); color: #FFFFFF; border: 1px solid var(--azul-alto);
+  border-radius: 14px; padding: 0.85rem 1.2rem; font-weight: 800; font-size: 0.95rem;
+  transition: transform .15s, box-shadow .15s;
+}
+.btn-azul:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(1,35,80,0.6); }
 
 /* ═══ Animaciones ═══ */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -95,12 +114,11 @@ button:not(:disabled):active { transform: scale(0.97); }
 @keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
 @keyframes spinWheel { to { transform: rotate(360deg); } }
 @keyframes speedLine { 0% { transform: translateX(-100%); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateX(200%); opacity: 0; } }
-@keyframes glowPulse { 0%,100% { box-shadow: 0 0 20px rgba(250,204,21,0.3); } 50% { box-shadow: 0 0 40px rgba(250,204,21,0.6); } }
+@keyframes glowPulse { 0%,100% { box-shadow: 0 0 20px rgba(253,181,0,0.30); } 50% { box-shadow: 0 0 40px rgba(253,181,0,0.60); } }
 
 .fade-up { animation: fadeUp .4s ease both; }
 .pop-in { animation: popIn .5s cubic-bezier(.34,1.56,.64,1) both; }
 
-/* Skeleton shimmer */
 .skeleton {
   background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.04) 75%);
   background-size: 800px 100%;
@@ -115,11 +133,18 @@ button:not(:disabled):active { transform: scale(0.97); }
   .nav-burger { display: inline-flex !important; }
 }
 
-/* Toast (notificaciones de duelo) */
+/* Toast */
 .toast-wrap { position: fixed; top: 66px; right: 14px; z-index: 200; display: flex; flex-direction: column; gap: 8px; }
 .toast {
-  background: rgba(20,27,46,0.95); backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,89,48,0.5); border-radius: 14px;
+  background: rgba(1,35,80,0.96); backdrop-filter: blur(16px);
+  border: 1px solid rgba(253,181,0,0.5); border-radius: 14px;
   padding: 0.7rem 1rem; box-shadow: 0 12px 30px rgba(0,0,0,0.5);
   animation: fadeUp .35s ease both; max-width: 300px;
 }
+
+/* ═══ Utilidades de marca ═══ */
+.texto-marca {
+  background: var(--race-grad); -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.superficie-azul { background: var(--azul); border: 1px solid var(--azul-alto); border-radius: 18px; }

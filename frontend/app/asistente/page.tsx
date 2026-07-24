@@ -2,6 +2,76 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../../lib/useAuth'
 
+// Renderiza markdown basico (headers, negrita, citas, listas) como JSX,
+// sin depender de una libreria externa -evita reconstruir la imagen Docker-.
+function renderInline(texto: string, keyBase: string) {
+  const partes = texto.split(/(\*\*[^*]+\*\*)/g)
+  return partes.map((p, i) =>
+    p.startsWith("**") && p.endsWith("**")
+      ? <strong key={`${keyBase}-${i}`} style={{ color: "#f9a8d4", fontWeight: 700 }}>{p.slice(2, -2)}</strong>
+      : <span key={`${keyBase}-${i}`}>{p}</span>
+  )
+}
+
+function renderMarkdown(texto: string) {
+  const lineas = texto.split("\n")
+  const bloques: any[] = []
+  let listaActual: string[] = []
+  let citaActual: string[] = []
+
+  const cerrarLista = (key: string) => {
+    if (listaActual.length === 0) return
+    bloques.push(
+      <ul key={key} style={{ margin: "0.4rem 0", paddingLeft: "1.3rem" }}>
+        {listaActual.map((li, i) => <li key={i} style={{ marginBottom: "0.25rem" }}>{renderInline(li, `${key}-${i}`)}</li>)}
+      </ul>
+    )
+    listaActual = []
+  }
+  const cerrarCita = (key: string) => {
+    if (citaActual.length === 0) return
+    bloques.push(
+      <div key={key} style={{ borderLeft: "3px solid #ec4899", background: "rgba(236,72,153,0.08)", borderRadius: 8,
+        padding: "0.6rem 0.8rem", margin: "0.6rem 0", fontStyle: "italic", color: "#f1c9dd", fontSize: "0.85rem" }}>
+        {citaActual.map((l, i) => <div key={i}>{renderInline(l, `${key}-${i}`)}</div>)}
+      </div>
+    )
+    citaActual = []
+  }
+
+  lineas.forEach((linea, idx) => {
+    const t = linea.trim()
+    const key = `b${idx}`
+    if (t.startsWith(">")) {
+      cerrarLista(`ul-${idx}`)
+      citaActual.push(t.replace(/^>\s?/, "").replace(/^\*|\*$/g, ""))
+      return
+    }
+    cerrarCita(`q-${idx}`)
+    if (/^#{1,3}\s/.test(t)) {
+      cerrarLista(`ul-${idx}`)
+      const nivel = t.match(/^#+/)![0].length
+      const contenido = t.replace(/^#{1,3}\s*/, "")
+      bloques.push(
+        <div key={key} style={{ fontWeight: 800, color: "#e879f9", fontSize: nivel === 1 ? "1.05rem" : nivel === 2 ? "0.95rem" : "0.88rem",
+          marginTop: idx === 0 ? 0 : "0.7rem", marginBottom: "0.3rem" }}>
+          {renderInline(contenido, key)}
+        </div>
+      )
+    } else if (/^(\d+\.|-|\*)\s/.test(t)) {
+      listaActual.push(t.replace(/^(\d+\.|-|\*)\s*/, ""))
+    } else if (t === "") {
+      cerrarLista(`ul-${idx}`)
+    } else {
+      cerrarLista(`ul-${idx}`)
+      bloques.push(<div key={key} style={{ marginBottom: "0.3rem" }}>{renderInline(t, key)}</div>)
+    }
+  })
+  cerrarLista("ul-final")
+  cerrarCita("q-final")
+  return bloques
+}
+
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8010'
 
 interface Mensaje {
@@ -10,6 +80,7 @@ interface Mensaje {
   fuentes?: string[]
   docs?: number
   error?: boolean
+  historia?: { nombre: string; ciudad: string; historia: string; imagen_url?: string }
 }
 
 const PREGUNTAS_SUGERIDAS = [
@@ -21,8 +92,9 @@ const PREGUNTAS_SUGERIDAS = [
 ]
 
 export default function AsistentePage() {
-  const { usuario, listo } = useAuth()
+  const { usuario, listo } = useAuth(true, true)
   const [mensajes, setMensajes] = useState<Mensaje[]>([])
+  const [historiaModal, setHistoriaModal] = useState<Mensaje["historia"] | null>(null)
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
   const [estadoRAG, setEstado] = useState<any>(null)
@@ -74,6 +146,7 @@ export default function AsistentePage() {
           texto: d.respuesta || "No pude obtener una respuesta. Intenta reformular tu pregunta.",
           fuentes: d.fuentes,
           docs: d.documentos_recuperados,
+          historia: d.historia_relacionada || undefined,
         }])
       }
     } catch {
@@ -146,8 +219,8 @@ export default function AsistentePage() {
               borderRadius: m.rol === "usuario" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
               padding: "0.75rem 0.95rem",
             }}>
-              <div style={{ color: m.rol === "usuario" ? "#fff" : m.error ? "#fca5a5" : "#e2e8f0", fontSize: "0.9rem", lineHeight: 1.55, whiteSpace: "pre-wrap" }}>
-                {m.error && "⚠️ "}{m.texto}
+              <div style={{ color: m.rol === "usuario" ? "#fff" : m.error ? "#fca5a5" : "#e2e8f0", fontSize: "0.9rem", lineHeight: 1.55, whiteSpace: m.rol === "usuario" ? "pre-wrap" : "normal" }}>
+                {m.error && "⚠️ "}{m.rol === "asistente" && !m.error ? renderMarkdown(m.texto) : m.texto}
               </div>
               {m.fuentes && m.fuentes.length > 0 && (
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.55rem" }}>
@@ -160,6 +233,19 @@ export default function AsistentePage() {
                     <span style={{ color: "#64748b", fontSize: "0.65rem", alignSelf: "center" }}>{m.docs} docs</span>
                   )}
                 </div>
+              )}
+              {m.historia && (
+                <button onClick={() => setHistoriaModal(m.historia!)}
+                  style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.6rem", padding: "0.5rem 0.7rem",
+                    background: "rgba(236,72,153,0.1)", border: "1px solid rgba(236,72,153,0.35)", borderRadius: 8,
+                    cursor: "pointer", width: "100%", textAlign: "left" }}>
+                  {m.historia.imagen_url && (
+                    <img src={m.historia.imagen_url} alt="" style={{ width: 36, height: 36, borderRadius: 6, objectFit: "cover" }} />
+                  )}
+                  <span style={{ fontSize: "0.75rem", color: "#f9a8d4" }}>
+                    🏍️ Basado en un testimonio real de {m.historia.ciudad} — toca para ver
+                  </span>
+                </button>
               )}
             </div>
           </div>
@@ -191,6 +277,24 @@ export default function AsistentePage() {
           {loading ? "..." : "Enviar ➤"}
         </button>
       </div>
+
+      {historiaModal && (
+        <div onClick={() => setHistoriaModal(null)}
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100, padding: "1rem" }}>
+          <div onClick={e => e.stopPropagation()}
+            style={{ background: "#0f172a", border: "1px solid #334155", borderRadius: 16, padding: "1.2rem", maxWidth: 420, width: "100%", maxHeight: "80vh", overflowY: "auto" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.8rem" }}>
+              <div style={{ fontWeight: 700, color: "#f9a8d4", fontSize: "0.9rem" }}>🏍️ Testimonio real — {historiaModal.ciudad}</div>
+              <button onClick={() => setHistoriaModal(null)} style={{ background: "none", border: "none", color: "#94a3b8", fontSize: "1.2rem", cursor: "pointer" }}>✕</button>
+            </div>
+            {historiaModal.imagen_url && (
+              <img src={historiaModal.imagen_url} alt="" style={{ width: "100%", borderRadius: 10, marginBottom: "0.8rem", maxHeight: 260, objectFit: "cover" }} />
+            )}
+            <div style={{ color: "#e2e8f0", fontSize: "0.88rem", lineHeight: 1.6 }}>{historiaModal.historia}</div>
+            <div style={{ color: "#64748b", fontSize: "0.72rem", marginTop: "0.8rem" }}>— {historiaModal.nombre}</div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

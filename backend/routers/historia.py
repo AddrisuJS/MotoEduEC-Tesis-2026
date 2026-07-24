@@ -41,23 +41,30 @@ def contribuir_historia(
         "nombre":   "El Lobo de Cuenca",
         "ciudad":   "Cuenca",
         "anio":     "1995",
-        "historia": "Mi primera moto fue una Honda CB100..."
+        "historia": "Mi primera moto fue una Honda CB100...",
+        "imagen_base64": "data:image/jpeg;base64,... (opcional)"
     }),
     db: Session = Depends(get_db)
 ):
     if not datos.get("historia", "").strip():
         return {"error": "La historia no puede estar vacia"}
 
+    imagen = datos.get("imagen_base64", "") or None
+    # Limite de tamano razonable (~5MB en base64) para no saturar la BD
+    if imagen and len(imagen) > 7_000_000:
+        return {"error": "La imagen es demasiado grande. Usa una imagen mas liviana."}
+
     try:
         result = db.execute(text("""
-            INSERT INTO contribuciones_historia (nombre, ciudad, anio, historia, estado)
-            VALUES (:nombre, :ciudad, :anio, :historia, 'pendiente_revision')
+            INSERT INTO contribuciones_historia (nombre, ciudad, anio, historia, estado, imagen_url)
+            VALUES (:nombre, :ciudad, :anio, :historia, 'pendiente_revision', :imagen)
             RETURNING id
         """), {
             "nombre":   datos.get("nombre", "Anonimo"),
             "ciudad":   datos.get("ciudad", "Ecuador"),
             "anio":     datos.get("anio", ""),
-            "historia": datos.get("historia", "")
+            "historia": datos.get("historia", ""),
+            "imagen":   imagen
         })
         nuevo_id = result.fetchone()[0]
         db.commit()
@@ -77,38 +84,13 @@ def contribuir_historia(
 
 @router.get("/contribuciones/lista", summary="Lista las contribuciones comunitarias")
 def listar_contribuciones(db: Session = Depends(get_db)):
-    """Devuelve el muro de historias. Incluye el texto completo y el estado
-    de moderacion para que el frontend pueda marcarlas como 'en revision'."""
     result = db.execute(text("""
-        SELECT id, nombre, ciudad, anio, historia,
-               LEFT(historia, 140) AS preview,
-               estado, fecha_envio
+        SELECT id, nombre, ciudad, anio, historia, estado, fecha_envio, imagen_url
         FROM contribuciones_historia
+        WHERE estado = 'aprobada'
         ORDER BY fecha_envio DESC
     """)).mappings().all()
-    contribuciones = []
-    for r in result:
-        d = dict(r)
-        if d.get("fecha_envio"):
-            d["fecha_envio"] = str(d["fecha_envio"])[:16]
-        contribuciones.append(d)
-    aprobadas = sum(1 for c in contribuciones if c.get("estado") == "aprobada")
     return {
-        "total":          len(contribuciones),
-        "aprobadas":      aprobadas,
-        "en_revision":    len(contribuciones) - aprobadas,
-        "contribuciones": contribuciones
+        "total":          len(result),
+        "contribuciones": [dict(r) for r in result]
     }
-
-
-@router.patch("/contribuciones/{contribucion_id}/aprobar", summary="Aprueba una contribucion (moderacion)")
-def aprobar_contribucion(contribucion_id: int, db: Session = Depends(get_db)):
-    """Modera una historia comunitaria: la marca como aprobada y publicable."""
-    try:
-        db.execute(text("UPDATE contribuciones_historia SET estado='aprobada' WHERE id=:i"),
-                   {"i": contribucion_id})
-        db.commit()
-        return {"ok": True, "id": contribucion_id, "estado": "aprobada"}
-    except Exception as e:
-        db.rollback()
-        return {"error": str(e)}

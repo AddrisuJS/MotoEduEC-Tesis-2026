@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useAuth } from "../../lib/useAuth"
@@ -28,7 +28,7 @@ const RAREZA: any = {
 }
 
 export default function GarajePage() {
-  const { usuario, listo } = useAuth()
+  const { usuario, listo } = useAuth(true, true)
   const [data, setData] = useState<any>(null)
 
   useEffect(() => {
@@ -100,7 +100,7 @@ export default function GarajePage() {
           <div style={{ display: "inline-flex", gap: "1.2rem", background: "rgba(30,41,59,0.8)", border: "1px solid #334155", borderRadius: 14, padding: "0.6rem 1.4rem", marginTop: "0.4rem", flexWrap: "wrap", justifyContent: "center" }}>
             <span style={{ color: "#4ade80", fontWeight: 800, fontSize: "0.9rem" }}>🏆 {data.desbloqueados}/{data.total} piezas</span>
             <span style={{ color: "#facc15", fontWeight: 800, fontSize: "0.9rem" }}>⚡ {data.stats.xp} XP</span>
-            <span style={{ color: "#fb923c", fontWeight: 800, fontSize: "0.9rem" }}>🔥 {data.stats.racha} racha</span>
+            <span style={{ color: "#FAC74C", fontWeight: 800, fontSize: "0.9rem" }}>🔥 {data.stats.racha} racha</span>
             <span style={{ color: "#60a5fa", fontWeight: 800, fontSize: "0.9rem" }}>🕹️ {data.stats.partidas} partidas</span>
           </div>
         )}

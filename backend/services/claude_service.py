@@ -109,8 +109,13 @@ async def generar_leccion(categoria: str, perfil: dict, nivel: str) -> dict:
             "modo": "mock"
         }
 
-    tipo_uso = perfil.get("tipo_uso", "urbano")
-    zona     = perfil.get("zona", "Sierra")
+    _tuso_raw = perfil.get("tipo_uso", "urbano")
+
+
+    tipo_uso = ", ".join(_tuso_raw) if isinstance(_tuso_raw, list) else (_tuso_raw or "urbano")
+    _zona_raw = perfil.get("zona", "Sierra")
+
+    zona = (_zona_raw[0] if _zona_raw else "Sierra") if isinstance(_zona_raw, list) else (_zona_raw or "Sierra")
     moto     = perfil.get("moto_actual", "motocicleta")
     nombre   = perfil.get("nombre", "Motociclista")
     geo = contexto_geografico(perfil.get("ciudad",""), perfil.get("provincia",""), zona)
@@ -169,7 +174,10 @@ async def generar_quiz(categoria: str, perfil: dict, n: int = 10) -> list:
             })
         return preguntas
 
-    tipo_uso = perfil.get("tipo_uso", "urbano")
+    _tuso_raw = perfil.get("tipo_uso", "urbano")
+
+
+    tipo_uso = ", ".join(_tuso_raw) if isinstance(_tuso_raw, list) else (_tuso_raw or "urbano")
 
     prompt = f"""Genera {n} preguntas de opcion multiple sobre "{categoria}" para motociclistas {tipo_uso} en Ecuador.
 
@@ -212,8 +220,13 @@ async def asistente_rag(pregunta: str, perfil: dict, contexto_chromadb: list, hi
             "modo": "mock"
         }
 
-    tipo_uso = perfil.get("tipo_uso", "urbano")
-    zona     = perfil.get("zona", "Sierra")
+    _tuso_raw = perfil.get("tipo_uso", "urbano")
+
+
+    tipo_uso = ", ".join(_tuso_raw) if isinstance(_tuso_raw, list) else (_tuso_raw or "urbano")
+    _zona_raw = perfil.get("zona", "Sierra")
+
+    zona = (_zona_raw[0] if _zona_raw else "Sierra") if isinstance(_zona_raw, list) else (_zona_raw or "Sierra")
     anos     = perfil.get("anos_experiencia", 1)
     geo = contexto_geografico(perfil.get("ciudad",""), perfil.get("provincia",""), zona)
     
@@ -289,8 +302,13 @@ async def recomendar_moto(perfil: dict, catalogo: list) -> dict:
             "modo": "mock"
         }
 
-    tipo_uso    = perfil.get("tipo_uso", "urbano")
-    zona        = perfil.get("zona", "Sierra")
+    _tuso_raw = perfil.get("tipo_uso", "urbano")
+
+
+    tipo_uso = ", ".join(_tuso_raw) if isinstance(_tuso_raw, list) else (_tuso_raw or "urbano")
+    _zona_raw = perfil.get("zona", "Sierra")
+
+    zona = (_zona_raw[0] if _zona_raw else "Sierra") if isinstance(_zona_raw, list) else (_zona_raw or "Sierra")
     anos        = perfil.get("anos_experiencia", 1)
     presupuesto = perfil.get("presupuesto_max", 5000)
 

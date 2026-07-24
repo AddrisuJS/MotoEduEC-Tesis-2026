@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 import { useState, useEffect, useRef } from "react"
 
 /* ═══════════════════════════════════════════════════
@@ -69,8 +69,14 @@ export const IconCampana = ({ size = 20, color = "currentColor" }: IconProps) =>
 
 // ─── LOGO ───
 export const Logo = ({ size = 30 }: { size?: number }) => (
-  <div style={{ width: size, height: size, borderRadius: size * 0.3, background: "var(--race-grad-v)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(255,89,48,0.4)" }}>
-    <IconMoto size={size * 0.56} color="#fff" />
+  <div style={{
+    width: size, height: size, padding: Math.round(size * 0.14),
+    borderRadius: Math.round(size * 0.28), background: "#F6F8FC",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    boxShadow: "0 8px 22px rgba(0,0,0,0.35)", flexShrink: 0,
+  }}>
+    <img src="/logo-icono.png" alt="MotoEdu EC"
+         style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />
   </div>
 )
 
@@ -78,9 +84,9 @@ export const Logo = ({ size = 30 }: { size?: number }) => (
 export const LoaderMoto = ({ texto = "Cargando..." }: { texto?: string }) => (
   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1rem", padding: "3rem 1rem" }}>
     <div style={{ position: "relative", width: 70, height: 70 }}>
-      <div style={{ position: "absolute", inset: 0, borderRadius: "50%", background: "conic-gradient(from 0deg, transparent, rgba(255,89,48,0.15), var(--race-2))", animation: "spinWheel 0.9s linear infinite" }} />
+      <div style={{ position: "absolute", inset: 0, borderRadius: "50%", background: "conic-gradient(from 0deg, transparent, rgba(253,181,0,0.15), var(--race-2))", animation: "spinWheel 0.9s linear infinite" }} />
       <div style={{ position: "absolute", inset: 6, borderRadius: "50%", background: "var(--bg-1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <IconLlanta size={34} color="#ff9575" />
+        <IconLlanta size={34} color="#FAC74C" />
       </div>
     </div>
     <div style={{ color: "var(--t1)", fontSize: "0.85rem", fontWeight: 600 }}>{texto}</div>
@@ -115,10 +121,10 @@ export function CountUp({ to, dur = 1000, prefix = "", suffix = "" }: { to: numb
 // ─── Fondo de líneas de velocidad (para login/registro) ───
 export const SpeedBG = () => (
   <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
-    <div style={{ position: "absolute", top: "15%", left: "-10%", width: "60%", height: 2, background: "linear-gradient(90deg,transparent,rgba(255,89,48,0.5),transparent)", transform: "rotate(-8deg)" }} />
-    <div style={{ position: "absolute", top: "28%", left: "20%", width: "70%", height: 1, background: "linear-gradient(90deg,transparent,rgba(255,149,0,0.4),transparent)", transform: "rotate(-8deg)" }} />
+    <div style={{ position: "absolute", top: "15%", left: "-10%", width: "60%", height: 2, background: "linear-gradient(90deg,transparent,rgba(253,181,0,0.5),transparent)", transform: "rotate(-8deg)" }} />
+    <div style={{ position: "absolute", top: "28%", left: "20%", width: "70%", height: 1, background: "linear-gradient(90deg,transparent,rgba(250,199,76,0.4),transparent)", transform: "rotate(-8deg)" }} />
     <div style={{ position: "absolute", bottom: "22%", left: "-5%", width: "55%", height: 2, background: "linear-gradient(90deg,transparent,rgba(59,130,246,0.4),transparent)", transform: "rotate(-8deg)" }} />
-    <div style={{ position: "absolute", top: -60, right: -60, width: 260, height: 260, background: "radial-gradient(circle,rgba(255,89,48,0.22),transparent 65%)", borderRadius: "50%" }} />
+    <div style={{ position: "absolute", top: -60, right: -60, width: 260, height: 260, background: "radial-gradient(circle,rgba(253,181,0,0.22),transparent 65%)", borderRadius: "50%" }} />
     <div style={{ position: "absolute", bottom: -80, left: -40, width: 240, height: 240, background: "radial-gradient(circle,rgba(59,130,246,0.16),transparent 65%)", borderRadius: "50%" }} />
   </div>
 )

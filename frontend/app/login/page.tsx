@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -25,14 +25,38 @@ export default function LoginPage() {
       if (!r.ok) throw new Error(data.detail || "Error al iniciar sesión")
       localStorage.setItem("motoeduc_token", data.token)
       localStorage.setItem("motoeduc_usuario", JSON.stringify(data.usuario))
-      router.push("/perfil")
+      // El investigador (admin) observa el estudio: va directo al panel, no al
+      // onboarding de participante. Asi no se contamina con pretest/postest.
+      if (data.usuario?.rol === "admin") {
+        router.push("/admin")
+      } else {
+        // Verificar si el participante YA tiene perfil creado. Si lo tiene, va
+        // directo a la app (no repite el onboarding). Si no, al onboarding.
+        try {
+          const pr = await fetch(`${API}/m1/perfil/existe/${encodeURIComponent(email)}`)
+          const pd = await pr.json()
+          if (pd.existe) {
+            localStorage.setItem("motoeduc_usuario_id", pd.usuario_id)
+            localStorage.setItem("motoeduc_perfil", JSON.stringify(pd.perfil || {}))
+            // El control solo rinde evaluaciones (no usa la app)
+            if (data.usuario?.grupo === "control") router.push("/evaluacion")
+            else router.push("/")
+          } else {
+            // Sin perfil: el control va directo a evaluación, el resto al onboarding
+            if (data.usuario?.grupo === "control") router.push("/evaluacion")
+            else router.push("/perfil")
+          }
+        } catch {
+          router.push("/perfil")
+        }
+      }
     } catch (e: any) {
       setError(e.message)
     } finally { setCargando(false) }
   }
 
   const inp: any = { flex: 1, background: "transparent", border: "none", outline: "none", color: "#f1f5f9", fontSize: "0.9rem" }
-  const wrap: any = (focus: boolean) => ({ display: "flex", alignItems: "center", gap: 9, background: "rgba(0,0,0,0.25)", border: `1px solid ${focus ? "rgba(255,89,48,0.5)" : "rgba(255,255,255,0.12)"}`, borderRadius: 13, padding: "0.7rem 0.9rem", marginBottom: "0.8rem" })
+  const wrap: any = (focus: boolean) => ({ display: "flex", alignItems: "center", gap: 9, background: "rgba(0,0,0,0.25)", border: `1px solid ${focus ? "rgba(253,181,0,0.5)" : "rgba(255,255,255,0.12)"}`, borderRadius: 13, padding: "0.7rem 0.9rem", marginBottom: "0.8rem" })
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem", position: "relative" }}>
@@ -41,7 +65,7 @@ export default function LoginPage() {
 
         <div style={{ textAlign: "center", marginBottom: "1.4rem" }}>
           <div style={{ display: "inline-block", marginBottom: "0.7rem" }}><Logo size={64} /></div>
-          <div style={{ color: "#f1f5f9", fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.02em" }}>MotoEdu <span style={{ color: "#ff5930" }}>EC</span></div>
+          <div style={{ color: "#f1f5f9", fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.02em" }}>MotoEdu <span style={{ color: "#FDB500" }}>EC</span></div>
           <div style={{ color: "#94a3b8", fontSize: "0.8rem", marginTop: 2 }}>Educación vial inteligente 🏍️</div>
         </div>
 
@@ -56,7 +80,7 @@ export default function LoginPage() {
 
           <div style={{ color: "#94a3b8", fontSize: "0.72rem", fontWeight: 600, marginBottom: 5 }}>CONTRASEÑA</div>
           <div style={wrap(false)}>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#ff9575" strokeWidth="2"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 018 0v4" /></svg>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FAC74C" strokeWidth="2"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 018 0v4" /></svg>
             <input style={inp} type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" onKeyDown={e => e.key === "Enter" && entrar()} />
           </div>
 
@@ -67,7 +91,7 @@ export default function LoginPage() {
           </button>
 
           <div style={{ textAlign: "center", color: "#64748b", fontSize: "0.8rem", marginTop: "1rem" }}>
-            ¿No tienes cuenta? <Link href="/registro" style={{ color: "#ff9575", fontWeight: 700 }}>Regístrate gratis</Link>
+            ¿No tienes cuenta? <Link href="/registro" style={{ color: "#FAC74C", fontWeight: 700 }}>Regístrate gratis</Link>
           </div>
         </div>
 

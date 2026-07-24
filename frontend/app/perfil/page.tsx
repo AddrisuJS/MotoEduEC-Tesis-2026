@@ -1,5 +1,6 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8010'
 
@@ -38,11 +39,42 @@ const RIESGO_COLOR: Record<string,string> = {
 }
 
 export default function PerfilPage() {
+  const router = useRouter()
   const [paso, setPaso]       = useState(1)
   const [datos, setDatos]     = useState<any>({ objetivos: [] })
   const [resultado, setRes]   = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState("")
+  const [verificando, setVerificando] = useState(true)
+  const [usuario, setUsuario] = useState<any>(null)
+
+  // ── Comprobacion en el SERVIDOR de si el perfil ya existe ──────────
+  // Antes esto dependia de localStorage, pero cerrarSesion() borra
+  // "motoeduc_usuario_id" y "motoeduc_perfil": al volver a entrar el
+  // navegador no tenia rastro del perfil y el asistente arrancaba de
+  // cero aunque el perfil siguiera guardado en la base.
+  useEffect(() => {
+    const raw = typeof window !== "undefined" ? localStorage.getItem("motoeduc_usuario") : null
+    if (!raw) { setVerificando(false); return }
+    let u: any = null
+    try { u = JSON.parse(raw) } catch { u = null }
+    if (!u?.id) { setVerificando(false); return }
+    setUsuario(u)
+
+    fetch(`${API}/m13/perfil/estado/${u.id}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d?.tiene_perfil && d?.perfil_completo) {
+          // Restaurar las claves que el cierre de sesion borro
+          if (d.perfil_id) localStorage.setItem("motoeduc_usuario_id", d.perfil_id)
+          if (d.perfil)    localStorage.setItem("motoeduc_perfil", JSON.stringify(d.perfil))
+          router.replace(d.siguiente_paso || "/evaluacion")
+        } else {
+          setVerificando(false)
+        }
+      })
+      .catch(() => setVerificando(false))   // si falla, se muestra el asistente
+  }, [])
 
   const actualizar = (campo: string, valor: any) =>
     setDatos((prev: any) => ({ ...prev, [campo]: valor }))
@@ -62,12 +94,30 @@ export default function PerfilPage() {
       const r = await fetch(`${API}/m1/perfil/crear`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...datos, nombre: datos.nombre || "Motociclista" })
+        body: JSON.stringify({
+          ...datos,
+          nombre: datos.nombre || usuario?.nombre || "Motociclista",
+          email:  usuario?.email || undefined,
+        })
       })
       const d = await r.json()
       if (d.usuario_id) {
         localStorage.setItem("motoeduc_usuario_id", d.usuario_id)
         localStorage.setItem("motoeduc_perfil", JSON.stringify(d))
+
+        // Vincular el perfil con la cuenta autenticada. Sin esto el perfil
+        // queda huerfano en la tabla usuarios y el asistente vuelve a
+        // mostrarse en el siguiente inicio de sesion.
+        if (usuario?.id) {
+          try {
+            await fetch(`${API}/m13/perfil/vincular`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ usuario_auth_id: usuario.id, perfil_id: d.usuario_id }),
+            })
+          } catch { /* no bloquea: el perfil ya quedo creado */ }
+        }
+
         setRes(d)
       } else {
         setError("Error al crear el perfil. Intenta de nuevo.")
@@ -77,6 +127,16 @@ export default function PerfilPage() {
     }
     setLoading(false)
   }
+
+  if (verificando) return (
+    <div style={{ minHeight:"100vh", background:"#0f172a", display:"flex",
+                  alignItems:"center", justifyContent:"center" }}>
+      <div style={{ textAlign:"center" }}>
+        <div style={{ fontSize:"2.5rem", marginBottom:"0.6rem" }}>🏍️</div>
+        <div style={{ color:"#94a3b8", fontSize:"0.9rem" }}>Cargando tu perfil…</div>
+      </div>
+    </div>
+  )
 
   if (resultado) return <ResultadoPerfil data={resultado} onReset={() => { setRes(null); setPaso(1); setDatos({ objetivos: [] }) }} />
 
@@ -112,19 +172,28 @@ export default function PerfilPage() {
           {paso === 1 && (
             <div>
               <h2 style={{ color:"#f1f5f9", marginBottom:"0.5rem" }}>¿Como usas tu moto principalmente?</h2>
-              <p style={{ color:"#94a3b8", marginBottom:"1.5rem", fontSize:"0.9rem" }}>Esto define tu perfil de riesgo y el contenido que verás</p>
+              <p style={{ color:"#94a3b8", marginBottom:"0.3rem", fontSize:"0.9rem" }}>Esto define tu perfil de riesgo y el contenido que verás</p>
+              <p style={{ color:"#60a5fa", marginBottom:"1.2rem", fontSize:"0.82rem" }}>Puedes elegir más de uno si usas tu moto para varias cosas (ej. ciudad + aventura).</p>
               <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))", gap:"0.75rem" }}>
-                {TIPOS_USO.map(t => (
-                  <button key={t.valor} onClick={() => actualizar("tipo_uso", t.valor)}
+                {TIPOS_USO.map(t => {
+                  const seleccionado = Array.isArray(datos.tipo_uso) && datos.tipo_uso.includes(t.valor)
+                  return (
+                  <button key={t.valor} onClick={() => {
+                      const actuales = Array.isArray(datos.tipo_uso) ? datos.tipo_uso : []
+                      const nuevos = seleccionado ? actuales.filter((v: string) => v !== t.valor) : [...actuales, t.valor]
+                      actualizar("tipo_uso", nuevos)
+                    }}
                     style={{
-                      background: datos.tipo_uso === t.valor ? "#3b82f6" : "#0f172a",
-                      border: `2px solid ${datos.tipo_uso === t.valor ? "#3b82f6" : "#334155"}`,
-                      borderRadius:"10px", padding:"1rem", cursor:"pointer", textAlign:"left", color:"#f1f5f9"
+                      background: seleccionado ? "#3b82f6" : "#0f172a",
+                      border: `2px solid ${seleccionado ? "#3b82f6" : "#334155"}`,
+                      borderRadius:"10px", padding:"1rem", cursor:"pointer", textAlign:"left", color:"#f1f5f9", position:"relative"
                     }}>
+                    {seleccionado && <span style={{ position:"absolute", top:8, right:10, color:"#93c5fd", fontSize:"0.9rem" }}>✓</span>}
                     <div style={{ fontWeight:"bold", marginBottom:"0.25rem" }}>{t.label}</div>
                     <div style={{ fontSize:"0.8rem", color:"#94a3b8" }}>{t.desc}</div>
                   </button>
-                ))}
+                  )
+                })}
               </div>
             </div>
           )}
@@ -178,19 +247,28 @@ export default function PerfilPage() {
           {paso === 4 && (
             <div>
               <h2 style={{ color:"#f1f5f9", marginBottom:"0.5rem" }}>¿En que zona del Ecuador manejas?</h2>
-              <p style={{ color:"#94a3b8", marginBottom:"1.5rem", fontSize:"0.9rem" }}>Las condiciones viales varian segun la region</p>
+              <p style={{ color:"#94a3b8", marginBottom:"0.3rem", fontSize:"0.9rem" }}>Las condiciones viales varian segun la region</p>
+              <p style={{ color:"#60a5fa", marginBottom:"1.2rem", fontSize:"0.82rem" }}>Puedes elegir varias si viajas o recorres más de una región.</p>
               <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))", gap:"0.75rem" }}>
-                {ZONAS.map(z => (
-                  <button key={z} onClick={() => actualizar("zona", z)}
+                {ZONAS.map(z => {
+                  const seleccionada = Array.isArray(datos.zona) && datos.zona.includes(z)
+                  return (
+                  <button key={z} onClick={() => {
+                      const actuales = Array.isArray(datos.zona) ? datos.zona : []
+                      const nuevas = seleccionada ? actuales.filter((v: string) => v !== z) : [...actuales, z]
+                      actualizar("zona", nuevas)
+                    }}
                     style={{
-                      background: datos.zona === z ? "#3b82f6" : "#0f172a",
-                      border: `2px solid ${datos.zona === z ? "#3b82f6" : "#334155"}`,
+                      background: seleccionada ? "#3b82f6" : "#0f172a",
+                      border: `2px solid ${seleccionada ? "#3b82f6" : "#334155"}`,
                       borderRadius:"10px", padding:"1.5rem", cursor:"pointer",
-                      color:"#f1f5f9", fontWeight:"bold", fontSize:"1.1rem"
+                      color:"#f1f5f9", fontWeight:"bold", fontSize:"1.1rem", position:"relative"
                     }}>
+                    {seleccionada && <span style={{ position:"absolute", top:8, right:10, color:"#93c5fd", fontSize:"0.9rem" }}>✓</span>}
                     {z === "Sierra" ? "🏔️" : z === "Costa" ? "🌊" : z === "Amazonia" ? "🌿" : "🏝️"} {z}
                   </button>
-                ))}
+                  )
+                })}
               </div>
             </div>
           )}
@@ -228,10 +306,10 @@ export default function PerfilPage() {
           {paso < 5 ? (
             <button onClick={() => setPaso(p => p+1)}
               disabled={
-                (paso===1 && !datos.tipo_uso) ||
+                (paso===1 && (!Array.isArray(datos.tipo_uso) || datos.tipo_uso.length === 0)) ||
                 (paso===2 && datos.anos_experiencia === undefined) ||
                 (paso===3 && !datos.moto_actual) ||
-                (paso===4 && !datos.zona)
+                (paso===4 && (!Array.isArray(datos.zona) || datos.zona.length === 0))
               }
               style={{
                 flex:1, padding:"1rem", background:"var(--race-grad)", border:"none",

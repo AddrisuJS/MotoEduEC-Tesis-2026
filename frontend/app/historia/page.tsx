@@ -46,10 +46,22 @@ export default function HistoriaPage() {
   const [hitoSel, setHitoSel]   = useState<any>(null)
   const [narrativa, setNarr]    = useState<any>(null)
   const [loadNarr, setLoadNarr] = useState(false)
-  const [modo, setModo]         = useState<"timeline"|"contribuir"|"muro">("timeline")
-  const [muro, setMuro]         = useState<any>(null)
-  const [cargandoMuro, setCM]   = useState(false)
-  const [form, setForm]         = useState({ nombre:"", ciudad:"", historia:"", anio:"" })
+  const [modo, setModo]         = useState<"timeline"|"contribuir">("timeline")
+  const [form, setForm]         = useState({ nombre:"", ciudad:"", historia:"", anio:"", imagen_base64:"" })
+  const [imagenPreview, setImagenPreview] = useState("")
+
+  const manejarImagen = (e: any) => {
+    const archivo = e.target.files?.[0]
+    if (!archivo) return
+    if (archivo.size > 5_000_000) { alert("La imagen es muy pesada (max 5MB)"); return }
+    const reader = new FileReader()
+    reader.onload = () => {
+      const base64 = reader.result as string
+      setForm(f => ({...f, imagen_base64: base64}))
+      setImagenPreview(base64)
+    }
+    reader.readAsDataURL(archivo)
+  }
   const [enviado, setEnviado]   = useState(false)
   const [enviando, setEnviando] = useState(false)
 
@@ -63,17 +75,6 @@ export default function HistoriaPage() {
     setLoadNarr(false)
   }
 
-  const cargarMuro = async () => {
-    setCM(true)
-    try {
-      const r = await fetch(`${API}/m6/historia/contribuciones/lista`)
-      setMuro(await r.json())
-    } catch { setMuro({ total: 0, contribuciones: [] }) }
-    finally { setCM(false) }
-  }
-
-  useEffect(() => { cargarMuro() }, [])
-
   const enviarContribucion = async () => {
     if (!form.historia.trim() || !form.ciudad.trim()) return
     setEnviando(true)
@@ -84,10 +85,8 @@ export default function HistoriaPage() {
         body: JSON.stringify(form)
       })
       setEnviado(true)
-      cargarMuro()
     } catch {
-      setEnviado(true)
-      cargarMuro() // Mostrar exito igual por si el endpoint no existe aun
+      setEnviado(true) // Mostrar exito igual por si el endpoint no existe aun
     }
     setEnviando(false)
   }
@@ -124,15 +123,6 @@ export default function HistoriaPage() {
               color: modo === "contribuir" ? "#fff" : "#94a3b8"
             }}>
             ✍️ Comparte tu Historia
-          </button>
-          <button onClick={() => { setModo("muro"); cargarMuro() }}
-            style={{
-              flex:1, padding:"0.75rem", borderRadius:"10px", cursor:"pointer", fontWeight:"bold",
-              background: modo === "muro" ? "#ec4899" : "#1e293b",
-              border: `1px solid ${modo === "muro" ? "#ec4899" : "#334155"}`,
-              color: modo === "muro" ? "#fff" : "#94a3b8"
-            }}>
-            🧱 Muro Motero {muro?.total ? `(${muro.total})` : ""}
           </button>
         </div>
 
@@ -268,6 +258,14 @@ export default function HistoriaPage() {
                       rows={6}
                       style={{ width:"100%", padding:"0.75rem", background:"#0f172a", border:"1px solid #334155", borderRadius:"8px", color:"#f1f5f9", marginTop:"0.25rem", resize:"vertical" }} />
                   </div>
+                  <div>
+                    <label style={{ color:"#94a3b8", fontSize:"0.85rem" }}>Una foto (opcional)</label>
+                    <input type="file" accept="image/*" onChange={manejarImagen}
+                      style={{ width:"100%", padding:"0.6rem", background:"#0f172a", border:"1px solid #334155", borderRadius:"8px", color:"#f1f5f9", marginTop:"0.25rem" }} />
+                    {imagenPreview && (
+                      <img src={imagenPreview} alt="Vista previa" style={{ marginTop:"0.6rem", maxWidth:"200px", maxHeight:"150px", borderRadius:"8px", border:"1px solid #334155" }} />
+                    )}
+                  </div>
                   <button onClick={enviarContribucion} disabled={enviando || !form.historia.trim()}
                     style={{
                       padding:"1rem", background: enviando ? "#334155" : "#ec4899",
@@ -280,57 +278,6 @@ export default function HistoriaPage() {
                   </p>
                 </div>
               </div>
-            )}
-          </div>
-        )}
-
-        {/* MURO MOTERO — historias de la comunidad */}
-        {modo === "muro" && (
-          <div className="fade-up">
-            {cargandoMuro && <p style={{ color:"#94a3b8", textAlign:"center", padding:"2rem" }}>Cargando historias...</p>}
-
-            {!cargandoMuro && muro?.total === 0 && (
-              <div style={{ background:"rgba(255,255,255,0.05)", backdropFilter:"blur(14px)", border:"1px solid rgba(255,255,255,0.14)", borderRadius:"16px", padding:"2.5rem 1.5rem", textAlign:"center" }}>
-                <div style={{ fontSize:"2.5rem" }}>🧱</div>
-                <h3 style={{ color:"#f1f5f9", margin:"0.5rem 0" }}>El muro esta vacio</h3>
-                <p style={{ color:"#94a3b8", fontSize:"0.9rem" }}>Se el primero en compartir tu historia motera.</p>
-                <button onClick={() => setModo("contribuir")}
-                  style={{ marginTop:"1rem", padding:"0.7rem 1.4rem", background:"var(--race-grad)", border:"none", borderRadius:"12px", color:"#fff", fontWeight:"bold", cursor:"pointer" }}>
-                  ✍️ Compartir la mia
-                </button>
-              </div>
-            )}
-
-            {!cargandoMuro && muro?.total > 0 && (
-              <>
-                <p style={{ color:"#94a3b8", fontSize:"0.85rem", marginBottom:"1rem", textAlign:"center" }}>
-                  {muro.total} historia{muro.total !== 1 ? "s" : ""} de la comunidad motera ecuatoriana 🇪🇨
-                  {muro.en_revision > 0 && <span style={{ color:"#facc15" }}> · {muro.en_revision} en revision</span>}
-                </p>
-                <div style={{ display:"grid", gap:"0.9rem" }}>
-                  {muro.contribuciones.map((c: any) => (
-                    <div key={c.id} style={{ background:"rgba(255,255,255,0.05)", backdropFilter:"blur(14px)", border:"1px solid rgba(255,255,255,0.14)", borderRadius:"14px", padding:"1.1rem" }}>
-                      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"0.4rem", marginBottom:"0.5rem" }}>
-                        <div style={{ display:"flex", alignItems:"center", gap:"0.5rem" }}>
-                          <span style={{ fontSize:"1.2rem" }}>🏍️</span>
-                          <div>
-                            <div style={{ color:"#f1f5f9", fontWeight:"bold", fontSize:"0.92rem" }}>{c.nombre || "Anonimo"}</div>
-                            <div style={{ color:"#64748b", fontSize:"0.72rem" }}>
-                              {c.ciudad}{c.anio ? ` · ${c.anio}` : ""} · {c.fecha_envio}
-                            </div>
-                          </div>
-                        </div>
-                        {c.estado !== "aprobada" && (
-                          <span style={{ background:"rgba(250,204,21,0.15)", border:"1px solid rgba(250,204,21,0.4)", color:"#fde047", borderRadius:"6px", padding:"0.15rem 0.55rem", fontSize:"0.65rem", fontWeight:"bold" }}>
-                            EN REVISION
-                          </span>
-                        )}
-                      </div>
-                      <p style={{ color:"#cbd5e1", fontSize:"0.88rem", lineHeight:1.6, whiteSpace:"pre-wrap" }}>{c.historia}</p>
-                    </div>
-                  ))}
-                </div>
-              </>
             )}
           </div>
         )}

@@ -48,11 +48,11 @@ def usuario_actual(authorization: str = Header(None), db: Session = Depends(get_
         raise HTTPException(401, "Sesión expirada, inicia sesión de nuevo")
     except jwt.InvalidTokenError:
         raise HTTPException(401, "Token inválido")
-    row = db.execute(text("SELECT id, nombre, email, tipo_uso, rol FROM usuarios_auth WHERE id=:i"),
+    row = db.execute(text("SELECT id, nombre, email, tipo_uso, rol, COALESCE(grupo,'intervencion') FROM usuarios_auth WHERE id=:i"),
                      {"i": int(payload["sub"])}).fetchone()
     if not row:
         raise HTTPException(401, "Usuario no existe")
-    return {"id": row[0], "nombre": row[1], "email": row[2], "tipo_uso": row[3], "rol": row[4]}
+    return {"id": row[0], "nombre": row[1], "email": row[2], "tipo_uso": row[3], "rol": row[4], "grupo": (row[5] if len(row) > 5 else "intervencion")}
 
 
 @router.post("/registro")
@@ -78,7 +78,7 @@ def registro(datos: RegistroIn, db: Session = Depends(get_db)):
 @router.post("/login")
 def login(datos: LoginIn, db: Session = Depends(get_db)):
     email = datos.email.strip().lower()
-    row = db.execute(text("SELECT id, nombre, password_hash, tipo_uso, rol FROM usuarios_auth WHERE email=:e"),
+    row = db.execute(text("SELECT id, nombre, password_hash, tipo_uso, rol, COALESCE(grupo,'intervencion') FROM usuarios_auth WHERE email=:e"),
                      {"e": email}).fetchone()
     if not row or not bcrypt.checkpw(datos.password.encode(), row[2].encode()):
         raise HTTPException(401, "Email o contraseña incorrectos")
@@ -86,7 +86,7 @@ def login(datos: LoginIn, db: Session = Depends(get_db)):
     db.commit()
     token = _crear_token(row[0], email, row[1])
     return {"ok": True, "token": token,
-            "usuario": {"id": row[0], "nombre": row[1], "email": email, "tipo_uso": row[3], "rol": row[4]}}
+            "usuario": {"id": row[0], "nombre": row[1], "email": email, "tipo_uso": row[3], "rol": row[4], "grupo": (row[5] if len(row) > 5 else "intervencion")}}
 
 
 @router.get("/me")
